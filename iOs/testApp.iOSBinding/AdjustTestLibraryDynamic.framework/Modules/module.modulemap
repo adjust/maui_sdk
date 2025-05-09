@@ -1,0 +1,6 @@
+framework module AdjustTestLibraryDynamic {
+  umbrella header "AdjustTestLibraryDynamic.h"
+  export *
+
+  module * { export * }
+}
