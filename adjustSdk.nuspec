@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>AdjustSdk.MAUI</id>
-    <version>5.1.0-beta3</version>
+    <version>5.1.0-beta6</version>
     <title>MAUI SDK of Adjust</title>
     <authors>Adjust GmbH</authors>
     <owners>Adjust GmbH</owners>
