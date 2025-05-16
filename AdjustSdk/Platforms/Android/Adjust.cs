@@ -151,14 +151,7 @@ public partial class Adjust
 
     #endregion
 
-    private static Android.Content.Context? _appContext;
-    public static void SetAppContext(Android.Content.Context context) => _appContext = context;
-    internal static Android.Content.Context AppContext {
-        get {
-            if (_appContext == null) throw new InvalidOperationException("AppContext not set. Call Adjust.SetAppContext(context) early in your app startup.");
-            return _appContext;
-        }
-    }
+    internal static Android.Content.Context AppContext { get { return Platform.AppContext; } }
 
     private static Nullable<TValue> optionVal<TValue>(Dictionary<string, object> options, string key)
         where TValue : struct
