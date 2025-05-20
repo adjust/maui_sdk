@@ -41,10 +41,10 @@ public record class AdjustAppStoreSubscription(string Price, string Currency, st
             nativeAppStoreSubscription.SetSalesRegion(SalesRegion);
         }
 
-        AdjustUtil.iterateTwoPairList(innerCallbackParameters,
+        AdjustUtil.IterateTwoPairList(innerCallbackParameters,
             nativeAppStoreSubscription.AddCallbackParameter);
 
-        AdjustUtil.iterateTwoPairList(innerPartnerParameters,
+        AdjustUtil.IterateTwoPairList(innerPartnerParameters,
             nativeAppStoreSubscription.AddPartnerParameter);
 
         return nativeAppStoreSubscription;

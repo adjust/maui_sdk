@@ -182,7 +182,7 @@ public partial class Adjust
 
     internal static Android.Content.Context AppContext { get { return Platform.AppContext; } }
 
-    private static Nullable<TValue> optionVal<TValue>(Dictionary<string, object> options, string key)
+    private static Nullable<TValue> OptionVal<TValue>(Dictionary<string, object> options, string key)
         where TValue : struct
     {
         if (options.TryGetValue(key, out object? objectValue)
@@ -193,7 +193,7 @@ public partial class Adjust
         return null;
     }
 
-    private static TValue? optionRef<TValue>(Dictionary<string, object> options, string key)
+    private static TValue? OptionRef<TValue>(Dictionary<string, object> options, string key)
         where TValue : class
     {
         if (options.TryGetValue(key, out object? objectValue)
@@ -208,12 +208,12 @@ public partial class Adjust
         Dictionary<string, object> testOptions)
     {
         Com.Adjust.Sdk.AdjustTestOptions nativeTestOptions = new ();
-        nativeTestOptions.BaseUrl = optionRef<string>(testOptions, "baseUrl");
-        nativeTestOptions.GdprUrl = optionRef<string>(testOptions, "gdprUrl");
-        nativeTestOptions.SubscriptionUrl = optionRef<string>(testOptions, "subscriptionUrl");
-        nativeTestOptions.PurchaseVerificationUrl = optionRef<string>(testOptions, "purchaseVerificationUrl");
+        nativeTestOptions.BaseUrl = OptionRef<string>(testOptions, "baseUrl");
+        nativeTestOptions.GdprUrl = OptionRef<string>(testOptions, "gdprUrl");
+        nativeTestOptions.SubscriptionUrl = OptionRef<string>(testOptions, "subscriptionUrl");
+        nativeTestOptions.PurchaseVerificationUrl = OptionRef<string>(testOptions, "purchaseVerificationUrl");
 
-        if (optionRef<string>(testOptions, "extraPath") is string extraPath)
+        if (OptionRef<string>(testOptions, "extraPath") is string extraPath)
         {
             nativeTestOptions.BasePath = extraPath;
             nativeTestOptions.GdprPath = extraPath;
@@ -221,49 +221,49 @@ public partial class Adjust
             nativeTestOptions.PurchaseVerificationPath = extraPath;
         }
 
-        if (optionVal<bool>(testOptions, "deleteState") is true)
+        if (OptionVal<bool>(testOptions, "deleteState") is true)
         {
             nativeTestOptions.Context = AppContext;
         }
 
-        if (optionVal<long>(testOptions, "timerIntervalInMilliseconds") is long timerIntervalInMilliseconds)
+        if (OptionVal<long>(testOptions, "timerIntervalInMilliseconds") is long timerIntervalInMilliseconds)
         {
             nativeTestOptions.TimerIntervalInMilliseconds =
                 Java.Lang.Long.ValueOf(timerIntervalInMilliseconds);
         }
 
-        if (optionVal<long>(testOptions, "timerStartInMilliseconds")
+        if (OptionVal<long>(testOptions, "timerStartInMilliseconds")
             is long timerStartInMilliseconds)
         {
             nativeTestOptions.TimerStartInMilliseconds =
                 Java.Lang.Long.ValueOf(timerStartInMilliseconds);
         }
 
-        if (optionVal<long>(testOptions, "sessionIntervalInMilliseconds")
+        if (OptionVal<long>(testOptions, "sessionIntervalInMilliseconds")
             is long sessionIntervalInMilliseconds)
         {
             nativeTestOptions.SessionIntervalInMilliseconds =
                 Java.Lang.Long.ValueOf(sessionIntervalInMilliseconds);
         }
 
-        if (optionVal<long>(testOptions, "subsessionIntervalInMilliseconds")
+        if (OptionVal<long>(testOptions, "subsessionIntervalInMilliseconds")
             is long subsessionIntervalInMilliseconds)
         {
             nativeTestOptions.SubsessionIntervalInMilliseconds =
                 Java.Lang.Long.ValueOf(subsessionIntervalInMilliseconds);
         }
 
-        if (optionVal<bool>(testOptions, "teardown") is bool teardown)
+        if (OptionVal<bool>(testOptions, "teardown") is bool teardown)
         {
             nativeTestOptions.Teardown = Java.Lang.Boolean.ValueOf(teardown);
         }
 
-        if (optionVal<bool>(testOptions, "noBackoffWait") is bool noBackoffWait)
+        if (OptionVal<bool>(testOptions, "noBackoffWait") is bool noBackoffWait)
         {
             nativeTestOptions.NoBackoffWait = Java.Lang.Boolean.ValueOf(noBackoffWait);
         }
 
-        if (optionVal<bool>(testOptions, "ignoreSystemLifecycleBootstrap")
+        if (OptionVal<bool>(testOptions, "ignoreSystemLifecycleBootstrap")
             is bool ignoreSystemLifecycleBootstrap)
         {
             nativeTestOptions.IgnoreSystemLifecycleBootstrap =

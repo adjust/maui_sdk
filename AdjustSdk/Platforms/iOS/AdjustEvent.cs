@@ -13,10 +13,10 @@ public partial class AdjustEvent
             nativeEvent.SetRevenue(revenueValue, Currency);
         }
 
-        AdjustUtil.iterateTwoPairList(innerCallbackParameters,
+        AdjustUtil.IterateTwoPairList(innerCallbackParameters,
             nativeEvent.AddCallbackParameter);
 
-        AdjustUtil.iterateTwoPairList(innerPartnerParameters,
+        AdjustUtil.IterateTwoPairList(innerPartnerParameters,
             nativeEvent.AddPartnerParameter);
 
         if (DeduplicationId is not null)

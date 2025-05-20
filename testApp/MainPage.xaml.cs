@@ -16,17 +16,10 @@ public partial class MainPage : ContentPage
 	{
 		Trace.WriteLine("OnCounterClicked");
 
-		//Adjust.ping();
-		//Adjust.commonPing();
-
 		var testLibrary = new TestLibraryBridge();
-
-		//testLibrary.addTest("Test_AttributionCallback_reattribution");
-
-		//testLibrary.addTest("Test_MeasurementConsent_second_start_no_new_session");
-		//testLibrary.addTestDirectory("deeplink");
-		
-		testLibrary.start();
+		//testLibrary.AddTest("Test_MeasurementConsent_second_start_no_new_session");
+		//testLibrary.AddTestDirectory("deeplink");
+		testLibrary.Start();
 
 		count++;
 

@@ -18,68 +18,96 @@ public partial class TestLibraryBridge {
             overwriteUrl, controlUrl, new CommandDelegate(this));
     }
 
-    public partial void start() {
+    public partial void Start()
+    {
         Adjust.GetSdkVersion(testLibrary.StartTestSession);
     }
-    public partial void addTest(string testName) {
+
+    public partial void AddTest(string testName)
+    {
         testLibrary.AddTest(testName);
     }
-    public partial void addTestDirectory(string testDirectory) {
+
+    public partial void AddTestDirectory(string testDirectory)
+    {
         testLibrary.AddTestDirectory(testDirectory);
     }
-    private partial void addInfoToSend(string key, string value) {
+
+    private partial void AddInfoToSend(string key, string value)
+    {
         testLibrary.AddInfoToSend(key, value);
     }
-    private partial void setInfoToServer(IDictionary<string, string>? infoToSend) {
-        if (infoToSend is null) { return; }
-        foreach (KeyValuePair<string, string> keyValuePair in infoToSend) {
-            addInfoToSend(keyValuePair.Key, keyValuePair.Value);
+
+    private partial void SetInfoToServer(IDictionary<string, string>? infoToSend)
+    {
+        if (infoToSend is null)
+        {
+            return;
+        }
+
+        foreach (KeyValuePair<string, string> keyValuePair in infoToSend)
+        {
+            AddInfoToSend(keyValuePair.Key, keyValuePair.Value);
         }
     }
-    private partial void sendInfoToServer(string? extraPath) {
+
+    private partial void SendInfoToServer(string? extraPath)
+    {
         testLibrary.SendInfoToServer(extraPath);
     }
 
-    private void trackAppStoreSubscription(Dictionary<string, List<string>> parameters) {
-        if (! (firstStringValue(parameters, "revenue") is string price
-            && firstStringValue(parameters, "currency") is string currency
-            && firstStringValue(parameters, "transactionId") is string transactionId
-        )) { return; }
+    private void TrackAppStoreSubscription(Dictionary<string, List<string>> parameters)
+    {
+        if (!(FirstStringValue(parameters, "revenue") is string price
+            && FirstStringValue(parameters, "currency") is string currency
+            && FirstStringValue(parameters, "transactionId") is string transactionId))
+        {
+            return;
+        }
 
         AdjustAppStoreSubscription adjustAppStoreSubscription = new (price, currency, transactionId);
 
-        if (firstStringValue(parameters, "transactionDate") is string transactionDate) {
+        if (FirstStringValue(parameters, "transactionDate") is string transactionDate)
+        {
             adjustAppStoreSubscription.TransactionDate = transactionDate;
         }
 
-        if (firstStringValue(parameters, "salesRegion") is string salesRegion) {
+        if (FirstStringValue(parameters, "salesRegion") is string salesRegion)
+        {
             adjustAppStoreSubscription.SalesRegion = salesRegion;
         }
 
-        iterateTwoPairList(listValues(parameters, "callbackParams"),
+        IterateTwoPairList(ListValues(parameters, "callbackParams"),
             adjustAppStoreSubscription.AddCallbackParameter);
 
-        iterateTwoPairList(listValues(parameters, "partnerParams"),
+        IterateTwoPairList(ListValues(parameters, "partnerParams"),
             adjustAppStoreSubscription.AddPartnerParameter);
 
         Adjust.TrackAppStoreSubscription(adjustAppStoreSubscription);
     }
 
-    private void verifyAppStorePurchase(Dictionary<string, List<string>> parameters) {
-        if (! (firstStringValue(parameters, "productId") is string productId
-            && firstStringValue(parameters, "transactionId") is string transactionId))
+    private void VerifyAppStorePurchase(Dictionary<string, List<string>> parameters)
+    {
+        if (!(FirstStringValue(parameters, "productId") is string productId
+            && FirstStringValue(parameters, "transactionId") is string transactionId))
         {
             return;
         }
 
         string? localBasePath = currentExtraPath;
-        Adjust.VerifyAppStorePurchase(new (transactionId, productId),
-            verificationResultCallback(localBasePath));
+        Adjust.VerifyAppStorePurchase(new(transactionId, productId),
+            VerificationResultCallback(localBasePath));
     }
-    private static string? jsonResponseConvert(NSDictionary? jsonResponse) {
-        if (jsonResponse is null) { return null; }
 
-        return NSJsonSerialization.Serialize(jsonResponse, 0, out NSError nsError) switch {
+    private static string? JsonResponseConvert(NSDictionary? jsonResponse)
+    {
+        if (jsonResponse is null)
+        {
+            return null;
+        }
+
+        return NSJsonSerialization.Serialize(jsonResponse, 0, out NSError nsError) switch
+        {
             NSData jsonResponseData when jsonResponseData.Length > 0 =>
                 new NSString(jsonResponseData, NSStringEncoding.UTF8).ToString(),
             _ => null
@@ -90,16 +118,14 @@ public partial class TestLibraryBridge {
 internal class CommandDelegate(TestLibraryBridge testLibraryBridge) :
     TestLibrary.iOSBinding.AdjustCommandDelegate
 {
-/*
-    public override void ExecuteCommand(string className, string methodName, NSDictionary parameters) {
+    /*
+        public override void ExecuteCommand(string className, string methodName, NSDictionary parameters) {}
+    */
+    public override void ExecuteCommand(string className, string methodName, string jsonParameters)
+    {
+        testLibraryBridge.ExecuteCommon(className, methodName, jsonParameters);
     }
-*/
-    public override void ExecuteCommand(string className, string methodName, string jsonParameters) {
-        testLibraryBridge.executeCommon(className, methodName, jsonParameters);
-    }
-/*
-    public override void ExecuteCommandRawJson(string json) {
-
-    }
-*/
+    /*
+        public override void ExecuteCommandRawJson(string json) {}
+    */
 }

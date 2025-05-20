@@ -2,7 +2,7 @@ namespace AdjustSdk;
 
 internal class AdjustUtil
 {
-    internal static void iterateTwoPairList(
+    internal static void IterateTwoPairList(
         List<string>? twoPairList, Action<string, string> twoPairApply) 
     {
         if (twoPairList is null)

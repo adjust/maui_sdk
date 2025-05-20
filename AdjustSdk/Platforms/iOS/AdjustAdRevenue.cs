@@ -11,10 +11,10 @@ public partial class AdjustAdRevenue
             nativeAdRevenue.SetRevenue(revenueValue, Currency);
         }
 
-        AdjustUtil.iterateTwoPairList(innerCallbackParameters,
+        AdjustUtil.IterateTwoPairList(innerCallbackParameters,
             nativeAdRevenue.AddCallbackParameter);
 
-        AdjustUtil.iterateTwoPairList(innerPartnerParameters,
+        AdjustUtil.IterateTwoPairList(innerPartnerParameters,
             nativeAdRevenue.AddPartnerParameter);
 
         if (AdImpressionsCount is int adImpressionsCountValue)

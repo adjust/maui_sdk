@@ -42,10 +42,10 @@ public record class AdjustPlayStoreSubscription(
             nativeAdjustPlayStoreSubscription.PurchaseTime = purchaseTimeValue;
         }
 
-        AdjustUtil.iterateTwoPairList(innerCallbackParameters,
+        AdjustUtil.IterateTwoPairList(innerCallbackParameters,
             nativeAdjustPlayStoreSubscription.AddCallbackParameter);
 
-        AdjustUtil.iterateTwoPairList(innerPartnerParameters,
+        AdjustUtil.IterateTwoPairList(innerPartnerParameters,
             nativeAdjustPlayStoreSubscription.AddPartnerParameter);
 
         return nativeAdjustPlayStoreSubscription;

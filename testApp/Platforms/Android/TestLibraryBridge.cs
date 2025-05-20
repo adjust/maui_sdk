@@ -1,15 +1,15 @@
 using AdjustSdk;
 
-public partial class TestLibraryBridge {
+public partial class TestLibraryBridge
+{
     // emulator
     // private const string baseIp = "10.0.2.2";
     // device
     private const string baseIp = "192.168.86.227";
-    
+    private Com.Adjust.Test.TestLibrary testLibrary { get; init; }
 
-    private Com.Adjust.Test.TestLibrary testLibrary { get; init;}
-
-    public TestLibraryBridge() {
+    public TestLibraryBridge()
+    {
         overwriteUrl = $"https://{baseIp}:8443";
         controlUrl = $"ws://{baseIp}:1987";
 
@@ -18,67 +18,80 @@ public partial class TestLibraryBridge {
             new CommandJsonListener(this));
     }
 
-    public partial void start() {
+    public partial void Start()
+    {
         Adjust.GetSdkVersion(testLibrary.StartTestSession);
     }
 
-    public partial void addTest(string testName) {
+    public partial void AddTest(string testName)
+    {
         testLibrary.AddTest(testName);
     }
-    public partial void addTestDirectory(string testDirectory) {
+
+    public partial void AddTestDirectory(string testDirectory)
+    {
         testLibrary.AddTestDirectory(testDirectory);
     }
 
-    private partial void addInfoToSend(string key, string value) {
+    private partial void AddInfoToSend(string key, string value)
+    {
         testLibrary.AddInfoToSend(key, value);
     }
 
-    private partial void setInfoToServer(IDictionary<string, string>? infoToSend) {
+    private partial void SetInfoToServer(IDictionary<string, string>? infoToSend)
+    {
         testLibrary.SetInfoToSend(infoToSend);
     }
 
-    private partial void sendInfoToServer(string? extraPath) {
+    private partial void SendInfoToServer(string? extraPath)
+    {
         testLibrary.SendInfoToServer(extraPath);
     }
 
-    private void trackPlayStoreSubscription(Dictionary<string, List<string>> parameters) {
-        if (! (firstLongValue(parameters, "revenue") is long price
-            && firstStringValue(parameters, "currency") is string currency
-            && firstStringValue(parameters, "productId") is string productId
-            && firstStringValue(parameters, "receipt") is string signature
-            && firstStringValue(parameters, "purchaseToken") is string purchaseToken
-            && firstStringValue(parameters, "transactionId") is string orderId
-        )) { return; }
+    private void TrackPlayStoreSubscription(Dictionary<string, List<string>> parameters)
+    {
+        if (!(FirstLongValue(parameters, "revenue") is long price
+            && FirstStringValue(parameters, "currency") is string currency
+            && FirstStringValue(parameters, "productId") is string productId
+            && FirstStringValue(parameters, "receipt") is string signature
+            && FirstStringValue(parameters, "purchaseToken") is string purchaseToken
+            && FirstStringValue(parameters, "transactionId") is string orderId))
+        {
+            return;
+        }
 
         AdjustPlayStoreSubscription adjustPlayStoreSubscription = new (
             price, currency, productId, orderId, signature, purchaseToken);
 
-        if (firstLongValue(parameters, "transactionDate") is long purchaseTime) {
+        if (FirstLongValue(parameters, "transactionDate") is long purchaseTime)
+        {
             adjustPlayStoreSubscription.PurchaseTime = purchaseTime;
         }
 
-        iterateTwoPairList(listValues(parameters, "callbackParams"),
+        IterateTwoPairList(ListValues(parameters, "callbackParams"),
             adjustPlayStoreSubscription.AddCallbackParameter);
 
-        iterateTwoPairList(listValues(parameters, "partnerParams"),
+        IterateTwoPairList(ListValues(parameters, "partnerParams"),
             adjustPlayStoreSubscription.AddPartnerParameter);
 
         Adjust.TrackPlayStoreSubscription(adjustPlayStoreSubscription);
     }
 
-    private void verifyPlayStorePurchase(Dictionary<string, List<string>> parameters) {
-        if (! (firstStringValue(parameters, "productId") is string productId
-            && firstStringValue(parameters, "purchaseToken") is string purchaseToken))
+    private void VerifyPlayStorePurchase(Dictionary<string, List<string>> parameters)
+    {
+        if (!(FirstStringValue(parameters, "productId") is string productId
+            && FirstStringValue(parameters, "purchaseToken") is string purchaseToken))
         {
             return;
         }
 
         string? localBasePath = currentExtraPath;
         Adjust.VerifyPlayStorePurchase(new (productId, purchaseToken),
-            verificationResultCallback(localBasePath));
+            VerificationResultCallback(localBasePath));
     }
 
-    private static string? jsonResponseConvert(Org.Json.JSONObject? jsonResponse) {
+    private static string? JsonResponseConvert(Org.Json.JSONObject? jsonResponse)
+    {
         return jsonResponse?.ToString();
     }
 }
@@ -88,10 +101,11 @@ internal class CommandJsonListener(TestLibraryBridge testLibraryBridge) :
 {
     public void ExecuteCommand(string? className, string? methodName, string? jsonParameters)
     {
-        if (className is null || methodName is null || jsonParameters is null) {
+        if (className is null || methodName is null || jsonParameters is null)
+        {
             return;
         }
 
-        testLibraryBridge.executeCommon(className, methodName, jsonParameters);
+        testLibraryBridge.ExecuteCommon(className, methodName, jsonParameters);
     }
 }
