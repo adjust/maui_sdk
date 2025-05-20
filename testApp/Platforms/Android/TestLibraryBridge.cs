@@ -1,5 +1,3 @@
-
-
 using AdjustSdk;
 
 public partial class TestLibraryBridge {

@@ -1,4 +1,4 @@
-﻿namespace testApp;
+﻿namespace TestApp;
 
 using System.Diagnostics;
 using AdjustSdk;
