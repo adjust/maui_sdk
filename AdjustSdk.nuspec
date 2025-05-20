@@ -3,11 +3,11 @@
   <metadata>
     <id>AdjustSdk.MAUI</id>
     <version>5.1.0-beta6</version>
-    <title>MAUI SDK of Adjust</title>
+    <title>Adjust MAUI SDK</title>
     <authors>Adjust GmbH</authors>
     <owners>Adjust GmbH</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="file">License</license>
+    <license type="file">LICENSE</license>
     <projectUrl>https://github.com/adjust/maui_sdk</projectUrl>
     <iconUrl>https://raw.github.com/adjust/adjust_sdk/master/Resources/windows/gravatar.gif</iconUrl>
     <icon>gravatar.jpg</icon>
@@ -25,7 +25,7 @@
   </metadata>
   <files>
     <file src="gravatar.jpg" target="" />
-    <file src="Lice*" target="" />
+    <file src="LICENSE" target="" />
     <file src="README.md" target="" />
 
     <file src="AdjustSdk/bin/Release/net8.0-android/AdjustSdk.dll" target="lib/net8.0-android34.0/AdjustSdk.dll" />
