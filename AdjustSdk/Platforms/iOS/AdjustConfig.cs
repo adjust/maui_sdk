@@ -176,7 +176,8 @@ internal class AdjustDelegateAdapter : AdjustSdk.iOSBinding.AdjustDelegate
         {
             return null;
         }
-        return new() {
+        return new()
+        {
             AttributionChangedDelegate = adjustConfig.AttributionChangedDelegate,
             EventSuccessDelegate = adjustConfig.EventSuccessDelegate,
             EventFailureDelegate = adjustConfig.EventFailureDelegate,

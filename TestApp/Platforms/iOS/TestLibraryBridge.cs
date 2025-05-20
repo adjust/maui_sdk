@@ -2,7 +2,8 @@ using System;
 using AdjustSdk;
 using Foundation;
 
-public partial class TestLibraryBridge {
+public partial class TestLibraryBridge
+{
     // simulator
     // private const string baseIp = "127.0.0.1";
     // device
@@ -10,7 +11,8 @@ public partial class TestLibraryBridge {
 
     private TestLibrary.iOSBinding.ATLTestLibrary testLibrary { get; init; }
 
-    public TestLibraryBridge() {
+    public TestLibraryBridge()
+    {
         overwriteUrl = $"http://{baseIp}:8080";
         controlUrl = $"ws://{baseIp}:1987";
 

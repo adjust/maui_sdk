@@ -249,7 +249,8 @@ public partial class AdjustEventFailure {
 internal class OnEventTrackingFailedListenerAdapter(Action<AdjustEventFailure> EventFailureDelegate)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnEventTrackingFailedListener
 {
-    public void OnEventTrackingFailed(Com.Adjust.Sdk.AdjustEventFailure? nativeAdjustEventFailure) {
+    public void OnEventTrackingFailed(Com.Adjust.Sdk.AdjustEventFailure? nativeAdjustEventFailure)
+    {
         if (AdjustEventFailure.fromNativeAdjustEventFailure(nativeAdjustEventFailure)
         is AdjustEventFailure adjustEventFailure)
         {
