@@ -1,6 +1,7 @@
 namespace AdjustSdk;
 
-public partial class AdjustThirdPartySharing  {
+public partial class AdjustThirdPartySharing 
+{
     public bool? IsEnabled { get; private set; }
     internal List<GranularOptionsArgs>? GranularOptions { get; set; }
     internal readonly record struct GranularOptionsArgs(
@@ -14,12 +15,14 @@ public partial class AdjustThirdPartySharing  {
         this.IsEnabled = isEnabled;
     }
 
-    public void AddGranularOption(string partnerName, string key, string value) {
+    public void AddGranularOption(string partnerName, string key, string value)
+    {
         GranularOptions ??= new();
-        GranularOptions.Add(new (partnerName, key, value));
+        GranularOptions.Add(new(partnerName, key, value));
     }
 
-    public void AddPartnerSharingSettings(string partnerName, string key, bool value) {
+    public void AddPartnerSharingSettings(string partnerName, string key, bool value)
+    {
         PartnerSharingSettings ??= new ();
         PartnerSharingSettings.Add(new(partnerName, key, value));
     }

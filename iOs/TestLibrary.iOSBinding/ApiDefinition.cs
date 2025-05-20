@@ -1,8 +1,8 @@
 using Foundation;
 using ObjCRuntime;
 
-namespace TestLibrary.iOSBinding {
-
+namespace TestLibrary.iOSBinding
+{
 	// The first step to creating a binding is to add your native framework ("MyLibrary.xcframework")
 	// to the project.
 	// Open your binding csproj and add a section like this
@@ -71,7 +71,8 @@ namespace TestLibrary.iOSBinding {
 
 	[BaseType(typeof(NSObject))]
     [Model, Protocol]
-	interface AdjustCommandDelegate {
+	interface AdjustCommandDelegate
+	{
 		[Export("executeCommand:methodName:parameters:")]
 		void ExecuteCommand(string className, string methodName, NSDictionary parameters);
 
@@ -83,7 +84,8 @@ namespace TestLibrary.iOSBinding {
 	}
 
 	[BaseType (typeof(NSObject))]
-	interface ATLTestLibrary {
+	interface ATLTestLibrary
+	{
 		[Static, Export("testLibraryWithBaseUrl:andControlUrl:andCommandDelegate:")]
 		ATLTestLibrary TestLibraryWithBaseUrl(string baseUrl, string controlUrl, AdjustCommandDelegate commandDelegate);
 

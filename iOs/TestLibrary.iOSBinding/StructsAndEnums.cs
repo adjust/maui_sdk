@@ -1,3 +1,1 @@
-namespace TestLibrary.iOSBinding {
-
-}
+namespace TestLibrary.iOSBinding {}

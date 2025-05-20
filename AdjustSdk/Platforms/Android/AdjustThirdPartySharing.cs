@@ -1,7 +1,9 @@
 namespace AdjustSdk;
 
-public partial class AdjustThirdPartySharing  {
-    internal Com.Adjust.Sdk.AdjustThirdPartySharing toNative() {
+public partial class AdjustThirdPartySharing 
+{
+    internal Com.Adjust.Sdk.AdjustThirdPartySharing toNative()
+    {
         // public unsafe AdjustThirdPartySharing (global::Java.Lang.Boolean? isEnabled) : base (IntPtr.Zero, JniHandleOwnership.DoNotTransfer)
         Java.Lang.Boolean? nativeIsEnabled = IsEnabled switch {
             true => Java.Lang.Boolean.True,
@@ -11,15 +13,19 @@ public partial class AdjustThirdPartySharing  {
 
         var nativeAdjustThirdPartySharing = new Com.Adjust.Sdk.AdjustThirdPartySharing(nativeIsEnabled);
 
-        if (GranularOptions is not null) {
-            foreach (var element in GranularOptions) {
+        if (GranularOptions is not null)
+        {
+            foreach (var element in GranularOptions)
+            {
                 nativeAdjustThirdPartySharing.AddGranularOption(
                     element.PartnerName, element.Key, element.StringValue);
             }
         }
 
-        if (PartnerSharingSettings is not null) {
-            foreach (var element in PartnerSharingSettings) {
+        if (PartnerSharingSettings is not null)
+        {
+            foreach (var element in PartnerSharingSettings)
+            {
                 nativeAdjustThirdPartySharing.AddPartnerSharingSetting(
                     element.PartnerName, element.Key, element.BoolValue);
             }

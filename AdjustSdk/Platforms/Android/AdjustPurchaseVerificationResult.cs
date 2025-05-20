@@ -5,7 +5,10 @@ public partial record AdjustPurchaseVerificationResult
     internal static AdjustPurchaseVerificationResult? fromNative(
         Com.Adjust.Sdk.AdjustPurchaseVerificationResult? nativeResult)
     {
-        if (nativeResult is null) { return null; }
+        if (nativeResult is null)
+        {
+            return null;
+        }
 
         return new(
             nativeResult.VerificationStatus,

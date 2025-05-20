@@ -1,13 +1,15 @@
 namespace AdjustSdk;
 
-public partial class AdjustEvent {
-
+public partial class AdjustEvent
+{
     public string? PurchaseToken { get; set; }
 
-    internal Com.Adjust.Sdk.AdjustEvent toNative() {
+    internal Com.Adjust.Sdk.AdjustEvent toNative()
+    {
         Com.Adjust.Sdk.AdjustEvent nativeEvent = new Com.Adjust.Sdk.AdjustEvent(EventToken);
 
-        if (Revenue is double revenueValue) {
+        if (Revenue is double revenueValue)
+        {
             nativeEvent.SetRevenue(revenueValue, Currency);
         }
 
@@ -17,19 +19,23 @@ public partial class AdjustEvent {
         AdjustUtil.iterateTwoPairList(innerPartnerParameters,
             nativeEvent.AddPartnerParameter);
 
-        if (DeduplicationId is not null) {
+        if (DeduplicationId is not null)
+        {
             nativeEvent.DeduplicationId = DeduplicationId;
         }
 
-        if (CallbackId is not null) {
+        if (CallbackId is not null)
+        {
             nativeEvent.CallbackId = CallbackId;
         }
 
-        if (ProductId is not null) {
+        if (ProductId is not null)
+        {
             nativeEvent.ProductId = ProductId;
         }
 
-        if (PurchaseToken is not null) {
+        if (PurchaseToken is not null)
+        {
             nativeEvent.PurchaseToken = PurchaseToken;
         }
 

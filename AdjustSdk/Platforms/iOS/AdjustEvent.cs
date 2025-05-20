@@ -1,13 +1,15 @@
 namespace AdjustSdk;
 
-public partial class AdjustEvent {
-
+public partial class AdjustEvent
+{
     public string? TransactionId { get; set; }
 
-    internal AdjustSdk.iOSBinding.ADJEvent toNative() {
-        AdjustSdk.iOSBinding.ADJEvent nativeEvent = new (EventToken);
+    internal AdjustSdk.iOSBinding.ADJEvent toNative()
+    {
+        AdjustSdk.iOSBinding.ADJEvent nativeEvent = new(EventToken);
 
-        if (Revenue is double revenueValue && Currency is not null) {
+        if (Revenue is double revenueValue && Currency is not null)
+        {
             nativeEvent.SetRevenue(revenueValue, Currency);
         }
 
@@ -17,19 +19,23 @@ public partial class AdjustEvent {
         AdjustUtil.iterateTwoPairList(innerPartnerParameters,
             nativeEvent.AddPartnerParameter);
 
-        if (DeduplicationId is not null) {
+        if (DeduplicationId is not null)
+        {
             nativeEvent.SetDeduplicationId(DeduplicationId);
         }
 
-        if (CallbackId is not null) {
+        if (CallbackId is not null)
+        {
             nativeEvent.SetCallbackId(CallbackId);
         }
 
-        if (ProductId is not null) {
+        if (ProductId is not null)
+        {
             nativeEvent.SetProductId(ProductId);
         }
 
-        if (TransactionId is not null) {
+        if (TransactionId is not null)
+        {
             nativeEvent.SetTransactionId(TransactionId);
         }
 

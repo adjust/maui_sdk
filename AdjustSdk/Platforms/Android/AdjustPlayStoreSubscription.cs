@@ -25,7 +25,9 @@ public record class AdjustPlayStoreSubscription(
         innerPartnerParameters.Add(key);
         innerPartnerParameters.Add(value);
     }
-   internal Com.Adjust.Sdk.AdjustPlayStoreSubscription toNative() {
+
+    internal Com.Adjust.Sdk.AdjustPlayStoreSubscription toNative()
+    {
         Com.Adjust.Sdk.AdjustPlayStoreSubscription nativeAdjustPlayStoreSubscription = new (
             Price,
             Currency,
@@ -34,7 +36,8 @@ public record class AdjustPlayStoreSubscription(
             Signature,
             PurchaseToken);
 
-        if (PurchaseTime is long purchaseTimeValue) {
+        if (PurchaseTime is long purchaseTimeValue)
+        {
             // nativeAdjustPlayStoreSubscription.SetPurchaseTime(purchaseTimeValue);
             nativeAdjustPlayStoreSubscription.PurchaseTime = purchaseTimeValue;
         }

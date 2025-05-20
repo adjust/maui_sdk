@@ -1,8 +1,9 @@
-using Foundation;
-
 namespace AdjustSdk;
 
-public record class AdjustAppStoreSubscription(string Price, string Currency, string TransactionId) {
+using Foundation;
+
+public record class AdjustAppStoreSubscription(string Price, string Currency, string TransactionId)
+{
     public string? TransactionDate { get; set; }
     public string? SalesRegion { get; set; }
     internal List<string>? innerCallbackParameters = null;
@@ -21,18 +22,22 @@ public record class AdjustAppStoreSubscription(string Price, string Currency, st
         innerPartnerParameters.Add(key);
         innerPartnerParameters.Add(value);
     }
-    internal AdjustSdk.iOSBinding.ADJAppStoreSubscription toNative() {
+
+    internal AdjustSdk.iOSBinding.ADJAppStoreSubscription toNative()
+    {
         AdjustSdk.iOSBinding.ADJAppStoreSubscription nativeAppStoreSubscription =
             new (new NSDecimalNumber(Price), Currency, TransactionId);
 
-        if (TransactionDate is not null) {
+        if (TransactionDate is not null)
+        {
             // following Unity implementation
             nativeAppStoreSubscription.SetTransactionDate(
                 NSDate.FromTimeIntervalSince1970(
                     new NSNumberFormatter().NumberFromString(TransactionDate).DoubleValue / 1000));
         }
 
-        if (SalesRegion is not null) {
+        if (SalesRegion is not null)
+        {
             nativeAppStoreSubscription.SetSalesRegion(SalesRegion);
         }
 

@@ -3,8 +3,12 @@ namespace AdjustSdk;
 internal class OnAdidReadListenerAdapter(Action<string> AdidCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnAdidReadListener
 {
-    public void OnAdidRead (string? adid) {
-        if (adid is null) { return; }
+    public void OnAdidRead(string? adid)
+    {
+        if (adid is null)
+        {
+            return;
+        }
 
         AdidCallback.Invoke(adid);
     }
@@ -13,10 +17,14 @@ internal class OnAdidReadListenerAdapter(Action<string> AdidCallback)
 internal class OnAttributionReadListenerAdapter(Action<AdjustAttribution> attributionCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnAttributionReadListener
 {
-    public void OnAttributionRead (Com.Adjust.Sdk.AdjustAttribution? nativeAdjustAttribution) {
+    public void OnAttributionRead (Com.Adjust.Sdk.AdjustAttribution? nativeAdjustAttribution)
+    {
         var adjustAttribution = AdjustAttribution.fromNative(nativeAdjustAttribution);
 
-        if (adjustAttribution is null) { return; }
+        if (adjustAttribution is null)
+        {
+            return;
+        }
 
         attributionCallback.Invoke(adjustAttribution);
     }
@@ -25,8 +33,12 @@ internal class OnAttributionReadListenerAdapter(Action<AdjustAttribution> attrib
 internal class OnSdkVersionReadListenerAdapter(Action<string> SdkVersionCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnSdkVersionReadListener
 {
-    public void OnSdkVersionRead (string? sdkVersion) {
-        if (sdkVersion is null) { return; }
+    public void OnSdkVersionRead (string? sdkVersion)
+    {
+        if (sdkVersion is null)
+        {
+            return;
+        }
 
         SdkVersionCallback($"{AdjustConfig.SdkPrefix}@{sdkVersion}");
     }
@@ -35,7 +47,8 @@ internal class OnSdkVersionReadListenerAdapter(Action<string> SdkVersionCallback
 internal class OnLastDeeplinkReadListenerAdapter(Action<string?> LastDeeplinkReadCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnLastDeeplinkReadListener
 {
-    public void OnLastDeeplinkRead (Android.Net.Uri? nativeDeeplink) {
+    public void OnLastDeeplinkRead (Android.Net.Uri? nativeDeeplink)
+    {
         LastDeeplinkReadCallback(nativeDeeplink?.ToString());
     }
 }
@@ -43,11 +56,18 @@ internal class OnLastDeeplinkReadListenerAdapter(Action<string?> LastDeeplinkRea
 internal class OnDeeplinkResolvedListenerAdapter(Action<string> DeeplinkResolvedCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnDeeplinkResolvedListener
 {
-    public void OnDeeplinkResolved (string? nativeDeeplink) {
-        if (nativeDeeplink is null) { return; }
+    public void OnDeeplinkResolved (string? nativeDeeplink)
+    {
+        if (nativeDeeplink is null)
+        {
+            return;
+        }
 
         var deeplink = nativeDeeplink.ToString();
-        if (deeplink is null) { return; }
+        if (deeplink is null)
+        {
+            return;
+        }
 
         DeeplinkResolvedCallback.Invoke(deeplink);
     }
@@ -56,8 +76,12 @@ internal class OnDeeplinkResolvedListenerAdapter(Action<string> DeeplinkResolved
 internal class OnGoogleAdIdReadListenerAdapter(Action<string> GoogleAdIdReadCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnGoogleAdIdReadListener
 {
-    public void OnGoogleAdIdRead (string? nativeGoogleAdId) {
-        if (nativeGoogleAdId is null) { return; }
+    public void OnGoogleAdIdRead (string? nativeGoogleAdId)
+    {
+        if (nativeGoogleAdId is null)
+        {
+            return;
+        }
 
         GoogleAdIdReadCallback.Invoke(nativeGoogleAdId);
     }
@@ -66,8 +90,12 @@ internal class OnGoogleAdIdReadListenerAdapter(Action<string> GoogleAdIdReadCall
 internal class OnAmazonAdIdReadListenerAdapter(Action<string> AmazonAdIdReadCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnAmazonAdIdReadListener
 {
-    public void OnAmazonAdIdRead (string? nativeAmazonAdId) {
-        if (nativeAmazonAdId is null) { return; }
+    public void OnAmazonAdIdRead (string? nativeAmazonAdId)
+    {
+        if (nativeAmazonAdId is null)
+        {
+            return;
+        }
 
         AmazonAdIdReadCallback.Invoke(nativeAmazonAdId);
     }
@@ -83,7 +111,10 @@ internal class OnPurchaseVerificationFinishedListenerAdapter(
         var result =
             AdjustPurchaseVerificationResult.fromNative(nativeAdjustPurchaseVerificationResult);
 
-        if (result is null) { return; }
+        if (result is null)
+        {
+            return;
+        }
 
         AdjustPurchaseVerificationCallback.Invoke(result);
     }

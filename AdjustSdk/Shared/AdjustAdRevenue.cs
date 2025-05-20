@@ -1,6 +1,7 @@
 namespace AdjustSdk;
 
-public partial class AdjustAdRevenue {
+public partial class AdjustAdRevenue
+{
     public string Source { get; private set; }
     public double? Revenue { get; private set; }
     public string? Currency { get; private set; }

@@ -1,6 +1,7 @@
 namespace AdjustSdk;
 
-public enum AdjustLogLevel {
+public enum AdjustLogLevel
+{
     VERBOSE,
     DEBUG,
     INFO,
@@ -10,12 +11,14 @@ public enum AdjustLogLevel {
     SUPPRESS
 }
 
-public enum AdjustEnvironment {
+public enum AdjustEnvironment
+{
     Sandbox,
     Production
 }
 
-public partial class AdjustConfig {
+public partial class AdjustConfig
+{
     public string AppToken { get; private set; }
     public AdjustEnvironment Environment { get; private set; }
     public bool? AllowSuppressLogLevel { get; private set; }
@@ -41,7 +44,7 @@ public partial class AdjustConfig {
 
     internal const string SdkPrefix = "maui5.1.0";
     public AdjustConfig(string appToken, AdjustEnvironment environment)
-        : this(appToken, environment, false) { }
+        : this(appToken, environment, false) {}
 
     public AdjustConfig(string appToken, AdjustEnvironment environment, bool allowSuppressLogLevel)
     {
@@ -61,7 +64,8 @@ public partial class AdjustConfig {
     }
 }
 
-public partial class AdjustAttribution  {
+public partial class AdjustAttribution
+{
     public string? TrackerToken { get; private set; }
     public string? TrackerName { get; private set; }
     public string? Network { get; private set; }
@@ -74,7 +78,8 @@ public partial class AdjustAttribution  {
     public string? CostCurrency { get; private set; }
 }
 
-public partial class AdjustEventSuccess {
+public partial class AdjustEventSuccess
+{
     public string? Adid { get; private set; }
     public string? Message { get; private set; }
     public string? Timestamp { get; private set; }
@@ -82,7 +87,8 @@ public partial class AdjustEventSuccess {
     public string? CallbackId { get; private set; }
 }
 
-public partial class AdjustEventFailure {
+public partial class AdjustEventFailure
+{
     public string? Adid { get; private set; }
     public string? Message { get; private set; }
     public string? Timestamp { get; private set; }
@@ -91,16 +97,18 @@ public partial class AdjustEventFailure {
     public string? CallbackId { get; private set; }
 
 }
-public partial class AdjustSessionSuccess {
+
+public partial class AdjustSessionSuccess
+{
     public string? Adid { get; private set; }
     public string? Message { get; private set; }
     public string? Timestamp { get; private set; }
 }
 
-public partial class AdjustSessionFailure {
+public partial class AdjustSessionFailure
+{
     public string? Adid { get; private set; }
     public string? Message { get; private set; }
     public string? Timestamp { get; private set; }
     public bool WillRetry { get; private set; }
-
 }

@@ -1,18 +1,19 @@
-﻿using System.Diagnostics;
+﻿namespace AdjustSdk;
 
-namespace AdjustSdk;
-
-public partial class Adjust {
+public partial class Adjust
+{
     public static partial void InitSdk(AdjustConfig adjustConfig);
 
     public static partial void TrackEvent(AdjustEvent adjustEvent);
 
     public static partial void Enable();
+
     public static partial void Disable();
 
     public static partial void IsEnabled(Action<bool> callback);
 
     public static partial void SwitchToOfflineMode();
+
     public static partial void SwitchBackToOnlineMode();
 
     public static partial void SetPushToken(string pushToken);
@@ -22,12 +23,15 @@ public partial class Adjust {
     public static partial void ProcessDeeplink(AdjustDeeplink deeplink);
 
     public static partial void AddGlobalPartnerParameter(string key, string value);
+
     public static partial void AddGlobalCallbackParameter(string key, string value);
 
     public static partial void RemoveGlobalPartnerParameter(string key);
+
     public static partial void RemoveGlobalCallbackParameter(string key);
 
     public static partial void RemoveGlobalPartnerParameters();
+
     public static partial void RemoveGlobalCallbackParameters();
 
     public static partial void TrackAdRevenue(AdjustAdRevenue adRevenue);
@@ -49,6 +53,7 @@ public partial class Adjust {
     public static partial void SetTestOptions(Dictionary<string, object> testOptions);
 
     public static partial void Resume();
+
     public static partial void Pause();
 
     #if ANDROID
