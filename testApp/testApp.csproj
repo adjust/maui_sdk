@@ -53,16 +53,16 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
-		<ProjectReference Include="..\android\testApp.AndroidBinding\testApp.AndroidBinding.csproj" />
+		<ProjectReference Include="..\android\TestLibrary.AndroidBinding\TestLibrary.AndroidBinding.csproj" />
 	<!-- 
-		<AndroidLibrary Include="..\android\testApp.AndroidBinding\libs\gson-2.11.0.jar">
+		<AndroidLibrary Include="..\android\TestLibrary.AndroidBinding\libs\gson-2.11.0.jar">
             <Bind>false</Bind>
             <Visible>false</Visible>
         </AndroidLibrary>
 -->
 		<!-- 
 
-		<AndroidLibrary Include="..\android\testApp.AndroidBinding\libs\error_prone_annotations-2.36.0.jar">
+		<AndroidLibrary Include="..\android\TestLibrary.AndroidBinding\libs\error_prone_annotations-2.36.0.jar">
             <Bind>false</Bind>
             <Visible>false</Visible>
         </AndroidLibrary>
@@ -99,7 +99,7 @@
     </ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('ios'))">
-        <ProjectReference Include="..\ios\testApp.iOSBinding\testApp.iOSBinding.csproj" />
+        <ProjectReference Include="..\ios\TestLibrary.iOSBinding\TestLibrary.iOSBinding.csproj" />
     </ItemGroup>
 
 </Project>

@@ -8,13 +8,13 @@ public partial class TestLibraryBridge {
     // device
     private const string baseIp = "192.168.86.227";
 
-    private testApp.iOSBinding.ATLTestLibrary testLibrary { get; init; }
+    private TestLibrary.iOSBinding.ATLTestLibrary testLibrary { get; init; }
 
     public TestLibraryBridge() {
         overwriteUrl = $"http://{baseIp}:8080";
         controlUrl = $"ws://{baseIp}:1987";
 
-        testLibrary = testApp.iOSBinding.ATLTestLibrary.TestLibraryWithBaseUrl(
+        testLibrary = TestLibrary.iOSBinding.ATLTestLibrary.TestLibraryWithBaseUrl(
             overwriteUrl, controlUrl, new CommandDelegate(this));
     }
 
@@ -88,7 +88,7 @@ public partial class TestLibraryBridge {
 }
 
 internal class CommandDelegate(TestLibraryBridge testLibraryBridge) :
-    testApp.iOSBinding.AdjustCommandDelegate
+    TestLibrary.iOSBinding.AdjustCommandDelegate
 {
 /*
     public override void ExecuteCommand(string className, string methodName, NSDictionary parameters) {

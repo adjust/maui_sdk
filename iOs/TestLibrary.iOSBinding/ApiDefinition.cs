@@ -1,7 +1,7 @@
 using Foundation;
 using ObjCRuntime;
 
-namespace testApp.iOSBinding {
+namespace TestLibrary.iOSBinding {
 
 	// The first step to creating a binding is to add your native framework ("MyLibrary.xcframework")
 	// to the project.
