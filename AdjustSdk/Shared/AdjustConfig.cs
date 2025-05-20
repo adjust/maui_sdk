@@ -39,7 +39,7 @@ public partial class AdjustConfig {
     public Action<AdjustSessionFailure>? SessionFailureDelegate { get; set; }
     public Func<string, bool>? DeferredDeeplinkDelegate { get; set; }
 
-    internal const string SdkPrefix = "maui5.0.0";
+    internal const string SdkPrefix = "maui5.1.0";
     public AdjustConfig(string appToken, AdjustEnvironment environment)
         : this(appToken, environment, false) { }
 
