@@ -14,7 +14,7 @@
 		<ApplicationTitle>TestApp</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.adjust.testapp</ApplicationId>
+		<ApplicationId>com.adjust.examples</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
