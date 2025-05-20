@@ -1,17 +1,12 @@
-# Adjust SDK for iOS
+# Adjust SDK for MAUI
 
-This is the [Adjust](https://adjust.com)™  SDK for MAUI. Documentation is available on our help center in the following languages:
+This is the [Adjust](https://adjust.com)™  SDK for MAUI. Documentation is available on our Developer Hub in the following languages:
 
-* [English][en-helpcenter]
-* [中文][zh-helpcenter]
-* [日本語][ja-helpcenter]
-* [한국어][ko-helpcenter]
+* [English][https://dev.adjust.com/en/sdk/maui/]
+* [中文][https://dev.adjust.com/zh/sdk/maui/]
+* [日本語][https://dev.adjust.com/ja/sdk/maui/]
+* [한국어][https://dev.adjust.com/ko/sdk/maui/]
 
 ## License
 
-Distributed under the [MIT license](https://opensource.org/licenses/MIT). See [`MIT-LICENSE`](MIT-LICENSE) for the full text.
-
-[en-helpcenter]: https://help.adjust.com/en/developer/maui-sdk-documentation
-[zh-helpcenter]: https://help.adjust.com/zh/developer/maui-sdk-documentation
-[ja-helpcenter]: https://help.adjust.com/ja/developer/maui-sdk-documentation
-[ko-helpcenter]: https://help.adjust.com/ko/developer/maui-sdk-documentation
+Distributed under the [MIT license](https://opensource.org/licenses/MIT). See [`LICENSE`](LICENSE) for the full text.
