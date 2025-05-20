@@ -99,7 +99,7 @@
     </ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('ios'))">
-        <ProjectReference Include="..\iOs\testApp.iOSBinding\testApp.iOSBinding.csproj" />
+        <ProjectReference Include="..\ios\testApp.iOSBinding\testApp.iOSBinding.csproj" />
     </ItemGroup>
 
 </Project>

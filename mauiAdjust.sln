@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApp", "ExampleApp\Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidBinding", "android\AdjustSdk.AndroidBinding\AdjustSdk.AndroidBinding.csproj", "{0D534A30-D460-4F5C-8B42-4471FE3DBF56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iOSBinding", "iOs\AdjustSdk.iOSBinding\AdjustSdk.iOSBinding.csproj", "{7D822FC0-6A5F-4FF8-AC92-4B1F7DB79F3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iOSBinding", "ios\AdjustSdk.iOSBinding\AdjustSdk.iOSBinding.csproj", "{7D822FC0-6A5F-4FF8-AC92-4B1F7DB79F3C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{C3D0C68B-DA61-4719-B7CB-0234B82540CD}"
 EndProject
@@ -17,9 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "android", "android", "{1E55
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testApp.AndroidBinding", "android\testApp.AndroidBinding\testApp.AndroidBinding.csproj", "{670FB1D9-2A58-4EC9-92F0-D286263919D4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "iOs", "iOs", "{A45A6A13-F677-4FAC-9066-C13FCECE0B50}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ios", "ios", "{A45A6A13-F677-4FAC-9066-C13FCECE0B50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testApp.iOSBinding", "iOs\testApp.iOSBinding\testApp.iOSBinding.csproj", "{36DE5D9B-1225-474A-84AE-09D59B5F29D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testApp.iOSBinding", "ios\testApp.iOSBinding\testApp.iOSBinding.csproj", "{36DE5D9B-1225-474A-84AE-09D59B5F29D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

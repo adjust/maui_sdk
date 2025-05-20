@@ -142,7 +142,7 @@ public partial class Adjust {
 
     #endregion
 
-    #region iOs specific
+    #region iOS specific
     public static partial void RequestAppTrackingAuthorization(Action<int> callback) {
         AdjustSdk.iOSBinding.Adjust
             .RequestAppTrackingAuthorizationWithCompletionHandler(

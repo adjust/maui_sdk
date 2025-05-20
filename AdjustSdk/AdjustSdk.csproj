@@ -22,7 +22,7 @@
         <ProjectReference Include="..\android\AdjustSdk.AndroidBinding\AdjustSdk.AndroidBinding.csproj" />
     </ItemGroup>
 	<ItemGroup Condition="$(TargetFramework.Contains('ios'))">
-        <ProjectReference Include="..\iOs\AdjustSdk.iOSBinding\AdjustSdk.iOSBinding.csproj" />
+        <ProjectReference Include="..\ios\AdjustSdk.iOSBinding\AdjustSdk.iOSBinding.csproj" />
     </ItemGroup>
 
 </Project>

@@ -37,7 +37,7 @@
     <file src="android/AdjustSdk.AndroidBinding/libs/adjust-android-signature.aar" target="lib/net8.0-android34.0/adjust-android-signature.aar" />
     <file src="android/AdjustSdk.AndroidBinding/libs/adjust-android.aar" target="lib/net8.0-android34.0/adjust-android.aar" />
 
-    <file src="iOs/AdjustSdk.iOSBinding/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.dll" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.dll" />
-    <file src="iOs/AdjustSdk.iOSBinding/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.resources.zip" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.resources.zip" />
+    <file src="ios/AdjustSdk.iOSBinding/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.dll" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.dll" />
+    <file src="ios/AdjustSdk.iOSBinding/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.resources.zip" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.resources.zip" />
   </files>
 </package>

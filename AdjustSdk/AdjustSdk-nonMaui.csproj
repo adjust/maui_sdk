@@ -30,7 +30,7 @@
 	</ItemGroup>
 	<ItemGroup Condition="$(TargetFramework.Contains('ios'))">
 		<Compile Include="Platforms/iOS/*.cs" />
-		<ProjectReference Include="..\iOs\AdjustSdk.iOSBinding\AdjustSdk.iOSBinding.csproj" />
+		<ProjectReference Include="..\ios\AdjustSdk.iOSBinding\AdjustSdk.iOSBinding.csproj" />
 	</ItemGroup>
 
 </Project>
