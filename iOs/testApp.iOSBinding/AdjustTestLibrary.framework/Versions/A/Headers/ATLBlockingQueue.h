@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ATLUtil.h"
 
 @interface ATLBlockingQueue : NSObject
 

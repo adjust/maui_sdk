@@ -3,7 +3,11 @@
 using AdjustSdk;
 
 public partial class TestLibraryBridge {
-    private const string baseIp = "10.0.2.2";
+    // emulator
+    // private const string baseIp = "10.0.2.2";
+    // device
+    private const string baseIp = "192.168.86.227";
+    
 
     private Com.Adjust.Test.TestLibrary testLibrary { get; init;}
 

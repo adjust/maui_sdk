@@ -3,9 +3,10 @@ using AdjustSdk;
 using Foundation;
 
 public partial class TestLibraryBridge {
-    //private const string baseIp = "192.168.86.165";
-    //private const string baseIp = "192.168.1.4";
-    private const string baseIp = "127.0.0.1";
+    // simulator
+    // private const string baseIp = "127.0.0.1";
+    // device
+    private const string baseIp = "192.168.86.227";
 
     private testApp.iOSBinding.ATLTestLibrary testLibrary { get; init; }
 

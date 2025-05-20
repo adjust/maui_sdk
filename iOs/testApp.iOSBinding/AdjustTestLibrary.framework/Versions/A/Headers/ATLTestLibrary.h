@@ -7,10 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-//#import "ATLNetworking.h"
-//#import "ATLBlockingQueue.h"
-@class ATLBlockingQueue;
-@class ATLHttpResponse;
+#import "ATLNetworking.h"
+#import "ATLBlockingQueue.h"
 
 @protocol AdjustCommandDelegate <NSObject>
 @optional

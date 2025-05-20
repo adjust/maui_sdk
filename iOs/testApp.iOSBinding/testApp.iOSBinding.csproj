@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <NativeReference Include="AdjustTestLibraryDynamic.framework">
+    <NativeReference Include="AdjustTestLibrary.framework">
       <Kind>Framework</Kind>
     </NativeReference>
   </ItemGroup>

@@ -7,15 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-//#import "PocketSocket/PSWebSocket.h"
-//#import "ATLTestLibrary.h"
-
-@class ATLTestLibrary;
+#import "PocketSocket/PSWebSocket.h"
+#import "ATLTestLibrary.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ATLControlWebSocketClient : NSObject 
-//@interface ATLControlWebSocketClient : NSObject <PSWebSocketDelegate>
+@interface ATLControlWebSocketClient : NSObject <PSWebSocketDelegate>
 
 - (void)initializeWebSocketWithControlUrl:(NSString*)controlUrl
                            andTestLibrary:(ATLTestLibrary*)testLibrary;
