@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdjustSdk", "AdjustSdk\AdjustSdk.csproj", "{0841B5E8-ACC4-4626-BB82-BCE942135CB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "example", "example\example.csproj", "{F807DA1F-B95F-4CC2-8485-5EF479E33253}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApp", "ExampleApp\ExampleApp.csproj", "{F807DA1F-B95F-4CC2-8485-5EF479E33253}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidBinding", "android\AdjustSdk.AndroidBinding\AdjustSdk.AndroidBinding.csproj", "{0D534A30-D460-4F5C-8B42-4471FE3DBF56}"
 EndProject

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using AdjustSdk;
 
-namespace example;
+namespace ExampleApp;
 //import sdk;
 
 public partial class MainPage : ContentPage
