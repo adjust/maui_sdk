@@ -1,7 +1,7 @@
 namespace AdjustSdk;
 
-public partial class AdjustEvent
-{
+public partial record AdjustEvent {
+
     public string? PurchaseToken { get; set; }
 
     internal Com.Adjust.Sdk.AdjustEvent toNative()

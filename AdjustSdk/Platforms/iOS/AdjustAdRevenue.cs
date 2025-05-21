@@ -1,6 +1,6 @@
 namespace AdjustSdk;
 
-public partial class AdjustAdRevenue
+public partial record AdjustAdRevenue
 {
     internal AdjustSdk.iOSBinding.ADJAdRevenue toNative()
     {

@@ -1,11 +1,9 @@
 namespace AdjustSdk;
 
-public partial class AdjustThirdPartySharing
-{
-    internal AdjustSdk.iOSBinding.ADJThirdPartySharing toNative()
-    {
+public partial record AdjustThirdPartySharing  {
+    internal AdjustSdk.iOSBinding.ADJThirdPartySharing toNative() {
         AdjustSdk.iOSBinding.ADJThirdPartySharing nativeAdjustThirdPartySharing = new(IsEnabled);
-        
+
         if (GranularOptions is not null)
         {
             foreach (var element in GranularOptions)

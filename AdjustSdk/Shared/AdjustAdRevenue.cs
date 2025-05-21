@@ -1,8 +1,6 @@
 namespace AdjustSdk;
 
-public partial class AdjustAdRevenue
-{
-    public string Source { get; private set; }
+public partial record AdjustAdRevenue(string Source) {
     public double? Revenue { get; private set; }
     public string? Currency { get; private set; }
     public int? AdImpressionsCount { get; set; }
@@ -11,11 +9,6 @@ public partial class AdjustAdRevenue
     public string? AdRevenuePlacement { get; set; }
     internal List<string>? innerCallbackParameters = null;
     internal List<string>? innerPartnerParameters = null;
-
-    public AdjustAdRevenue(string source)
-    {
-        Source = source;
-    }
 
     public void SetRevenue(double amount, string currency)
     {

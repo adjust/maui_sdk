@@ -1,10 +1,8 @@
 namespace AdjustSdk;
 
-public partial class AdjustAdRevenue
-{
-    internal Com.Adjust.Sdk.AdjustAdRevenue toNative()
-    {
-        Com.Adjust.Sdk.AdjustAdRevenue nativeAdRevenue = new(Source);
+public partial record AdjustAdRevenue {
+    internal Com.Adjust.Sdk.AdjustAdRevenue toNative() {
+        Com.Adjust.Sdk.AdjustAdRevenue nativeAdRevenue = new (Source);
 
         if (Revenue is double revenueValue)
         {

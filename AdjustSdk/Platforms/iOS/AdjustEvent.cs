@@ -1,7 +1,7 @@
 namespace AdjustSdk;
 
-public partial class AdjustEvent
-{
+public partial record AdjustEvent {
+
     public string? TransactionId { get; set; }
 
     internal AdjustSdk.iOSBinding.ADJEvent toNative()

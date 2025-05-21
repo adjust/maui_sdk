@@ -1,7 +1,6 @@
 namespace AdjustSdk;
 
-public partial class AdjustConfig
-{
+public partial record AdjustConfig {
     public bool? IsPlayStoreKidsComplianceEnabled { get; set; }
     public bool? IsPreinstallTrackingEnabled { get; set; }
     public string? PreinstallFilePath { get; set; }
@@ -16,13 +15,8 @@ public partial class AdjustConfig
             _ => null
         };
 
-        Com.Adjust.Sdk.AdjustConfig nativeAdjustConfig = AllowSuppressLogLevel switch
-        {
-            bool allowSuppressLogLevel => new Com.Adjust.Sdk.AdjustConfig(
-                Adjust.AppContext, AppToken, nativeEnvironment, allowSuppressLogLevel),
-            _ => new Com.Adjust.Sdk.AdjustConfig(
-                Adjust.AppContext, AppToken, nativeEnvironment)
-        };
+        Com.Adjust.Sdk.AdjustConfig nativeAdjustConfig = new Com.Adjust.Sdk.AdjustConfig(
+            Adjust.AppContext, AppToken, nativeEnvironment, AllowSuppressLogLevel);
 
         Com.Adjust.Sdk.LogLevel? nativeLogLevel = LogLevel switch
         {

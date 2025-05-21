@@ -2,7 +2,7 @@ namespace AdjustSdk;
 
 using Foundation;
 
-public partial class AdjustConfig
+public partial record AdjustConfig
 {
     public bool? IsAdServicesEnabled { get; set; }
     public bool? IsIdfaReadingEnabled { get; set; }
@@ -21,11 +21,7 @@ public partial class AdjustConfig
             _ => null,
         };
 
-        AdjustSdk.iOSBinding.ADJConfig nativeAdjustConfig = AllowSuppressLogLevel switch
-        {
-            bool allowSuppressLogLevel => new AdjustSdk.iOSBinding.ADJConfig(AppToken, nativeEnvironment, allowSuppressLogLevel),
-            _ => new AdjustSdk.iOSBinding.ADJConfig(AppToken, nativeEnvironment)
-        };
+        AdjustSdk.iOSBinding.ADJConfig nativeAdjustConfig = new AdjustSdk.iOSBinding.ADJConfig(AppToken, nativeEnvironment, AllowSuppressLogLevel);
 
         AdjustSdk.iOSBinding.ADJLogLevel? nativeLogLevel = LogLevel switch
         {

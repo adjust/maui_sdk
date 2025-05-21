@@ -1,8 +1,6 @@
 namespace AdjustSdk;
 
-public partial class AdjustEvent
-{
-    public string EventToken { get; private set; }
+public partial record AdjustEvent(string EventToken) {
     public double? Revenue { get; private set; }
     public string? Currency { get; private set; }
     public string? CallbackId { get; set; }
@@ -10,11 +8,6 @@ public partial class AdjustEvent
     public string? ProductId { get; set; }
     internal List<string>? innerCallbackParameters = null;
     internal List<string>? innerPartnerParameters = null;
-
-    public AdjustEvent(string eventToken)
-    {
-        EventToken = eventToken;
-    }
 
     public void SetRevenue(double amount, string currency)
     {
