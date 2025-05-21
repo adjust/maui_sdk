@@ -67,5 +67,7 @@
 	  <ProjectReference Include="..\AdjustSdk\AdjustSdk.csproj" />
 	</ItemGroup>
 
-
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+		<PackageReference Include="Xamarin.Android.Binding.InstallReferrer" Version="2.2.0" />
+	</ItemGroup>
 </Project>
