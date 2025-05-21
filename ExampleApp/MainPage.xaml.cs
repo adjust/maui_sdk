@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using AdjustSdk;
+﻿namespace ExampleApp;
 
-namespace ExampleApp;
-//import sdk;
+using AdjustSdk;
 
 public partial class MainPage : ContentPage
 {
@@ -11,15 +9,17 @@ public partial class MainPage : ContentPage
 	public MainPage()
 	{
 		InitializeComponent();
+
+		var adjustConfig = new AdjustConfig("2fm9gkqubvpc", AdjustEnvironment.Sandbox);
+		adjustConfig.LogLevel = AdjustLogLevel.VERBOSE;
+		Adjust.InitSdk(adjustConfig);
 	}
 
 	private void OnCounterClicked(object sender, EventArgs e)
 	{
-		var adjustConfig = new AdjustConfig("abcdef123456", AdjustEnvironment.Sandbox);
-		adjustConfig.LogLevel = AdjustLogLevel.VERBOSE;
-		Adjust.InitSdk(adjustConfig);
-		//Adjust.ping();
-		//sdk.Adjust.sdk
+		var adjustEvent = new AdjustEvent("g3mfiw");
+		Adjust.TrackEvent(adjustEvent);
+
 		count++;
 
 		if (count == 1)
