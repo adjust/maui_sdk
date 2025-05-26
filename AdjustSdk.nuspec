@@ -7,7 +7,7 @@
     <authors>Adjust GmbH</authors>
     <owners>Adjust GmbH</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="file">LICENSE</license>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/adjust/maui_sdk</projectUrl>
     <iconUrl>https://raw.github.com/adjust/adjust_sdk/master/Resources/windows/gravatar.gif</iconUrl>
     <icon>gravatar.jpg</icon>
@@ -25,7 +25,6 @@
   </metadata>
   <files>
     <file src="gravatar.jpg" target="" />
-    <file src="LICENSE" target="" />
     <file src="README.md" target="" />
 
     <file src="AdjustSdk/bin/Release/net8.0-android/AdjustSdk.dll" target="lib/net8.0-android34.0/AdjustSdk.dll" />
