@@ -1,4 +1,4 @@
-### Version 5.1.0 (xxth May 2025)
+### Version 5.1.0 (27th May 2025)
 
 #### Added
 - Initial release of the Adjust SDK for MAUI.
