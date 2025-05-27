@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Adjust.Maui.Sdk</id>
+    <version>5.1.0</version>
+    <title>Adjust MAUI SDK</title>
+    <authors>Adjust GmbH</authors>
+    <owners>Adjust GmbH</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/adjust/maui_sdk</projectUrl>
+    <iconUrl>https://raw.github.com/adjust/adjust_sdk/master/Resources/windows/gravatar.gif</iconUrl>
+    <icon>gravatar.jpg</icon>
+    <description>This is the MAUI SDK of Adjust. http://www.adjust.com</description>
+    <summary>This is the MAUI SDK of Adjust. http://www.adjust.com</summary>
+    <readme>README.md</readme>
+    <releaseNotes></releaseNotes>
+    <copyright></copyright>
+    <language></language>
+    <tags>adjust maui android ios measurement analytics</tags>
+    <dependencies>
+      <group targetFramework="net8.0-android34.0" />
+      <group targetFramework="net8.0-ios18.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="gravatar.jpg" target="" />
+    <file src="README.md" target="" />
+
+    <file src="AdjustSdk/bin/Release/net8.0-android/AdjustSdk.dll" target="lib/net8.0-android34.0/AdjustSdk.dll" />
+    <file src="AdjustSdk/bin/Release/net8.0-android/AdjustSdk.xml" target="lib/net8.0-android34.0/AdjustSdk.xml" />
+    <file src="AdjustSdk/bin/Release/net8.0-ios/AdjustSdk.dll" target="lib/net8.0-ios18.0/AdjustSdk.dll" />
+
+    <file src="android/AdjustSdk.AndroidBinding/bin/Release/net8.0-android/AdjustSdk.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustSdk.AndroidBinding.dll" />
+    <file src="android/AdjustSdk.AndroidBinding/bin/Release/net8.0-android/AdjustSdk.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustSdk.AndroidBinding.xml" />
+    <file src="android/AdjustSdk.AndroidBinding/libs/adjust-android-signature.aar" target="lib/net8.0-android34.0/adjust-android-signature.aar" />
+    <file src="android/AdjustSdk.AndroidBinding/libs/adjust-android.aar" target="lib/net8.0-android34.0/adjust-android.aar" />
+
+    <file src="ios/AdjustSdk.iOSBinding/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.dll" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.dll" />
+    <file src="ios/AdjustSdk.iOSBinding/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.resources.zip" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.resources.zip" />
+  </files>
+</package>

@@ -1,0 +1,44 @@
+namespace AdjustSdk;
+
+public partial record AdjustEvent {
+
+    public string? TransactionId { get; set; }
+
+    internal AdjustSdk.iOSBinding.ADJEvent toNative()
+    {
+        AdjustSdk.iOSBinding.ADJEvent nativeEvent = new(EventToken);
+
+        if (Revenue is double revenueValue && Currency is not null)
+        {
+            nativeEvent.SetRevenue(revenueValue, Currency);
+        }
+
+        AdjustUtil.IterateTwoPairList(innerCallbackParameters,
+            nativeEvent.AddCallbackParameter);
+
+        AdjustUtil.IterateTwoPairList(innerPartnerParameters,
+            nativeEvent.AddPartnerParameter);
+
+        if (DeduplicationId is not null)
+        {
+            nativeEvent.SetDeduplicationId(DeduplicationId);
+        }
+
+        if (CallbackId is not null)
+        {
+            nativeEvent.SetCallbackId(CallbackId);
+        }
+
+        if (ProductId is not null)
+        {
+            nativeEvent.SetProductId(ProductId);
+        }
+
+        if (TransactionId is not null)
+        {
+            nativeEvent.SetTransactionId(TransactionId);
+        }
+
+        return nativeEvent;
+    }
+}
