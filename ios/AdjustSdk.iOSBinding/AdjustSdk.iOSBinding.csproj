@@ -13,11 +13,10 @@
   <ItemGroup>
     <NativeReference Include="AdjustSdk.xcframework">
       <Kind>Framework</Kind>
-      <!--<SmartLink>true</SmartLink> -->
+      <WeakFrameworks>AdSupport AdServices AppTrackingTransparency StoreKit</WeakFrameworks>
     </NativeReference>
     <NativeReference Include="AdjustSigSdk.xcframework">
       <Kind>Framework</Kind>
-      <!--<SmartLink>true</SmartLink> -->
     </NativeReference>
   </ItemGroup>
 
