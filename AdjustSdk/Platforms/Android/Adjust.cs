@@ -180,7 +180,7 @@ public partial class Adjust
     }
     #endregion
 
-    internal static Android.Content.Context AppContext { get { return Platform.AppContext; } }
+    internal static Android.Content.Context AppContext { get { return Android.App.Application.Context; } }
 
     private static Nullable<TValue> OptionVal<TValue>(Dictionary<string, object> options, string key)
         where TValue : struct
