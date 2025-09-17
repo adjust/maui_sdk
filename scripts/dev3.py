@@ -116,6 +116,7 @@ def main(argv=None):
 
     if not arg_found:
         parser.print_help()
+        return 1
 
     return 0
 

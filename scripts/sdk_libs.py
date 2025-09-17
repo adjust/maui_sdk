@@ -6,6 +6,8 @@ import os
 import shutil
 import subprocess
 import sys
+import time
+import signal
 
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -21,13 +23,16 @@ ANDROID_TEST_OPTIONS_DIR = os.path.join(ANDROID_TESTS_ROOT, 'test-options')
 ANDROID_TEST_BINDING_LIBS_DIR = os.path.join(
     ROOT, 'android', 'TestLibrary.AndroidBinding', 'libs'
 )
+IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk')
+IOS_BINDING_DIR = os.path.join(ROOT, 'iOs', 'AdjustSdk.iOSBinding')
 
 
-def run(cmd, cwd=None):
+def run(cmd, cwd=None, env=None, check=True):
     print('> ' + ' '.join(cmd))
-    result = subprocess.run(cmd, cwd=cwd)
-    if result.returncode != 0:
+    result = subprocess.run(cmd, cwd=cwd, env=env)
+    if check and result.returncode != 0:
         sys.exit(result.returncode)
+    return result.returncode
 
 
 def ensure_paths():
@@ -41,6 +46,12 @@ def ensure_paths():
         os.makedirs(ANDROID_BINDING_LIBS_DIR, exist_ok=True)
     if not os.path.isdir(ANDROID_TEST_BINDING_LIBS_DIR):
         os.makedirs(ANDROID_TEST_BINDING_LIBS_DIR, exist_ok=True)
+    if not os.path.isdir(IOS_SDK_ROOT):
+        print('iOS SDK directory not found: %s' % IOS_SDK_ROOT)
+        # iOS build is optional; don't exit here.
+    if not os.path.isdir(IOS_BINDING_DIR):
+        # Create if missing so copy succeeds when building iOS
+        os.makedirs(IOS_BINDING_DIR, exist_ok=True)
 
 
 def _build_and_copy_aar_common(
@@ -150,23 +161,143 @@ def build_android_test_options_aar(is_release):
         search_prefix='test-options-'
     )
 
+
 def build_android_tests(is_release):
     build_android_test_library_aar(is_release)
     build_android_test_options_aar(is_release)
 
+
 def build_all(targets, is_release):
-    if 'sdk' in targets or 'all' in targets:
+    if 'test' not in targets:
         build_sdk(targets, is_release)
-    if 'test' in targets or 'all' in targets:
+    if 'sdk' not in targets:
         build_test(targets, is_release)
 
+
 def build_sdk(targets, is_release):
-    if 'android' in targets or 'all' in targets:
+    print('build_sdk targets: %s' % targets)
+    if 'ios' not in targets:
         build_android_sdk(is_release)
+    if 'android' not in targets:
+        build_ios_sdk_scripts(is_release)
+
 
 def build_test(targets, is_release):
-    if 'android' in targets or 'all' in targets:
+    if 'ios' not in targets:
         build_android_tests(is_release)
+
+
+def build_ios_sdk_scripts(is_release):
+    """Build AdjustSdk.xcframework using repo-provided bash scripts.
+
+    Uses ios_sdk/scripts/build_frameworks.sh with dynamic xcframeworks for iOS + tvOS.
+    Copies resulting AdjustSdk.xcframework into iOS binding folder.
+    """
+    ensure_paths()
+    if not os.path.isdir(IOS_SDK_ROOT):
+        print('Skipping iOS build (scripts): iOS SDK not found at %s' % IOS_SDK_ROOT)
+        return
+
+    # Execute the framework build script for dynamic xcframework (iOS + tvOS)
+    # Script expects to be run from ios_sdk root directory
+    print('Before build_frameworks.sh')
+    env = os.environ.copy()
+    env['SDK_CODE_SIGN_IDENTITY'] = '-'
+    code = run(['bash', './scripts/build_frameworks.sh', '-xd', '-ios', '-tv'], cwd=IOS_SDK_ROOT, env=env, check=False)
+    print('After build_frameworks.sh (exit code: %s)' % code)
+
+    # Preferred dynamic xcframework output path
+    dynamic_out = os.path.join(
+        IOS_SDK_ROOT,
+        'sdk_distribution',
+        'xcframeworks-dynamic',
+        'AdjustSdk-iOS-tvOS-xcframework',
+        'AdjustSdk.xcframework'
+    )
+    produced_xcframework = None
+    if os.path.isdir(dynamic_out):
+        produced_xcframework = dynamic_out
+
+    if not produced_xcframework:
+        print('Failed to locate produced AdjustSdk.xcframework under sdk_distribution')
+        sys.exit(1)
+
+    dest_xcframework = os.path.join(IOS_BINDING_DIR, 'AdjustSdk.xcframework')
+    if os.path.isdir(dest_xcframework):
+        shutil.rmtree(dest_xcframework)
+    shutil.copytree(produced_xcframework, dest_xcframework)
+    print('Copied XCFramework to %s' % dest_xcframework)
+
+
+def build_ios_sdk_xcodebuild(is_release):
+    """Build AdjustSdk.xcframework (iOS + tvOS) and copy into iOS binding.
+
+    Notes:
+    - Always builds Release archives for distribution.
+    - Replicates the dynamic xcframework content (iOS + tvOS slices).
+    """
+    ensure_paths()
+    if not os.path.isdir(IOS_SDK_ROOT):
+        print('Skipping iOS build: iOS SDK not found at %s' % IOS_SDK_ROOT)
+        return
+
+    # Working output under ios_sdk
+    xcf_work_root = os.path.join(IOS_SDK_ROOT, 'sdk_distribution_py')
+    if os.path.isdir(xcf_work_root):
+        shutil.rmtree(xcf_work_root)
+    os.makedirs(xcf_work_root, exist_ok=True)
+
+    # Archive names and paths
+    ios_dev_archive = os.path.join(xcf_work_root, 'AdjustSdk-Device.xcarchive')
+    ios_sim_archive = os.path.join(xcf_work_root, 'AdjustSdk-Simulator.xcarchive')
+    tv_dev_archive = os.path.join(xcf_work_root, 'AdjustSdkTv-Device.xcarchive')
+    tv_sim_archive = os.path.join(xcf_work_root, 'AdjustSdkTv-Simulator.xcarchive')
+
+    def xcb_archive(scheme, sdk, destination, archive_path):
+        run([
+            'xcodebuild', 'clean', 'archive',
+            '-scheme', scheme,
+            '-configuration', 'Release',
+            '-sdk', sdk,
+            '-destination', destination,
+            '-archivePath', archive_path,
+            'SKIP_INSTALL=NO',
+            'BUILD_LIBRARY_FOR_DISTRIBUTION=YES',
+            'GCC_GENERATE_DEBUGGING_SYMBOLS=YES',
+        ], cwd=IOS_SDK_ROOT)
+
+    # Build archives for iOS and tvOS
+    xcb_archive('AdjustSdk', 'iphoneos', 'generic/platform=iOS', ios_dev_archive)
+    xcb_archive('AdjustSdk', 'iphonesimulator', 'generic/platform=iOS Simulator', ios_sim_archive)
+    xcb_archive('AdjustSdkTv', 'appletvos', 'generic/platform=tvOS', tv_dev_archive)
+    xcb_archive('AdjustSdkTv', 'appletvsimulator', 'generic/platform=tvOS Simulator', tv_sim_archive)
+
+    # Framework paths inside archives
+    def frm(archive_dir, name='AdjustSdk'):
+        return os.path.join(archive_dir, 'Products', 'Library', 'Frameworks', f'{name}.framework')
+
+    ios_dev_frm = frm(ios_dev_archive)
+    ios_sim_frm = frm(ios_sim_archive)
+    tv_dev_frm = frm(tv_dev_archive)
+    tv_sim_frm = frm(tv_sim_archive)
+
+    # Output xcframework path in binding
+    dest_xcframework = os.path.join(IOS_BINDING_DIR, 'AdjustSdk.xcframework')
+    if os.path.isdir(dest_xcframework):
+        shutil.rmtree(dest_xcframework)
+
+    # Create xcframework with iOS + tvOS
+    run([
+        'xcodebuild', '-create-xcframework',
+        '-framework', ios_dev_frm,
+        '-framework', ios_sim_frm,
+        '-framework', tv_dev_frm,
+        '-framework', tv_sim_frm,
+        '-output', dest_xcframework,
+    ], cwd=IOS_SDK_ROOT)
+
+    print('Copied XCFramework to %s' % dest_xcframework)
+
 
 def main(argv=None):
     common = argparse.ArgumentParser(add_help=False)
