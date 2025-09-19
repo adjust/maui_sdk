@@ -14,7 +14,7 @@ public partial class TestLibraryBridge
         controlUrl = $"ws://{baseIp}:1987";
 
         testLibrary = new Com.Adjust.Test.TestLibrary(
-            overwriteUrl, controlUrl, Platform.AppContext,
+            overwriteUrl, controlUrl, Android.App.Application.Context,
             new CommandJsonListener(this));
     }
 
