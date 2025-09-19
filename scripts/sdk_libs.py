@@ -162,11 +162,6 @@ def build_android_test_options_aar(is_release):
     )
 
 
-def build_android_tests(is_release):
-    build_android_test_library_aar(is_release)
-    build_android_test_options_aar(is_release)
-
-
 def build_all(targets, is_release):
     if 'test' not in targets:
         build_sdk(targets, is_release)
@@ -184,8 +179,10 @@ def build_sdk(targets, is_release):
 
 def build_test(targets, is_release):
     if 'ios' not in targets:
-        build_android_tests(is_release)
-
+        build_android_test_library_aar(is_release)
+        build_android_test_options_aar(is_release)
+    if 'android' not in targets:
+        build_ios_test_library_xcodebuild()
 
 def build_ios_sdk_scripts(is_release):
     """Build AdjustSdk.xcframework using repo-provided bash scripts.
@@ -297,6 +294,37 @@ def build_ios_sdk_xcodebuild(is_release):
     ], cwd=IOS_SDK_ROOT)
 
     print('Copied XCFramework to %s' % dest_xcframework)
+
+def build_ios_test_library_xcodebuild():
+    """Build AdjustTestLibrary as an XCFramework (device + simulator) and copy to iOS test binding."""
+    ensure_paths()
+    testlib_root = os.path.join(IOS_SDK_ROOT, 'AdjustTests', 'AdjustTestLibrary')
+    if not os.path.isdir(testlib_root):
+        print('iOS Test Library source not found at %s' % testlib_root)
+        sys.exit(1)
+
+    # Build device and simulator frameworks
+    run(['xcodebuild', '-configuration', 'Debug', '-target', 'AdjustTestLibraryStatic', '-sdk', 'iphoneos', 'build'], cwd=testlib_root)
+    run(['xcodebuild', '-configuration', 'Debug', '-target', 'AdjustTestLibraryStatic', '-sdk', 'iphonesimulator', 'build'], cwd=testlib_root)
+
+    ios_frm = os.path.join(testlib_root, 'build', 'Debug-iphoneos', 'AdjustTestLibrary.framework')
+    sim_frm = os.path.join(testlib_root, 'build', 'Debug-iphonesimulator', 'AdjustTestLibrary.framework')
+    if not os.path.isdir(ios_frm) or not os.path.isdir(sim_frm):
+        print('Failed to locate built AdjustTestLibrary.framework for device or simulator')
+        sys.exit(1)
+
+    dest_xcf = os.path.join(ROOT, 'iOs', 'TestLibrary.iOSBinding', 'AdjustTestLibrary.xcframework')
+    if os.path.isdir(dest_xcf):
+        shutil.rmtree(dest_xcf)
+
+    run([
+        'xcodebuild', '-create-xcframework',
+        '-framework', ios_frm,
+        '-framework', sim_frm,
+        '-output', dest_xcf,
+    ], cwd=testlib_root)
+
+    print('Copied Test Library XCFramework to %s' % dest_xcf)
 
 
 def main(argv=None):
