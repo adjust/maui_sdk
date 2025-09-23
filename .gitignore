@@ -189,7 +189,7 @@ Android/.vs
 iOS/.vs
 
 ios/AdjustSdk.iOSBinding/AdjustSdk.xcframework
-iOs/TestLibrary.iOSBinding/AdjustTestLibrary.framework
+ios/TestLibrary.iOSBinding/AdjustTestLibrary.framework
 android/AdjustSdk.AndroidBinding/libs/adjust-android.aar
 android/TestLibrary.AndroidBinding/libs/test-library-debug.aar
 android/TestLibrary.AndroidBinding/libs/test-options-debug.aar
