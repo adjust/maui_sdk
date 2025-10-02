@@ -6,6 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <AndroidLibrary Update="libs\adjust-android-signature.aar" Bind="false" />
+    <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->
+    <AndroidLibrary Remove="libs\*.aar" />
+
+    <!-- Bind only the main SDK -->
+    <AndroidLibrary Include="libs\adjust-android.aar" Bind="true" />
+
+    <!-- Include signature AAR but do not bind -->
+    <AndroidLibrary Include="libs\adjust-android-signature.aar" Bind="false" />
   </ItemGroup>
 </Project>
