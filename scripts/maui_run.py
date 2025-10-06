@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import time
+import json
 
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -30,15 +31,9 @@ def ensure_example_exists() -> None:
         log('ExampleApp.csproj not found at: %s' % EXAMPLE_CSProj)
         sys.exit(1)
 
-
-def which(path: str) -> str:
-    found = shutil.which(path)
-    return found if found else ''
-
-
 def boot_android_avd(avd_name: str) -> None:
     # Try system emulator first, fallback to default SDK location
-    emu_bin = which('emulator')
+    emu_bin = shutil.which('emulator')
     if not emu_bin:
         emu_bin = os.path.expanduser('~/Library/Android/sdk/emulator/emulator')
     if not os.path.exists(emu_bin):
@@ -65,6 +60,32 @@ def boot_ios_sim(sim_name: str) -> None:
     run(['open', '-a', 'Simulator'], check=False)
 
 
+def get_ios_sim_udid(sim_name: str) -> str | None:
+    """Return UDID of the requested simulator name, preferring Booted if multiple."""
+    try:
+        out = subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json'])
+        data = json.loads(out)
+        booted: list[str] = []
+        matches: list[str] = []
+        for runtime_devices in data.get('devices', {}).values():
+            for dev in runtime_devices:
+                if dev.get('name') == sim_name:
+                    udid = dev.get('udid')
+                    if not udid:
+                        continue
+                    if dev.get('state') == 'Booted':
+                        booted.append(udid)
+                    else:
+                        matches.append(udid)
+        if booted:
+            return booted[0]
+        if matches:
+            return matches[0]
+    except Exception:
+        pass
+    return None
+
+
 def run_android(config: str, avd_name: str) -> None:
     ensure_example_exists()
     boot_android_avd(avd_name)
@@ -74,11 +95,16 @@ def run_android(config: str, avd_name: str) -> None:
 def run_ios(config: str, sim_name: str) -> None:
     ensure_example_exists()
     boot_ios_sim(sim_name)
-    run(['dotnet', 'build', EXAMPLE_CSProj, '-c', config, '-f', 'net8.0-ios', '-p:RuntimeIdentifier=iossimulator-arm64', '-t:Run'])
+    udid = get_ios_sim_udid(sim_name)
+    cmd = ['dotnet', 'build', EXAMPLE_CSProj, '-c', config, '-f', 'net8.0-ios', '-p:RuntimeIdentifier=iossimulator-arm64']
+    if udid:
+        cmd.append(f'-p:_DeviceName=:v2:udid={udid}')
+    cmd.append('-t:Run')
+    run(cmd)
 
 
 def list_android_avds() -> None:
-    emu = which('emulator') or os.path.expanduser('~/Library/Android/sdk/emulator/emulator')
+    emu = shutil.which('emulator') or os.path.expanduser('~/Library/Android/sdk/emulator/emulator')
     if not os.path.exists(emu):
         log('Android emulator not found.')
         return
@@ -108,7 +134,6 @@ def parse_args(argv=None):
     sub.add_parser('list-sims', help='List available iOS simulators')
 
     return parser.parse_args(argv)
-
 
 def main(argv=None) -> int:
     args = parse_args(argv)
