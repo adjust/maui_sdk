@@ -13,6 +13,7 @@ import json
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 EXAMPLE_CSProj = os.path.join(ROOT, 'ExampleApp', 'ExampleApp.csproj')
 
+TESTAPP_CSProj = os.path.join(ROOT, 'testApp', 'TestApp.csproj')
 
 def log(msg: str) -> None:
     print(msg)
@@ -29,6 +30,11 @@ def run(cmd, cwd=None, check=True) -> int:
 def ensure_example_exists() -> None:
     if not os.path.isfile(EXAMPLE_CSProj):
         log('ExampleApp.csproj not found at: %s' % EXAMPLE_CSProj)
+        sys.exit(1)
+
+def ensure_test_exists() -> None:
+    if not os.path.isfile(TESTAPP_CSProj):
+        log('TestApp.csproj not found at: %s' % TESTAPP_CSProj)
         sys.exit(1)
 
 def boot_android_avd(avd_name: str) -> None:
@@ -86,22 +92,32 @@ def get_ios_sim_udid(sim_name: str) -> str | None:
     return None
 
 
-def run_android(config: str, avd_name: str) -> None:
-    ensure_example_exists()
+def resolve_csproj(app: str) -> str:
+    if app == 'example':
+        ensure_example_exists()
+        return EXAMPLE_CSProj
+    if app == 'test':
+        ensure_test_exists()
+        return TESTAPP_CSProj
+    log("Unknown app: %s (expected 'test' or 'example')" % app)
+    sys.exit(1)
+
+
+def run_android(config: str, avd_name: str, app: str) -> None:
+    csproj = resolve_csproj(app)
     boot_android_avd(avd_name)
-    run(['dotnet', 'build', EXAMPLE_CSProj, '-c', config, '-f', 'net8.0-android', '-t:Run'])
+    run(['dotnet', 'build', csproj, '-c', config, '-f', 'net8.0-android', '-t:Run'])
 
 
-def run_ios(config: str, sim_name: str) -> None:
-    ensure_example_exists()
+def run_ios(config: str, sim_name: str, app: str) -> None:
+    csproj = resolve_csproj(app)
     boot_ios_sim(sim_name)
     udid = get_ios_sim_udid(sim_name)
-    cmd = ['dotnet', 'build', EXAMPLE_CSProj, '-c', config, '-f', 'net8.0-ios', '-p:RuntimeIdentifier=iossimulator-arm64']
+    cmd = ['dotnet', 'build', csproj, '-c', config, '-f', 'net8.0-ios', '-p:RuntimeIdentifier=iossimulator-arm64']
     if udid:
         cmd.append(f'-p:_DeviceName=:v2:udid={udid}')
     cmd.append('-t:Run')
     run(cmd)
-
 
 def list_android_avds() -> None:
     emu = shutil.which('emulator') or os.path.expanduser('~/Library/Android/sdk/emulator/emulator')
@@ -116,17 +132,19 @@ def list_ios_sims() -> None:
 
 
 def parse_args(argv=None):
-    parser = argparse.ArgumentParser(description='Configure and run the MAUI Example app')
+    parser = argparse.ArgumentParser(description='Configure and run the MAUI Example/Test apps')
     sub = parser.add_subparsers(dest='command')
 
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument('-c', '--config', default='Debug', choices=['Debug', 'Release'], help='Build configuration')
+    common.add_argument('-c', '--config', default='Debug', choices=['Debug', 'Release'], help='Build configuration (default: Debug)')
 
     # Run
-    p_run_android = sub.add_parser('run-android', parents=[common], help='Boot emulator and run ExampleApp on Android')
+    p_run_android = sub.add_parser('run-android', parents=[common], help='Boot emulator and run selected app on Android')
+    p_run_android.add_argument('app', choices=['test', 'example'], help='Which app to run')
     p_run_android.add_argument('--avd', default=os.environ.get('ANDROID_AVD', 'Pixel_5_API_34'), help='Android AVD name')
 
-    p_run_ios = sub.add_parser('run-ios', parents=[common], help='Boot simulator and run ExampleApp on iOS simulator')
+    p_run_ios = sub.add_parser('run-ios', parents=[common], help='Boot simulator and run selected app on iOS simulator')
+    p_run_ios.add_argument('app', choices=['test', 'example'], help='Which app to run')
     p_run_ios.add_argument('--ios-sim', default=os.environ.get('IOS_SIM', 'iPhone 15'), help='iOS Simulator name')
 
     # List devices
@@ -142,10 +160,10 @@ def main(argv=None) -> int:
         return 1
 
     if args.command == 'run-android':
-        run_android(args.config, args.avd)
+        run_android(args.config, args.avd, args.app)
         return 0
     if args.command == 'run-ios':
-        run_ios(args.config, args.ios_sim)
+        run_ios(args.config, args.ios_sim, args.app)
         return 0
     if args.command == 'list-avds':
         list_android_avds()
