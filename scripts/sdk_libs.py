@@ -24,8 +24,9 @@ ANDROID_TEST_BINDING_LIBS_DIR = os.path.join(
     ROOT, 'android', 'TestLibrary.AndroidBinding', 'libs'
 )
 IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk')
+#IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk_dev')
 IOS_BINDING_DIR = os.path.join(ROOT, 'iOs', 'AdjustSdk.iOSBinding')
-
+IOS_TEST_BINDING_DIR = os.path.join(ROOT, 'iOs', 'TestLibrary.iOSBinding')
 
 def run(cmd, cwd=None, env=None, check=True):
     print('> ' + ' '.join(cmd))
@@ -52,6 +53,9 @@ def ensure_paths():
     if not os.path.isdir(IOS_BINDING_DIR):
         # Create if missing so copy succeeds when building iOS
         os.makedirs(IOS_BINDING_DIR, exist_ok=True)
+    if not os.path.isdir(IOS_TEST_BINDING_DIR):
+        # Create if missing so copy succeeds when copying test framework
+        os.makedirs(IOS_TEST_BINDING_DIR, exist_ok=True)
 
 def _build_and_copy_aar_common(
     is_release,
@@ -199,6 +203,7 @@ def build_ios_test_library_scripts():
     env = os.environ.copy()
     env['SDK_CODE_SIGN_IDENTITY'] = '-'
     code = run(['bash', './scripts/build_frameworks.sh', '-test'], cwd=IOS_SDK_ROOT, env=env, check=False)
+    #code = run(['bash', './scripts/build_frameworks.sh', '-test-sim'], cwd=IOS_SDK_ROOT, env=env, check=False)
     print('After build_frameworks.sh (exit code: %s)' % code)
 
     # Preferred static test library framework output path
