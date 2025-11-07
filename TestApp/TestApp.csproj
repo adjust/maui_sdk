@@ -98,6 +98,12 @@
 		
     </ItemGroup>
 
+	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
+		<AndroidResource Update="Platforms/Android/Resources/**/*.*">
+			<Link>Resources/%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</AndroidResource>
+	</ItemGroup>
+
 	<ItemGroup Condition="$(TargetFramework.Contains('ios'))">
         <ProjectReference Include="..\ios\TestLibrary.iOSBinding\TestLibrary.iOSBinding.csproj" />
     </ItemGroup>
