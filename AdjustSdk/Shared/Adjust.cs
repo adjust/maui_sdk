@@ -58,6 +58,10 @@ public partial class Adjust
 
     public static partial void EndFirstSessionDelay();
 
+    public static partial void EnableCoppaComplianceInDelay();
+
+    public static partial void DisableCoppaComplianceInDelay();
+
     #if ANDROID
     public static partial void TrackPlayStoreSubscription(AdjustPlayStoreSubscription subscription);
 

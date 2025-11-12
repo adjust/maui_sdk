@@ -290,6 +290,16 @@ namespace AdjustSdk.iOSBinding {
 		[Export ("endFirstSessionDelay")]
 		void EndFirstSessionDelay ();
 
+		// + (void)enableCoppaComplianceInDelay;
+		[Static]
+		[Export ("enableCoppaComplianceInDelay")]
+		void EnableCoppaComplianceInDelay ();
+
+		// + (void)disableCoppaComplianceInDelay;
+		[Static]
+		[Export ("disableCoppaComplianceInDelay")]
+		void DisableCoppaComplianceInDelay ();
+
 		// +(void)setTestOptions:(NSDictionary * _Nullable)testOptions;
 		[Static]
 		[Export ("setTestOptions:")]

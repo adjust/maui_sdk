@@ -58,6 +58,7 @@ public partial class TestLibraryBridge
             case "attributionGetter": AttributionGetter(parameters); break;
             case "verifyTrack": VerifyTrack(parameters); break;
             case "endFirstSessionDelay": EndFirstSessionDelay(parameters); break;
+            case "coppaComplianceInDelay": CoppaComplianceInDelay(parameters); break;
         }
     }
 
@@ -758,6 +759,19 @@ public partial class TestLibraryBridge
     private void EndFirstSessionDelay(Dictionary<string, List<string>> parameters)
     {
         Adjust.EndFirstSessionDelay();
+    }
+
+    private void CoppaComplianceInDelay(Dictionary<string, List<string>> parameters)
+    {
+        if (FirstBoolValue(parameters, "isEnabled") is true)
+        {
+            Adjust.EnableCoppaComplianceInDelay();
+        }
+
+        if (FirstBoolValue(parameters, "isEnabled") is false)
+        {
+            Adjust.DisableCoppaComplianceInDelay();
+        }
     }
 
     #endregion

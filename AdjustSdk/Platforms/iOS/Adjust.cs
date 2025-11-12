@@ -188,6 +188,16 @@ public partial class Adjust
     {
         AdjustSdk.iOSBinding.Adjust.EndFirstSessionDelay();
     }
+
+    public static partial void EnableCoppaComplianceInDelay()
+    {
+        AdjustSdk.iOSBinding.Adjust.EnableCoppaComplianceInDelay();
+    }
+
+    public static partial void DisableCoppaComplianceInDelay()
+    {
+        AdjustSdk.iOSBinding.Adjust.DisableCoppaComplianceInDelay();
+    }
     #endregion
 
     #region iOS specific

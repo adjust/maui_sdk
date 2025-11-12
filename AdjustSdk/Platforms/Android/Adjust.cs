@@ -149,6 +149,15 @@ public partial class Adjust
         Com.Adjust.Sdk.Adjust.EndFirstSessionDelay();
     }
 
+    public static partial void EnableCoppaComplianceInDelay()
+    {
+        Com.Adjust.Sdk.Adjust.EnableCoppaComplianceInDelay();
+    }
+
+    public static partial void DisableCoppaComplianceInDelay()
+    {
+        Com.Adjust.Sdk.Adjust.DisableCoppaComplianceInDelay();
+    }
     #endregion
 
     #region Android specific
