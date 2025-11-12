@@ -77,6 +77,10 @@ public partial class Adjust
         AdjustEvent adjustEvent,
         Action<AdjustPurchaseVerificationResult> verificationResultCallback);
 
+    public static partial void EnablePlayStoreKidsComplianceInDelay();
+
+    public static partial void DisablePlayStoreKidsComplianceInDelay();
+
     #elif IOS
     public static partial void RequestAppTrackingAuthorization(Action<int> callback);
 

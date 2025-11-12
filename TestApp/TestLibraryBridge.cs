@@ -59,6 +59,9 @@ public partial class TestLibraryBridge
             case "verifyTrack": VerifyTrack(parameters); break;
             case "endFirstSessionDelay": EndFirstSessionDelay(parameters); break;
             case "coppaComplianceInDelay": CoppaComplianceInDelay(parameters); break;
+            #if ANDROID
+            case "playStoreKidsComplianceInDelay": PlayStoreKidsComplianceInDelay(parameters); break;
+            #endif
         }
     }
 
@@ -774,6 +777,20 @@ public partial class TestLibraryBridge
         }
     }
 
+#if ANDROID
+    private void PlayStoreKidsComplianceInDelay(Dictionary<string, List<string>> parameters)
+    {
+        if (FirstBoolValue(parameters, "isEnabled") is true)
+        {
+            Adjust.EnablePlayStoreKidsComplianceInDelay();
+        }
+
+        if (FirstBoolValue(parameters, "isEnabled") is false)
+        {
+            Adjust.DisablePlayStoreKidsComplianceInDelay();
+        }
+    }
+#endif
     #endregion
 
     private Action<AdjustPurchaseVerificationResult> VerificationResultCallback(

@@ -193,6 +193,16 @@ public partial class Adjust
         Com.Adjust.Sdk.Adjust.VerifyAndTrackPlayStorePurchase(adjustEvent.toNative(),
             new OnPurchaseVerificationFinishedListenerAdapter(verificationResultCallback));
     }
+
+    public static partial void EnablePlayStoreKidsComplianceInDelay()
+    {
+        Com.Adjust.Sdk.Adjust.EnablePlayStoreKidsComplianceInDelay();
+    }
+
+    public static partial void DisablePlayStoreKidsComplianceInDelay()
+    {
+        Com.Adjust.Sdk.Adjust.DisablePlayStoreKidsComplianceInDelay();
+    }
     #endregion
 
     internal static Android.Content.Context AppContext { get { return Android.App.Application.Context; } }
