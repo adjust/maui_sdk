@@ -186,7 +186,7 @@ public partial class Adjust
 
     public static partial void EndFirstSessionDelay()
     {
-        // TODO: Implement this
+        AdjustSdk.iOSBinding.Adjust.EndFirstSessionDelay();
     }
     #endregion
 

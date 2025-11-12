@@ -59,7 +59,7 @@ public partial record AdjustConfig
 
         if (IsFirstSessionDelayEnabled is true)
         {
-            // nativeAdjustConfig.EnableFirstSessionDelay();
+            nativeAdjustConfig.EnableFirstSessionDelay();
         }
 
         if (IsCostDataInAttributionEnabled is true)

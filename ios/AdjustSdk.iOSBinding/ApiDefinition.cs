@@ -285,6 +285,11 @@ namespace AdjustSdk.iOSBinding {
 		[Export ("verifyAndTrackAppStorePurchase:withCompletionHandler:")]
 		void VerifyAndTrackAppStorePurchase (ADJEvent @event, ADJVerificationResultBlock completion);
 
+		// + (void)endFirstSessionDelay;
+		[Static]
+		[Export ("endFirstSessionDelay")]
+		void EndFirstSessionDelay ();
+
 		// +(void)setTestOptions:(NSDictionary * _Nullable)testOptions;
 		[Static]
 		[Export ("setTestOptions:")]
@@ -484,6 +489,10 @@ namespace AdjustSdk.iOSBinding {
 		// -(void)enableCoppaCompliance;
 		[Export ("enableCoppaCompliance")]
 		void EnableCoppaCompliance ();
+
+		// - (void)enableFirstSessionDelay;
+		[Export ("enableFirstSessionDelay")]
+		void EnableFirstSessionDelay ();
 
 		// 531
 		// -(void)setUrlStrategy:(NSArray * _Nullable)urlStrategyDomains useSubdomains:(BOOL)useSubdomains isDataResidency:(BOOL)isDataResidency;
