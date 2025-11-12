@@ -158,6 +158,11 @@ public partial class Adjust
     {
         Com.Adjust.Sdk.Adjust.DisableCoppaComplianceInDelay();
     }
+
+    public static partial void SetExternalDeviceIdInDelay(string externalDeviceId)
+    {
+        Com.Adjust.Sdk.Adjust.SetExternalDeviceIdInDelay(externalDeviceId);
+    }
     #endregion
 
     #region Android specific

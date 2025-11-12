@@ -198,6 +198,11 @@ public partial class Adjust
     {
         AdjustSdk.iOSBinding.Adjust.DisableCoppaComplianceInDelay();
     }
+
+    public static partial void SetExternalDeviceIdInDelay(string? externalDeviceId)
+    {
+        AdjustSdk.iOSBinding.Adjust.SetExternalDeviceIdInDelay(externalDeviceId);
+    }
     #endregion
 
     #region iOS specific

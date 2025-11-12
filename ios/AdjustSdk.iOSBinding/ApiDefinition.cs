@@ -300,6 +300,11 @@ namespace AdjustSdk.iOSBinding {
 		[Export ("disableCoppaComplianceInDelay")]
 		void DisableCoppaComplianceInDelay ();
 
+		// + (void)setExternalDeviceIdInDelay:(nullable NSString *)externalDeviceId;
+		[Static]
+		[Export ("setExternalDeviceIdInDelay:")]
+		void SetExternalDeviceIdInDelay ([NullAllowed] string externalDeviceId);
+
 		// +(void)setTestOptions:(NSDictionary * _Nullable)testOptions;
 		[Static]
 		[Export ("setTestOptions:")]

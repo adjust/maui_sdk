@@ -59,6 +59,7 @@ public partial class TestLibraryBridge
             case "verifyTrack": VerifyTrack(parameters); break;
             case "endFirstSessionDelay": EndFirstSessionDelay(parameters); break;
             case "coppaComplianceInDelay": CoppaComplianceInDelay(parameters); break;
+            case "externalDeviceIdInDelay": ExternalDeviceIdInDelay(parameters); break;
             #if ANDROID
             case "playStoreKidsComplianceInDelay": PlayStoreKidsComplianceInDelay(parameters); break;
             #endif
@@ -774,6 +775,14 @@ public partial class TestLibraryBridge
         if (FirstBoolValue(parameters, "isEnabled") is false)
         {
             Adjust.DisableCoppaComplianceInDelay();
+        }
+    }
+
+    private void ExternalDeviceIdInDelay(Dictionary<string, List<string>> parameters)
+    {
+        if (FirstStringValue(parameters, "externalDeviceId") is string externalDeviceId)
+        {
+            Adjust.SetExternalDeviceIdInDelay(externalDeviceId);
         }
     }
 

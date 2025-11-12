@@ -62,6 +62,8 @@ public partial class Adjust
 
     public static partial void DisableCoppaComplianceInDelay();
 
+    public static partial void SetExternalDeviceIdInDelay(string? externalDeviceId);
+
     #if ANDROID
     public static partial void TrackPlayStoreSubscription(AdjustPlayStoreSubscription subscription);
 
