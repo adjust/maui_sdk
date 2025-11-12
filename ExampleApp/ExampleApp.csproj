@@ -73,7 +73,7 @@
 
 	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
 		<AndroidResource Update="Platforms/Android/Resources/**/*.*">
-			<Link>Resources/%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Link>$([System.String]::Copy('%(Identity)').Replace('Platforms\\Android\\','').Replace('Platforms/Android/',''))</Link>
 		</AndroidResource>
 	</ItemGroup>
 
