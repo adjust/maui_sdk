@@ -183,6 +183,11 @@ public partial class Adjust
     {
         AdjustSdk.iOSBinding.Adjust.TrackSubsessionEnd();
     }
+
+    public static partial void EndFirstSessionDelay()
+    {
+        // TODO: Implement this
+    }
     #endregion
 
     #region iOS specific

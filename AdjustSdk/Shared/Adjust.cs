@@ -56,6 +56,8 @@ public partial class Adjust
 
     public static partial void Pause();
 
+    public static partial void EndFirstSessionDelay();
+
     #if ANDROID
     public static partial void TrackPlayStoreSubscription(AdjustPlayStoreSubscription subscription);
 

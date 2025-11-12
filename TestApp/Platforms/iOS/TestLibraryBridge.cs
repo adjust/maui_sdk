@@ -5,9 +5,9 @@ using Foundation;
 public partial class TestLibraryBridge
 {
     // simulator
-    // private const string baseIp = "127.0.0.1";
+    private const string baseIp = "127.0.0.1";
     // device
-    private const string baseIp = "192.168.86.227";
+    //private const string baseIp = "192.168.86.227";
 
     private TestLibrary.iOSBinding.ATLTestLibrary testLibrary { get; init; }
 

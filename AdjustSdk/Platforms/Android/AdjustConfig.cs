@@ -51,6 +51,10 @@ public partial record AdjustConfig {
         {
             nativeAdjustConfig.EnableSendingInBackground();
         }
+        if (IsFirstSessionDelayEnabled is true)
+        {
+            nativeAdjustConfig.EnableFirstSessionDelay();
+        }
 
         if (IsCostDataInAttributionEnabled is true)
         {

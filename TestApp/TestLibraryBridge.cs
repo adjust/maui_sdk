@@ -57,6 +57,7 @@ public partial class TestLibraryBridge
             case "processDeeplink": ProcessDeeplink(parameters); break;
             case "attributionGetter": AttributionGetter(parameters); break;
             case "verifyTrack": VerifyTrack(parameters); break;
+            case "endFirstSessionDelay": EndFirstSessionDelay(parameters); break;
         }
     }
 
@@ -235,6 +236,11 @@ public partial class TestLibraryBridge
         if (FirstBoolValue(parameters, "sendInBackground") is true)
         {
             adjustConfig.IsSendingInBackgroundEnabled = true;
+        }
+
+        if (FirstBoolValue(parameters, "firstSessionDelayEnabled") is true)
+        {
+            adjustConfig.IsFirstSessionDelayEnabled = true;
         }
 
         if (FirstIntValue(parameters, "eventDeduplicationIdsMaxSize")
@@ -748,6 +754,12 @@ public partial class TestLibraryBridge
         Adjust.VerifyAndTrackAppStorePurchase(adjustEvent, VerificationResultCallback(localBasePath));
 #endif
     }
+
+    private void EndFirstSessionDelay(Dictionary<string, List<string>> parameters)
+    {
+        Adjust.EndFirstSessionDelay();
+    }
+
     #endregion
 
     private Action<AdjustPurchaseVerificationResult> VerificationResultCallback(

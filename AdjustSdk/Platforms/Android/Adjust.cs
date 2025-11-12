@@ -143,6 +143,12 @@ public partial class Adjust
     {
         Com.Adjust.Sdk.Adjust.OnPause();
     }
+
+    public static partial void EndFirstSessionDelay()
+    {
+        Com.Adjust.Sdk.Adjust.EndFirstSessionDelay();
+    }
+
     #endregion
 
     #region Android specific
