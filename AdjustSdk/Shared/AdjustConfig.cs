@@ -30,6 +30,7 @@ public partial record AdjustConfig(string AppToken, AdjustEnvironment Environmen
     public int? EventDeduplicationIdsMaxSize { get; set; }
     public List<string>? UrlStrategyDomains { get; private set; }
     public AdjustLogLevel? LogLevel { get; set; }
+    public AdjustStoreInfo? StoreInfo { get; set; }
     public Action<AdjustAttribution>? AttributionChangedDelegate { get; set; }
 
     public Action<AdjustEventSuccess>? EventSuccessDelegate { get; set; }

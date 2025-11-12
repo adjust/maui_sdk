@@ -264,6 +264,18 @@ public partial class TestLibraryBridge
             adjustConfig.IsCoppaComplianceEnabled = true;
         }
 
+        if (FirstStringValue(parameters, "storeName") is string storeName)
+        {
+            AdjustStoreInfo storeInfo = new AdjustStoreInfo(storeName);
+
+            if (FirstStringValue(parameters, "storeAppId") is string storeAppId)
+            {
+                storeInfo.StoreAppId = storeAppId;
+            }
+
+            adjustConfig.StoreInfo = storeInfo;
+        }
+
 #if ANDROID
         if (FirstBoolValue(parameters, "playStoreKids") is true)
         {

@@ -141,6 +141,11 @@ public partial record AdjustConfig {
             nativeAdjustConfig.FbAppId = fbAppIdValue;
         }
 
+        if (StoreInfo is AdjustStoreInfo storeInfoValue)
+        {
+            nativeAdjustConfig.StoreInfo = storeInfoValue.toNative();
+        }
+
         return nativeAdjustConfig;
     }
 }

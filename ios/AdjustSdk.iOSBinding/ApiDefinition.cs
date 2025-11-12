@@ -514,6 +514,10 @@ namespace AdjustSdk.iOSBinding {
 		[Export ("setUrlStrategy:useSubdomains:isDataResidency:")]
 		//void SetUrlStrategy ([NullAllowed] NSObject[] urlStrategyDomains, bool useSubdomains, bool isDataResidency);
 		void SetUrlStrategy ([NullAllowed] NSArray urlStrategyDomains, bool useSubdomains, bool isDataResidency);
+
+		// @property (nonatomic, copy, nonnull) ADJStoreInfo *storeInfo;
+		[Export ("storeInfo")]
+		ADJStoreInfo StoreInfo { get; set; }
 	}
 
 	// 605
@@ -772,4 +776,16 @@ namespace AdjustSdk.iOSBinding {
 		NativeHandle Constructor (NSUrl deeplink);
 	}
 
+	// @interface ADJStoreInfo : NSObject <NSCopying>
+	[BaseType (typeof(NSObject))]
+	interface ADJStoreInfo : INSCopying
+	{
+		// -(id _Nullable)initWithStoreName:(NSString * _Nonnull)storeName;
+		[Export ("initWithStoreName:")]
+		NativeHandle Constructor (string storeName);
+
+		// @property (nonatomic, copy, nonnull) NSString *storeAppId;
+		[Export ("storeAppId", ArgumentSemantic.Copy)]
+		string StoreAppId { get; set; }
+	}
 }

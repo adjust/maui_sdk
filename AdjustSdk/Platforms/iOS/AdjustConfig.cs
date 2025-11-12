@@ -126,6 +126,11 @@ public partial record AdjustConfig
             nativeAdjustConfig.AttConsentWaitingInterval = (nuint)attConsentWaitingIntervalValue;
         }
 
+        if (StoreInfo is AdjustStoreInfo storeInfoValue)
+        {
+            nativeAdjustConfig.StoreInfo = storeInfoValue.toNative();
+        }
+
         return nativeAdjustConfig;
     }
 }
