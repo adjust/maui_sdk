@@ -57,8 +57,7 @@ public partial class Adjust
 
     public static partial void ProcessDeeplink(AdjustDeeplink deeplink)
     {
-        AdjustSdk.iOSBinding.Adjust.ProcessDeeplink(
-            new AdjustSdk.iOSBinding.ADJDeeplink(new NSUrl(deeplink.Deeplink)));
+        AdjustSdk.iOSBinding.Adjust.ProcessDeeplink(deeplink.toNative());
     }
 
     public static partial void AddGlobalPartnerParameter(string key, string value)
@@ -155,8 +154,7 @@ public partial class Adjust
     public static partial void ProcessAndResolveDeeplink(
         AdjustDeeplink deeplink, Action<string> callback)
     {
-        AdjustSdk.iOSBinding.Adjust.ProcessAndResolveDeeplink(
-            new AdjustSdk.iOSBinding.ADJDeeplink(new NSUrl(deeplink.Deeplink)),
+        AdjustSdk.iOSBinding.Adjust.ProcessAndResolveDeeplink(deeplink.toNative(),
             (string? resolvedLink) =>
             {
                 if (resolvedLink is not null)

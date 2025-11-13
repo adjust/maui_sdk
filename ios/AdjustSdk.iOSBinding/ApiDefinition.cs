@@ -774,6 +774,10 @@ namespace AdjustSdk.iOSBinding {
 		// -(ADJDeeplink * _Nullable)initWithDeeplink:(NSURL * _Nonnull)deeplink;
 		[Export ("initWithDeeplink:")]
 		NativeHandle Constructor (NSUrl deeplink);
+
+		// - (void)setReferrer:(nonnull NSURL *)referrer;
+		[Export ("setReferrer:")]
+		void SetReferrer (NSUrl referrer);
 	}
 
 	// @interface ADJStoreInfo : NSObject <NSCopying>

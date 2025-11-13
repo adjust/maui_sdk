@@ -640,7 +640,13 @@ public partial class TestLibraryBridge
     {
         if (FirstStringValue(parameters, "deeplink") is string deeplink)
         {
-            Adjust.ProcessDeeplink(new AdjustDeeplink(deeplink));
+            AdjustDeeplink adjustDeeplink = new(deeplink);
+            if (FirstStringValue(parameters, "referrer") is string referrer)
+            {
+                adjustDeeplink.Referrer = referrer;
+            }
+
+            Adjust.ProcessDeeplink(adjustDeeplink);
         }
     }
 
