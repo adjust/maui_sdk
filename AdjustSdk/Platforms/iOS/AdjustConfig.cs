@@ -155,8 +155,23 @@ public partial class AdjustAttribution
             ClickLabel = nativeAttribution.ClickLabel,
             CostType = nativeAttribution.CostType,
             CostAmount = nativeAttribution.CostAmount?.DoubleValue,
-            CostCurrency = nativeAttribution.CostCurrency
+            CostCurrency = nativeAttribution.CostCurrency,
+            JsonResponse = JsonResponseToString(nativeAttribution.JsonResponse),
         };
+    }
+
+    private static string? JsonResponseToString(NSDictionary jsonResponse) {
+        if (jsonResponse is null) {
+            return null;
+        }
+
+        NSError? error = null;
+        NSData? jsonData = NSJsonSerialization.Serialize(jsonResponse, 0, out error);
+        if (error != null || jsonData is null) {
+            return null;
+        }
+
+        return NSString.FromData(jsonData, NSStringEncoding.UTF8)?.ToString();
     }
 }
 

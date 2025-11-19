@@ -564,6 +564,10 @@ namespace AdjustSdk.iOSBinding {
 		// @property (copy, nonatomic) NSString * _Nullable costCurrency;
 		[NullAllowed, Export ("costCurrency")]
 		string CostCurrency { get; set; }
+
+		// @property (nonatomic, strong, nullable) NSDictionary *jsonResponse;
+		[Export ("jsonResponse", ArgumentSemantic.Strong)]
+		NSDictionary JsonResponse { get; set; }
 	}
 
 	// 663

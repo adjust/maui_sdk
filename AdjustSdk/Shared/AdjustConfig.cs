@@ -64,6 +64,7 @@ public partial class AdjustAttribution
     public string? CostType { get; private set; }
     public double? CostAmount { get; private set; }
     public string? CostCurrency { get; private set; }
+    public string? JsonResponse { get; private set; }
 }
 
 public partial class AdjustEventSuccess

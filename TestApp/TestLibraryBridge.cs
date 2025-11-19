@@ -882,6 +882,7 @@ public partial class TestLibraryBridge
             infoToSend.Add("fb_install_referrer", attribution.FbInstallReferrer);
         }
 #endif
+        infoToSend.Add("json_response", attribution.JsonResponse);
         SetInfoToServer(infoToSend);
         SendInfoToServer(localBasePath);
     };

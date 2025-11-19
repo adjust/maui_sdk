@@ -173,7 +173,8 @@ public partial class AdjustAttribution {
             CostType = nativeAdjustAttribution.CostType,
             CostAmount = nativeAdjustAttribution.CostAmount?.DoubleValue(),
             CostCurrency = nativeAdjustAttribution.CostCurrency,
-            FbInstallReferrer = nativeAdjustAttribution.FbInstallReferrer
+            FbInstallReferrer = nativeAdjustAttribution.FbInstallReferrer,
+            JsonResponse = nativeAdjustAttribution.JsonResponse
         };
     }
 }

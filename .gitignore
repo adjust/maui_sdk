@@ -193,3 +193,4 @@ ios/TestLibrary.iOSBinding/AdjustTestLibrary.framework
 android/AdjustSdk.AndroidBinding/libs/adjust-android.aar
 android/TestLibrary.AndroidBinding/libs/test-library-debug.aar
 android/TestLibrary.AndroidBinding/libs/test-options-debug.aar
+artifacts_copy/
