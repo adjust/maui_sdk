@@ -3,7 +3,6 @@ using AdjustSdk;
 
 public partial class TestLibraryBridge
 {
-    private readonly Dictionary<int, AdjustConfig> savedConfigs = new();
     private string? currentExtraPath;
 
     private string overwriteUrl { get ; init; }
@@ -149,7 +148,6 @@ public partial class TestLibraryBridge
                 }
                 else if (teardownOption == "resetTest")
                 {
-                    savedConfigs.Clear();
                     testOptions.Add("timerIntervalInMilliseconds", -1L);
                     testOptions.Add("timerStartInMilliseconds", -1L);
                     testOptions.Add("sessionIntervalInMilliseconds", -1L);
@@ -162,7 +160,6 @@ public partial class TestLibraryBridge
                 }
                 else if (teardownOption == "test")
                 {
-                    savedConfigs.Clear();
                     testOptions.Add("timerIntervalInMilliseconds", -1L);
                     testOptions.Add("timerStartInMilliseconds", -1L);
                     testOptions.Add("sessionIntervalInMilliseconds", -1L);
@@ -182,31 +179,22 @@ public partial class TestLibraryBridge
 
     private AdjustConfig? ConfigNative(Dictionary<string, List<string>> parameters)
     {
-        if (!Int32.TryParse(FirstStringValue(parameters, "configName"), out int configNumber))
+        string? appToken = FirstStringValue(parameters, "appToken");
+        AdjustEnvironment? environment =
+            FirstStringValue(parameters, "environment") switch
         {
-            configNumber = 0;
+            "sandbox" => AdjustEnvironment.Sandbox,
+            "production"  => AdjustEnvironment.Production,
+            _ => null,
+        };
+
+        if (!(appToken is string appTokenValid
+            && environment is AdjustEnvironment environmentValid))
+        {
+            return null;
         }
 
-        if (!savedConfigs.TryGetValue(configNumber, out AdjustConfig? adjustConfig))
-        {
-            string? appToken = FirstStringValue(parameters, "appToken");
-            AdjustEnvironment? environment =
-                FirstStringValue(parameters, "environment") switch
-            {
-                "sandbox" => AdjustEnvironment.Sandbox,
-                "production"  => AdjustEnvironment.Production,
-                _ => null,
-            };
-
-            if (!(appToken is string appTokenValid
-                && environment is AdjustEnvironment environmentValid))
-            {
-                return null;
-            }
-
-            adjustConfig = new (appTokenValid, environmentValid);
-            savedConfigs.Add(configNumber, adjustConfig);
-        }
+        AdjustConfig adjustConfig = new (appTokenValid, environmentValid);
 
         AdjustLogLevel? adjustLogLevel = FirstStringValue(parameters, "appToken") switch
         {
@@ -222,6 +210,8 @@ public partial class TestLibraryBridge
         {
             adjustConfig.LogLevel = adjustLogLevel;
         }
+
+        adjustConfig.LogLevel = AdjustLogLevel.VERBOSE;
 
         // sdk prefix not tested from non-natives
 
@@ -478,8 +468,6 @@ public partial class TestLibraryBridge
         }
 
         Adjust.InitSdk(adjustConfig);
-
-        savedConfigs.Remove(FirstIntValue(parameters, "configName") ?? 0);
     }
 
     private AdjustEvent EventNative(Dictionary<string, List<string>> parameters)
