@@ -4,7 +4,6 @@ using AdjustSdk;
 public partial class TestLibraryBridge
 {
     private readonly Dictionary<int, AdjustConfig> savedConfigs = new();
-    private readonly Dictionary<int, AdjustEvent> savedEvents = new();
     private string? currentExtraPath;
 
     private string overwriteUrl { get ; init; }
@@ -151,7 +150,6 @@ public partial class TestLibraryBridge
                 else if (teardownOption == "resetTest")
                 {
                     savedConfigs.Clear();
-                    savedEvents.Clear();
                     testOptions.Add("timerIntervalInMilliseconds", -1L);
                     testOptions.Add("timerStartInMilliseconds", -1L);
                     testOptions.Add("sessionIntervalInMilliseconds", -1L);
@@ -165,7 +163,6 @@ public partial class TestLibraryBridge
                 else if (teardownOption == "test")
                 {
                     savedConfigs.Clear();
-                    savedEvents.Clear();
                     testOptions.Add("timerIntervalInMilliseconds", -1L);
                     testOptions.Add("timerStartInMilliseconds", -1L);
                     testOptions.Add("sessionIntervalInMilliseconds", -1L);
@@ -487,17 +484,8 @@ public partial class TestLibraryBridge
 
     private AdjustEvent EventNative(Dictionary<string, List<string>> parameters)
     {
-        if (!Int32.TryParse(FirstStringValue(parameters, "eventName"), out int eventNumber))
-        {
-            eventNumber = 0;
-        }
-
-        if (!savedEvents.TryGetValue(eventNumber, out AdjustEvent? adjustEvent))
-        {
-            string eventToken = FirstStringValue(parameters, "eventToken") ?? "";
-            adjustEvent = new (eventToken);
-            savedEvents.Add(eventNumber, adjustEvent);
-        }
+        string eventToken = FirstStringValue(parameters, "eventToken") ?? "";
+        AdjustEvent adjustEvent = new (eventToken);
 
         if (RevenueCurrencyValues(parameters) is (string currency, double amount))
         {
@@ -541,8 +529,6 @@ public partial class TestLibraryBridge
     private void TrackEvent(Dictionary<string, List<string>> parameters)
     {
         Adjust.TrackEvent(EventNative(parameters));
-
-        savedEvents.Remove(FirstIntValue(parameters, "eventName") ?? 0);
     }
 
     private void Resume(Dictionary<string, List<string>> parameters)
