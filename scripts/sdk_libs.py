@@ -17,16 +17,25 @@ ANDROID_SDK_CORE_DIR = os.path.join(ANDROID_SUBMODULE_ROOT, 'sdk-core')
 ANDROID_BINDING_LIBS_DIR = os.path.join(
     ROOT, 'android', 'AdjustSdk.AndroidBinding', 'libs'
 )
+
 ANDROID_TESTS_ROOT = os.path.join(ANDROID_SUBMODULE_ROOT, 'tests')
 ANDROID_TEST_LIBRARY_DIR = os.path.join(ANDROID_TESTS_ROOT, 'test-library')
 ANDROID_TEST_OPTIONS_DIR = os.path.join(ANDROID_TESTS_ROOT, 'test-options')
 ANDROID_TEST_BINDING_LIBS_DIR = os.path.join(
     ROOT, 'android', 'TestLibrary.AndroidBinding', 'libs'
 )
-IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk')
-#IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk_dev')
+
+ANDROID_PLUGINS_ROOT = os.path.join(ANDROID_SUBMODULE_ROOT, 'plugins')
+ANDROID_OAID_DIR = os.path.join(ANDROID_PLUGINS_ROOT, 'sdk-plugin-oaid')
+ANDROID_OAID_BINDING_LIBS_DIR = os.path.join(
+    ROOT, 'android', 'AdjustOaid.AndroidBinding', 'libs'
+)
+
+#IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk')
+IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk_dev')
 IOS_BINDING_DIR = os.path.join(ROOT, 'iOs', 'AdjustSdk.iOSBinding')
 IOS_TEST_BINDING_DIR = os.path.join(ROOT, 'iOs', 'TestLibrary.iOSBinding')
+
 
 def run(cmd, cwd=None, env=None, check=True):
     print('> ' + ' '.join(cmd))
@@ -117,6 +126,8 @@ def _build_and_copy_aar_common(
             print('Also searched dir: ' + search_dir)
         sys.exit(1)
 
+    print('Produced AAR: %s' % produced_path)
+
     final_dest = dest_path.format(variant=variant_lower)
     os.makedirs(os.path.dirname(final_dest), exist_ok=True)
     shutil.copyfile(produced_path, final_dest)
@@ -164,26 +175,43 @@ def build_android_test_options_aar(is_release):
         search_prefix='test-options-'
     )
 
-def build_all(targets, is_release):
-    if 'test' not in targets:
-        build_sdk(targets, is_release)
-    if 'sdk' not in targets:
-        build_test(targets, is_release)
+def build_android_oaid_aar(is_release):
+    return _build_and_copy_aar_common(
+        is_release=is_release,
+        # OAID module defines a single copy task that always depends on assembleRelease.
+        # There is no variant-suffixed task (e.g., ...AarDebug), so call the fixed task.
+        gradle_task_template=':plugins:sdk-plugin-oaid:adjustOaidAndroidAar',
+        candidate_path_templates=[
+            # Direct output from assembleRelease
+            os.path.join(ANDROID_OAID_DIR, 'build', 'outputs', 'aar', 'sdk-plugin-oaid-release.aar'),
+            # Or the copied/renamed artifact produced by adjustOaidAndroidAar
+            os.path.join(ANDROID_OAID_DIR, 'build', 'libs', 'sdk-plugin-oaid.aar'),
+        ],
+        dest_path=os.path.join(ANDROID_OAID_BINDING_LIBS_DIR, 'adjust-android-oaid.aar'),
+        search_dir=None,
+        search_prefix=None,
+    )
 
+def build_all(targets, is_release):
+    if ('oaid' in targets) or ('all' in targets):
+        build_android_oaid_aar(is_release)
+    if ('test' in targets) or ('all' in targets):
+        build_test(targets, is_release)
+    if ('sdk' in targets) or ('all' in targets):
+        build_sdk(targets, is_release)
 
 def build_sdk(targets, is_release):
     print('build_sdk targets: %s' % targets)
-    if 'ios' not in targets:
+    if ('android' in targets) or ('all' in targets):
         build_android_sdk(is_release)
-    if 'android' not in targets:
+    if ('ios' in targets) or ('all' in targets):
         build_ios_sdk_scripts(is_release)
 
-
 def build_test(targets, is_release):
-    if 'ios' not in targets:
+    if ('android' in targets) or ('all' in targets):
         build_android_test_library_aar(is_release)
         build_android_test_options_aar(is_release)
-    if 'android' not in targets:
+    if ('ios' in targets) or ('all' in targets):
         build_ios_test_library_scripts()
 
 def build_ios_test_library_scripts():
@@ -202,8 +230,8 @@ def build_ios_test_library_scripts():
     print('Before build_frameworks.sh')
     env = os.environ.copy()
     env['SDK_CODE_SIGN_IDENTITY'] = '-'
-    code = run(['bash', './scripts/build_frameworks.sh', '-test'], cwd=IOS_SDK_ROOT, env=env, check=False)
-    #code = run(['bash', './scripts/build_frameworks.sh', '-test-sim'], cwd=IOS_SDK_ROOT, env=env, check=False)
+    #code = run(['bash', './scripts/build_frameworks.sh', '-test'], cwd=IOS_SDK_ROOT, env=env, check=False)
+    code = run(['bash', './scripts/build_frameworks.sh', '-test-sim'], cwd=IOS_SDK_ROOT, env=env, check=False)
     print('After build_frameworks.sh (exit code: %s)' % code)
 
     # Preferred static test library framework output path
@@ -273,7 +301,7 @@ def main(argv=None):
     common.add_argument(
         'targets',
         nargs='*',
-        choices=['sdk', 'test', 'android', 'ios', 'all'],
+        choices=['sdk', 'test', 'oaid', 'android', 'ios', 'all'],
         help='Which targets (can specify multiple, default: all)'
     )
 

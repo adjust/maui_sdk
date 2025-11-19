@@ -23,6 +23,8 @@ ANDROID_TESTAPP_BINDING_CSPROJ = os.path.join(ANDROID_TESTAPP_BINDING_SUBMODULE_
 IOS_TESTAPP_BINDING_SUBMODULE_ROOT = os.path.join(IOS_BINDING_SUBMODULE_ROOT, 'TestLibrary.iOSBinding')
 IOS_TESTAPP_BINDING_CSPROJ = os.path.join(IOS_TESTAPP_BINDING_SUBMODULE_ROOT, 'TestLibrary.iOSBinding.csproj')
 
+ANDROID_OAID_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'AdjustOaid.AndroidBinding')
+ANDROID_OAID_BINDING_CSPROJ = os.path.join(ANDROID_OAID_BINDING_SUBMODULE_ROOT, 'AdjustOaid.AndroidBinding.csproj')
 
 SDK_SUBMODULE_ROOT = os.path.join(ROOT, 'AdjustSdk')
 SDK_CSPROJ = os.path.join(SDK_SUBMODULE_ROOT, 'AdjustSdk.csproj')
@@ -41,12 +43,15 @@ def run(cmd):
         sys.exit(result.returncode)
 
 def build_bindings(targets, config):
-    if 'test' not in targets:
+    if ('sdk' in targets) or ('all' in targets):
         print('> Build SDK bindings')
         build_sdk_bindings(targets, config)
-    if 'sdk' not in targets:
+    if ('test' in targets) or ('all' in targets):
         print('> Build TestApp bindings')
         build_testapp_bindings(targets, config)
+    if ('oaid' in targets) or ('all' in targets):
+        print('> Build OAID bindings')
+        build_oaid_bindings(targets, config)
 def build_sdk_bindings(targets, config):
     if 'ios' not in targets:
         print('> Building Android SDK binding')
@@ -61,6 +66,9 @@ def build_testapp_bindings(targets, config):
     if 'android' not in targets:
         print('> Building iOS TestApp binding')
         run(['dotnet', 'build', IOS_TESTAPP_BINDING_CSPROJ, '--configuration', config])
+def build_oaid_bindings(targets, config):
+    print('> Building Android OAID binding')
+    run(['dotnet', 'build', ANDROID_OAID_BINDING_CSPROJ, '--configuration', config])
 
 def build_sdk(config):
     print('> Building SDK')
@@ -110,10 +118,12 @@ def clean(targets, dry):
         clean_target(dry, EXAMPLE_APP_SUBMODULE_ROOT)
 
 def clean_bindings(targets, dry):
-    if 'sdk' not in targets:
+    if ('test' in targets):
         clean_testapp_bindings(targets, dry)
-    if 'test' not in targets:
+    if ('sdk' in targets):
         clean_sdk_bindings(targets, dry)
+    if ('oaid' in targets):
+        clean_oaid_bindings(targets, dry)
 
 def clean_testapp_bindings(targets, dry):
     if 'android' not in targets:
@@ -126,6 +136,9 @@ def clean_sdk_bindings(targets, dry):
         clean_target(dry, IOS_SDK_BINDING_SUBMODULE_ROOT)
     if 'ios' not in targets:
         clean_target(dry, ANDROID_SDK_BINDING_SUBMODULE_ROOT)
+
+def clean_oaid_bindings(targets, dry):
+    clean_target(dry, ANDROID_OAID_BINDING_SUBMODULE_ROOT)
 
 def find_bin_obj_dirs_cmd(subdir=None):
     search_root = os.path.join(ROOT, subdir) if subdir else ROOT
@@ -149,7 +162,7 @@ def main(argv=None):
     common.add_argument(
         'targets',
         nargs='*',
-        choices=['sdk', 'test', 'example', 'nuget', 'android', 'ios', 'bindings', 'all'],
+        choices=['sdk', 'test', 'example', 'nuget', 'android', 'ios', 'bindings', 'oaid', 'all'],
         help='Which targets (can specify multiple, default: all)'
     )
     common.add_argument('--dry', action='store_true', default=False, help='Perform a dry run (list bin/obj dirs only)')
