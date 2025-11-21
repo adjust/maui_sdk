@@ -25,7 +25,6 @@ IOS_TEST_BINDING_CSPROJ = os.path.join(IOS_TEST_BINDING_SUBMODULE_ROOT, 'TestLib
 ANDROID_OAID_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'AdjustOaid.AndroidBinding')
 ANDROID_OAID_BINDING_CSPROJ = os.path.join(ANDROID_OAID_BINDING_SUBMODULE_ROOT, 'AdjustOaid.AndroidBinding.csproj')
 
-
 CORE_SDK_SUBMODULE_ROOT = os.path.join(ROOT, 'AdjustSdk')
 CORE_SDK_CSPROJ = os.path.join(CORE_SDK_SUBMODULE_ROOT, 'AdjustSdk.csproj')
 
@@ -123,72 +122,6 @@ def build_all(targets, config):
     build_apps(targets, config)
 
 
-def clean(command: str, targets: list[str], dry: bool):
-    if command == 'clean_all' or (command == 'clean' and has_none(targets, ('bindings', 'sdk', 'apps'))):
-        clean_target(dry, ROOT)
-    if command == 'clean_bindings' or removing(targets, 'bindings'):
-        clean_bindings(targets, dry)
-    if command == 'clean_sdk' or removing(targets, 'sdk'):
-        clean_sdk(targets, dry)
-    if command == 'clean_apps' or removing(targets, 'apps'):
-        clean_apps(targets, dry)
-
-def clean_bindings(targets, dry):
-    no_bindings_target = has_none(BINDINGS,targets)
-    if 'test' in targets or no_bindings_target:
-        clean_test_bindings(targets, dry)
-    if 'core' in targets or no_bindings_target:
-        clean_core_bindings(targets, dry)
-    if 'oaid' in targets or no_bindings_target:
-        clean_oaid_bindings(targets, dry)
-
-def clean_sdk(targets, dry):
-    no_sdk_target = has_none(SDKS, targets)
-    if 'core' in targets or no_sdk_target:
-        clean_target(dry, CORE_SDK_SUBMODULE_ROOT)
-    if 'oaid' in targets or no_sdk_target:
-        clean_target(dry, OAID_SDK_SUBMODULE_ROOT)
-
-def clean_apps(targets, dry):
-    no_app_target = has_none(APPS, targets)
-    if 'test' in targets or no_app_target:
-        clean_target(dry, TESTAPP_SUBMODULE_ROOT)
-    if 'example' in targets or no_app_target:
-        clean_target(dry, EXAMPLE_APP_SUBMODULE_ROOT)
-
-def clean_test_bindings(targets, dry):
-    no_platform_target = has_none(PLATFORMS, targets)
-    if 'ios' in targets or no_platform_target:
-        clean_target(dry, IOS_TEST_BINDING_SUBMODULE_ROOT)
-    if 'android' in targets or no_platform_target:
-        clean_target(dry, ANDROID_TEST_BINDING_SUBMODULE_ROOT)
-
-def clean_core_bindings(targets, dry):
-    no_platform_target = has_none(PLATFORMS, targets)
-    if 'ios' in targets or no_platform_target:
-        clean_target(dry, IOS_CORE_BINDING_SUBMODULE_ROOT)
-    if 'android' in targets or no_platform_target:
-        clean_target(dry, ANDROID_CORE_BINDING_SUBMODULE_ROOT)
-
-def clean_oaid_bindings(targets, dry):
-    clean_target(dry, ANDROID_OAID_BINDING_SUBMODULE_ROOT)
-
-def find_bin_obj_dirs_cmd(subdir=None):
-    search_root = os.path.join(ROOT, subdir) if subdir else ROOT
-    return ['find', search_root, '-type', 'd', '(', '-name', 'bin', '-o', '-name', 'obj', ')', '-prune']
-
-def clean_target(dry, subdir=None):
-    if dry:
-        print('> dry-run: listing bin/ and obj/ directories under %s' % subdir)
-        subprocess.run(find_bin_obj_dirs_cmd(subdir) + ['-print'])
-        return
-    if which('trash'):
-        print('> trash bin/ and obj/ directories under %s' % subdir)
-        subprocess.run(find_bin_obj_dirs_cmd(subdir) + ['-exec', 'trash', '{}', '+'])
-    else:
-        print('> rm -rf bin/ and obj/ directories under %s' % subdir)
-        subprocess.run(find_bin_obj_dirs_cmd(subdir) + ['-exec', 'rm', '-rf', '{}', '+'])
-
 def main(argv=None):
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument('--release', action='store_true', help='Build in Release (default: Debug)')
@@ -243,6 +176,85 @@ def main(argv=None):
         return 1
 
     return 0
+
+ARTIFACTS_OUTPUT_DIR = os.path.join(ROOT, '.artifacts')
+
+ARTIFACTS_CORE_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustSdk.AndroidBinding')
+ARTIFACTS_CORE_BINDING_IOS_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustSdk.iOSBinding')
+ARTIFACTS_TEST_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestLibrary.AndroidBinding')
+ARTIFACTS_TEST_BINDING_IOS_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestLibrary.iOSBinding')
+ARTIFACTS_OAID_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustOaid.AndroidBinding')
+
+ARTIFACTS_CORE_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustSdk')
+ARTIFACTS_OAID_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustOaid')
+ARTIFACTS_TEST_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestApp')
+ARTIFACTS_EXAMPLE_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'ExampleApp')
+
+def clean(command: str, targets: list[str], dry: bool):
+    if command == 'clean_all' or (command == 'clean' and has_none(targets, ('bindings', 'sdk', 'apps'))):
+        clean_target(dry, ARTIFACTS_OUTPUT_DIR)
+    if command == 'clean_bindings' or removing(targets, 'bindings'):
+        clean_bindings(targets, dry)
+    if command == 'clean_sdk' or removing(targets, 'sdk'):
+        clean_sdk(targets, dry)
+    if command == 'clean_apps' or removing(targets, 'apps'):
+        clean_apps(targets, dry)
+
+def clean_bindings(targets, dry):
+    no_bindings_target = has_none(BINDINGS,targets)
+    if 'test' in targets or no_bindings_target:
+        clean_test_bindings(targets, dry)
+    if 'core' in targets or no_bindings_target:
+        clean_core_bindings(targets, dry)
+    if 'oaid' in targets or no_bindings_target:
+        clean_oaid_bindings(targets, dry)
+
+def clean_sdk(targets, dry):
+    no_sdk_target = has_none(SDKS, targets)
+    if 'core' in targets or no_sdk_target:
+        clean_target(dry, ARTIFACTS_CORE_SDK_OUTPUT_DIR)
+    if 'oaid' in targets or no_sdk_target:
+        clean_target(dry, ARTIFACTS_OAID_SDK_OUTPUT_DIR)
+
+def clean_apps(targets, dry):
+    no_app_target = has_none(APPS, targets)
+    if 'test' in targets or no_app_target:
+        clean_target(dry, ARTIFACTS_TEST_APP_OUTPUT_DIR)
+    if 'example' in targets or no_app_target:
+        clean_target(dry, ARTIFACTS_EXAMPLE_APP_OUTPUT_DIR)
+
+def clean_test_bindings(targets, dry):
+    no_platform_target = has_none(PLATFORMS, targets)
+    if 'ios' in targets or no_platform_target:
+        clean_target(dry, ARTIFACTS_TEST_BINDING_IOS_OUTPUT_DIR)
+    if 'android' in targets or no_platform_target:
+        clean_target(dry, ARTIFACTS_TEST_BINDING_ANDROID_OUTPUT_DIR)
+
+def clean_core_bindings(targets, dry):
+    no_platform_target = has_none(PLATFORMS, targets)
+    if 'ios' in targets or no_platform_target:
+        clean_target(dry, ARTIFACTS_CORE_BINDING_IOS_OUTPUT_DIR)
+    if 'android' in targets or no_platform_target:
+        clean_target(dry, ARTIFACTS_CORE_BINDING_ANDROID_OUTPUT_DIR)
+
+def clean_oaid_bindings(targets, dry):
+    clean_target(dry, ARTIFACTS_OAID_BINDING_ANDROID_OUTPUT_DIR)
+
+def find_bin_obj_dirs_cmd(subdir=None):
+    search_root = os.path.join(ROOT, subdir) if subdir else ROOT
+    return ['find', search_root, '-type', 'd', '(', '-name', 'bin', '-o', '-name', 'obj', ')', '-prune']
+
+def clean_target(dry, subdir=None):
+    if dry:
+        print('> dry-run: listing bin/ and obj/ directories under %s' % subdir)
+        subprocess.run(find_bin_obj_dirs_cmd(subdir) + ['-print'])
+        return
+    if which('trash'):
+        print('> trash bin/ and obj/ directories under %s' % subdir)
+        subprocess.run(find_bin_obj_dirs_cmd(subdir) + ['-exec', 'trash', '{}', '+'])
+    else:
+        print('> rm -rf bin/ and obj/ directories under %s' % subdir)
+        subprocess.run(find_bin_obj_dirs_cmd(subdir) + ['-exec', 'rm', '-rf', '{}', '+'])
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

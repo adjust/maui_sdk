@@ -1,8 +1,11 @@
 <Project>
   <PropertyGroup>
-    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory).artifacts/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    <!-- Intermediates: .artifacts/{ProjectName}/obj/{Config}/{TFM}/ -->
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory).artifacts/$(MSBuildProjectName)/obj/</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)/$(TargetFramework)/</IntermediateOutputPath>
-    <BaseOutputPath>$(MSBuildThisFileDirectory).artifacts/bin/</BaseOutputPath>
+
+    <!-- Outputs: .artifacts/{ProjectName}/bin/{Config}/{TFM}/ -->
+    <BaseOutputPath>$(MSBuildThisFileDirectory).artifacts/$(MSBuildProjectName)/bin/</BaseOutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <VisibleArtifactsRoot>$(MSBuildThisFileDirectory)artifacts_copy/</VisibleArtifactsRoot>
