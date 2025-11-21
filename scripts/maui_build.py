@@ -64,7 +64,7 @@ def run(cmd):
 def build_bindings(targets, config):
     no_bindings_target = has_none(BINDINGS, targets)
     if 'core' in targets or no_bindings_target:
-        print('> Build SDK bindings')
+        print('> Build SDK Core bindings')
         build_core_bindings(targets, config)
     if 'test' in targets or no_bindings_target:
         print('> Build Test bindings')
@@ -75,10 +75,10 @@ def build_bindings(targets, config):
 def build_core_bindings(targets, config):
     no_platform_target = has_none(PLATFORMS, targets)
     if 'android' in targets or no_platform_target:
-        print('> Building Android SDK binding')
+        print('> Building Android SDK Core binding')
         run(['dotnet', 'build', ANDROID_CORE_BINDING_CSPROJ, '--configuration', config])
     if 'ios' in targets or no_platform_target:
-        print('> Building iOS SDK binding')
+        print('> Building iOS SDK Core binding')
         run(['dotnet', 'build', IOS_CORE_BINDING_CSPROJ, '--configuration', config])
 def build_test_bindings(targets, config):
     no_platform_target = has_none(PLATFORMS, targets)

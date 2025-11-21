@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Adjust.Maui.Sdk</id>
-    <version>5.1.1</version>
+    <version>5.4.6</version>
     <title>Adjust MAUI SDK</title>
     <authors>Adjust GmbH</authors>
     <owners>Adjust GmbH</owners>
@@ -27,16 +27,16 @@
     <file src="gravatar.jpg" target="" />
     <file src="README.md" target="" />
 
-    <file src="AdjustSdk/bin/Release/net8.0-android/AdjustSdk.dll" target="lib/net8.0-android34.0/AdjustSdk.dll" />
-    <file src="AdjustSdk/bin/Release/net8.0-android/AdjustSdk.xml" target="lib/net8.0-android34.0/AdjustSdk.xml" />
-    <file src="AdjustSdk/bin/Release/net8.0-ios/AdjustSdk.dll" target="lib/net8.0-ios18.0/AdjustSdk.dll" />
+    <file src=".artifacts/bin/Release/net8.0-android/AdjustSdk.dll" target="lib/net8.0-android34.0/AdjustSdk.dll" />
+    <file src=".artifacts/bin/Release/net8.0-android/AdjustSdk.xml" target="lib/net8.0-android34.0/AdjustSdk.xml" />
+    <file src=".artifacts/bin/Release/net8.0-ios/AdjustSdk.dll" target="lib/net8.0-ios18.0/AdjustSdk.dll" />
 
-    <file src="android/AdjustSdk.AndroidBinding/bin/Release/net8.0-android/AdjustSdk.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustSdk.AndroidBinding.dll" />
-    <file src="android/AdjustSdk.AndroidBinding/bin/Release/net8.0-android/AdjustSdk.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustSdk.AndroidBinding.xml" />
+    <file src=".artifacts/bin/Release/net8.0-android/AdjustSdk.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustSdk.AndroidBinding.dll" />
+    <file src=".artifacts/bin/Release/net8.0-android/AdjustSdk.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustSdk.AndroidBinding.xml" />
     <file src="android/AdjustSdk.AndroidBinding/libs/adjust-android-signature.aar" target="lib/net8.0-android34.0/adjust-android-signature.aar" />
     <file src="android/AdjustSdk.AndroidBinding/libs/adjust-android.aar" target="lib/net8.0-android34.0/adjust-android.aar" />
 
-    <file src="ios/AdjustSdk.iOSBinding/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.dll" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.dll" />
-    <file src="ios/AdjustSdk.iOSBinding/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.resources.zip" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.resources.zip" />
+    <file src=".artifacts/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.dll" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.dll" />
+    <file src=".artifacts/bin/Release/net8.0-ios/AdjustSdk.iOSBinding.resources.zip" target="lib/net8.0-ios18.0/AdjustSdk.iOSBinding.resources.zip" />
   </files>
 </package>
