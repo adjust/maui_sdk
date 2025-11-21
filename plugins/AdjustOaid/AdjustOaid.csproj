@@ -15,5 +15,7 @@
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 	</ItemGroup>
 
-	<ProjectReference Include="..\..\android\AdjustOaid.AndroidBinding\AdjustOaid.AndroidBinding.csproj" />
+	<ItemGroup>
+		<ProjectReference Include="..\..\android\AdjustOaid.AndroidBinding\AdjustOaid.AndroidBinding.csproj" />
+	</ItemGroup>
 </Project>
