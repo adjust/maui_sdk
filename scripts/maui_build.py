@@ -25,12 +25,19 @@ IOS_TEST_BINDING_CSPROJ = os.path.join(IOS_TEST_BINDING_SUBMODULE_ROOT, 'TestLib
 ANDROID_OAID_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'AdjustOaid.AndroidBinding')
 ANDROID_OAID_BINDING_CSPROJ = os.path.join(ANDROID_OAID_BINDING_SUBMODULE_ROOT, 'AdjustOaid.AndroidBinding.csproj')
 
+ANDROID_META_REFERRER_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'AdjustMetaReferrer.AndroidBinding')
+ANDROID_META_REFERRER_BINDING_CSPROJ = os.path.join(ANDROID_META_REFERRER_BINDING_SUBMODULE_ROOT, 'AdjustMetaReferrer.AndroidBinding.csproj')
+
 CORE_SDK_SUBMODULE_ROOT = os.path.join(ROOT, 'AdjustSdk')
 CORE_SDK_CSPROJ = os.path.join(CORE_SDK_SUBMODULE_ROOT, 'AdjustSdk.csproj')
 
 PLUGINS_SUBMODULE_ROOT = os.path.join(ROOT, 'plugins')
+
 OAID_SDK_SUBMODULE_ROOT = os.path.join(PLUGINS_SUBMODULE_ROOT, 'AdjustOaid')
 OAID_SDK_CSPROJ = os.path.join(OAID_SDK_SUBMODULE_ROOT, 'AdjustOaid.csproj')
+
+META_REFERRER_SDK_SUBMODULE_ROOT = os.path.join(PLUGINS_SUBMODULE_ROOT, 'AdjustMetaReferrer')
+META_REFERRER_SDK_CSPROJ = os.path.join(META_REFERRER_SDK_SUBMODULE_ROOT, 'AdjustMetaReferrer.csproj')
 
 TESTAPP_SUBMODULE_ROOT = os.path.join(ROOT, 'testApp')
 TESTAPP_CSPROJ = os.path.join(TESTAPP_SUBMODULE_ROOT, 'TestApp.csproj')
@@ -39,9 +46,9 @@ EXAMPLE_APP_SUBMODULE_ROOT = os.path.join(ROOT, 'ExampleApp')
 EXAMPLE_APP_CSPROJ = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, 'ExampleApp.csproj')
 EXAMPLE_APP_CSPROJ_NUGET = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, 'ExampleApp-Nuget.csproj')
 
-BINDINGS = ['test', 'core', 'oaid']
+BINDINGS = ['test', 'core', 'oaid', 'meta_referrer']
 APPS = ['test', 'example']
-SDKS = ['core', 'oaid']
+SDKS = ['core', 'oaid', 'meta_referrer']
 PLATFORMS = ['android', 'ios']
 
 def removing(str_list: list[str], *args):
@@ -71,6 +78,9 @@ def build_bindings(targets, config):
     if 'oaid' in targets or no_bindings_target:
         print('> Build OAID bindings')
         build_oaid_bindings(targets, config)
+    if 'meta_referrer' in targets or no_bindings_target:
+        print('> Build Meta Referrer bindings')
+        build_meta_referrer_bindings(targets, config)
 def build_core_bindings(targets, config):
     no_platform_target = has_none(PLATFORMS, targets)
     if 'android' in targets or no_platform_target:
@@ -90,7 +100,9 @@ def build_test_bindings(targets, config):
 def build_oaid_bindings(targets, config):
     print('> Building Android OAID binding')
     run(['dotnet', 'build', ANDROID_OAID_BINDING_CSPROJ, '--configuration', config])
-
+def build_meta_referrer_bindings(targets, config):
+    print('> Building Android Meta Referrer binding')
+    run(['dotnet', 'build', ANDROID_META_REFERRER_BINDING_CSPROJ, '--configuration', config])
 def build_sdk(targets, config):
     no_sdk_target = has_none(SDKS, targets)
     if 'core' in targets or no_sdk_target:
@@ -99,7 +111,9 @@ def build_sdk(targets, config):
     if 'oaid' in targets or no_sdk_target:
         print('> Building OAID SDK plugin')
         run(['dotnet', 'build', OAID_SDK_CSPROJ, '--configuration', config])
-
+    if 'meta_referrer' in targets or no_sdk_target:
+        print('> Building Meta Referrer SDK plugin')
+        run(['dotnet', 'build', META_REFERRER_SDK_CSPROJ, '--configuration', config])
 def build_apps(targets, config):
     no_app_target = has_none(APPS, targets)
     if 'example' in targets or no_app_target:
@@ -128,7 +142,7 @@ def main(argv=None):
     common.add_argument(
         'targets',
         nargs='*',
-        choices=['bindings', 'sdk', 'apps', 'test', 'example', 'nuget', 'android', 'ios',  'core', 'oaid'],
+        choices=['bindings', 'sdk', 'apps', 'test', 'example', 'nuget', 'android', 'ios',  'core', 'oaid', 'meta_referrer'],
         help='Which targets (can specify multiple)'
     )
     common.add_argument('--dry', action='store_true', default=False, help='Perform a dry run (list bin/obj dirs only)')
@@ -184,9 +198,11 @@ ARTIFACTS_CORE_BINDING_IOS_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'Adju
 ARTIFACTS_TEST_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestLibrary.AndroidBinding')
 ARTIFACTS_TEST_BINDING_IOS_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestLibrary.iOSBinding')
 ARTIFACTS_OAID_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustOaid.AndroidBinding')
+ARTIFACTS_META_REFERRER_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustMetaReferrer.AndroidBinding')
 
 ARTIFACTS_CORE_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustSdk')
 ARTIFACTS_OAID_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustOaid')
+ARTIFACTS_META_REFERRER_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustMetaReferrer')
 ARTIFACTS_TEST_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestApp')
 ARTIFACTS_EXAMPLE_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'ExampleApp')
 
@@ -208,6 +224,8 @@ def clean_bindings(targets, dry):
         clean_core_bindings(targets, dry)
     if 'oaid' in targets or no_bindings_target:
         clean_oaid_bindings(targets, dry)
+    if 'meta_referrer' in targets or no_bindings_target:
+        clean_meta_referrer_bindings(targets, dry)
 
 def clean_sdk(targets, dry):
     no_sdk_target = has_none(SDKS, targets)
@@ -215,6 +233,8 @@ def clean_sdk(targets, dry):
         clean_target(dry, ARTIFACTS_CORE_SDK_OUTPUT_DIR)
     if 'oaid' in targets or no_sdk_target:
         clean_target(dry, ARTIFACTS_OAID_SDK_OUTPUT_DIR)
+    if 'meta_referrer' in targets or no_sdk_target:
+        clean_target(dry, ARTIFACTS_META_REFERRER_SDK_OUTPUT_DIR)
 
 def clean_apps(targets, dry):
     no_app_target = has_none(APPS, targets)
@@ -239,6 +259,9 @@ def clean_core_bindings(targets, dry):
 
 def clean_oaid_bindings(targets, dry):
     clean_target(dry, ARTIFACTS_OAID_BINDING_ANDROID_OUTPUT_DIR)
+
+def clean_meta_referrer_bindings(targets, dry):
+    clean_target(dry, ARTIFACTS_META_REFERRER_BINDING_ANDROID_OUTPUT_DIR)
 
 def find_bin_obj_dirs_cmd(subdir=None):
     search_root = os.path.join(ROOT, subdir) if subdir else ROOT
