@@ -28,11 +28,11 @@
     <file src="gravatar.jpg" target="" />
     <file src="README.md" target="" />
 
-    <file src=".artifacts/bin/Release/net8.0-android/AdjustOaid.dll" target="lib/net8.0-android34.0/AdjustOaid.dll" />
-    <file src=".artifacts/bin/Release/net8.0-android/AdjustOaid.xml" target="lib/net8.0-android34.0/AdjustOaid.xml" />
+    <file src=".artifacts/AdjustOaid/bin/Release/net8.0-android/AdjustOaid.dll" target="lib/net8.0-android34.0/AdjustOaid.dll" />
+    <file src=".artifacts/AdjustOaid/bin/Release/net8.0-android/AdjustOaid.xml" target="lib/net8.0-android34.0/AdjustOaid.xml" />
 
-    <file src=".artifacts/bin/Release/net8.0-android/AdjustOaid.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.dll" />
-    <file src=".artifacts/bin/Release/net8.0-android/AdjustOaid.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.xml" />
+    <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net8.0-android/AdjustOaid.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.dll" />
+    <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net8.0-android/AdjustOaid.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.xml" />
 
     <file src="android/AdjustOaid.AndroidBinding/libs/oaid_sdk_2.0.0.aar" target="lib/net8.0-android34.0/oaid_sdk_2.0.0.aar" />
     <file src="android/AdjustOaid.AndroidBinding/libs/ads-identifier-3.4.56.300.aar" target="lib/net8.0-android34.0/ads-identifier-3.4.56.300.aar" />
