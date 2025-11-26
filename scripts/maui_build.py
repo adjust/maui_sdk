@@ -5,6 +5,7 @@ import argparse
 import os
 import subprocess
 import sys
+import time
 from shutil import which
 
 CORE_BINDING_ANDROID_NAME = 'AdjustSdk.AndroidBinding'
@@ -82,13 +83,56 @@ def removing(str_list: list[str], *args):
 def has_none(from_list: list[str], in_list: list[str]) -> bool:
     return not any(arg in in_list for arg in from_list)
 
-def run(cmd):
+def shutdown_build_server():
+    """Shutdown dotnet build server to release file locks"""
+    print('> Shutting down dotnet build server...')
+    subprocess.run(['dotnet', 'build-server', 'shutdown'],
+                   stdout=subprocess.DEVNULL,
+                   stderr=subprocess.DEVNULL)
+    time.sleep(0.5)  # Give it a moment to fully shutdown
+
+def run(cmd, retry_on_file_lock=True, max_retries=3):
+    """Run a command with optional retry logic for file locking errors"""
     print('> ' + ' '.join(cmd))
-    result = subprocess.run(cmd)
-    if result.returncode != 0:
+
+    for attempt in range(max_retries):
+        # Run without capturing to preserve colors and real-time output
+        result = subprocess.run(cmd)
+
+        if result.returncode == 0:
+            # Success
+            return
+
+        # On failure, check if it's a file locking error by running with capture
+        if retry_on_file_lock and attempt < max_retries - 1:
+            # Re-run with capture to check error type (won't affect visible output since it already failed)
+            check_result = subprocess.run(cmd, capture_output=True, text=True)
+            error_output = check_result.stderr + check_result.stdout
+
+            is_file_lock_error = any(err in error_output for err in [
+                'is being used by another process',
+                'Renaming temporary file failed',
+                'No such file or directory',
+                'XARLP7024',
+                'XARLP7000'
+            ])
+
+            if is_file_lock_error:
+                print(f'\n > File locking error detected (attempt {attempt + 1}/{max_retries}). Retrying...\n')
+                shutdown_build_server()
+                time.sleep(2)  # Wait for file handles to be released
+                continue
+
+        # Either not a file lock error, or we've exhausted retries
         sys.exit(result.returncode)
 
+def run_with_delay(cmd, delay=1.0):
+    """Run a command and add a delay afterwards to prevent race conditions"""
+    run(cmd)
+    time.sleep(delay)
+
 def build_bindings(targets, config):
+    shutdown_build_server()  # Start with clean state
     no_bindings_target = has_none(BINDINGS, targets)
     if 'core' in targets or no_bindings_target:
         print('> Build SDK Core bindings')
@@ -109,42 +153,46 @@ def build_core_bindings(targets, config):
     no_platform_target = has_none(PLATFORMS, targets)
     if 'android' in targets or no_platform_target:
         print('> Building Android SDK Core binding')
-        run(['dotnet', 'build', ANDROID_CORE_BINDING_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', ANDROID_CORE_BINDING_CSPROJ, '--configuration', config])
     if 'ios' in targets or no_platform_target:
         print('> Building iOS SDK Core binding')
-        run(['dotnet', 'build', IOS_CORE_BINDING_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', IOS_CORE_BINDING_CSPROJ, '--configuration', config])
 def build_test_bindings(targets, config):
     no_platform_target = has_none(PLATFORMS, targets)
     if 'android' in targets or no_platform_target:
         print('> Building Android Test binding')
-        run(['dotnet', 'build', ANDROID_TEST_BINDING_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', ANDROID_TEST_BINDING_CSPROJ, '--configuration', config])
     if 'ios' in targets or no_platform_target:
         print('> Building iOS Test binding')
-        run(['dotnet', 'build', IOS_TEST_BINDING_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', IOS_TEST_BINDING_CSPROJ, '--configuration', config])
 def build_oaid_bindings(targets, config):
     print('> Building Android OAID binding')
-    run(['dotnet', 'build', ANDROID_OAID_BINDING_CSPROJ, '--configuration', config])
+    run_with_delay(['dotnet', 'build', ANDROID_OAID_BINDING_CSPROJ, '--configuration', config])
 def build_meta_referrer_bindings(targets, config):
     print('> Building Android Meta Referrer binding')
-    run(['dotnet', 'build', ANDROID_META_REFERRER_BINDING_CSPROJ, '--configuration', config])
+    run_with_delay(['dotnet', 'build', ANDROID_META_REFERRER_BINDING_CSPROJ, '--configuration', config])
 def build_google_lvl_bindings(targets, config):
     print('> Building Android Google LVL binding')
-    run(['dotnet', 'build', ANDROID_GOOGLE_LVL_BINDING_CSPROJ, '--configuration', config])
+    run_with_delay(['dotnet', 'build', ANDROID_GOOGLE_LVL_BINDING_CSPROJ, '--configuration', config])
+
 def build_sdk(targets, config):
+    shutdown_build_server()  # Start with clean state
     no_sdk_target = has_none(SDKS, targets)
     if 'core' in targets or no_sdk_target:
         print('> Building Core SDK')
-        run(['dotnet', 'build', CORE_SDK_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', CORE_SDK_CSPROJ, '--configuration', config])
     if 'oaid' in targets or no_sdk_target:
         print('> Building OAID SDK plugin')
-        run(['dotnet', 'build', OAID_SDK_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', OAID_SDK_CSPROJ, '--configuration', config])
     if 'meta_referrer' in targets or no_sdk_target:
         print('> Building Meta Referrer SDK plugin')
-        run(['dotnet', 'build', META_REFERRER_SDK_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', META_REFERRER_SDK_CSPROJ, '--configuration', config])
     if 'google_lvl' in targets or no_sdk_target:
         print('> Building Google LVL SDK plugin')
-        run(['dotnet', 'build', GOOGLE_LVL_SDK_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', GOOGLE_LVL_SDK_CSPROJ, '--configuration', config])
+
 def build_apps(targets, config):
+    shutdown_build_server()  # Start with clean state
     no_app_target = has_none(APPS, targets)
     if 'example' in targets or no_app_target:
         build_example(targets, config)
@@ -152,19 +200,18 @@ def build_apps(targets, config):
         build_test(config)
 def build_test(config):
     print('> Building Test App')
-    run(['dotnet', 'build', TESTAPP_CSPROJ, '--configuration', config])
+    run_with_delay(['dotnet', 'build', TESTAPP_CSPROJ, '--configuration', config])
 def build_example(targets, config):
     print('> Building Example')
     if 'nuget' in targets:
-        run(['dotnet', 'build', EXAMPLE_APP_CSPROJ_NUGET, '--configuration', config])
+        run_with_delay(['dotnet', 'build', EXAMPLE_APP_CSPROJ_NUGET, '--configuration', config])
     else:
-        run(['dotnet', 'build', EXAMPLE_APP_CSPROJ, '--configuration', config])
+        run_with_delay(['dotnet', 'build', EXAMPLE_APP_CSPROJ, '--configuration', config])
 
 def build_all(targets, config):
     build_bindings(targets, config)
     build_sdk(targets, config)
     build_apps(targets, config)
-
 
 def main(argv=None):
     common = argparse.ArgumentParser(add_help=False)
