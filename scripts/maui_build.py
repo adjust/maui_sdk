@@ -7,50 +7,65 @@ import subprocess
 import sys
 from shutil import which
 
+CORE_BINDING_ANDROID_NAME = 'AdjustSdk.AndroidBinding'
+CORE_BINDING_IOS_NAME = 'AdjustSdk.iOSBinding'
+TEST_BINDING_ANDROID_NAME = 'TestLibrary.AndroidBinding'
+TEST_BINDING_IOS_NAME = 'TestLibrary.iOSBinding'
+OAID_BINDING_ANDROID_NAME = 'AdjustOaid.AndroidBinding'
+META_REFERRER_BINDING_ANDROID_NAME = 'AdjustMetaReferrer.AndroidBinding'
+GOOGLE_LVL_BINDING_ANDROID_NAME = 'AdjustGoogleLVL.AndroidBinding'
+
+CORE_SDK_NAME = 'AdjustSdk'
+OAID_SDK_NAME = 'AdjustOaid'
+META_REFERRER_SDK_NAME = 'AdjustMetaReferrer'
+GOOGLE_LVL_SDK_NAME = 'AdjustGoogleLVL'
+TEST_APP_NAME = 'TestApp'
+EXAMPLE_APP_NAME = 'ExampleApp'
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 ANDROID_BINDING_SUBMODULE_ROOT = os.path.join(ROOT, 'android')
 IOS_BINDING_SUBMODULE_ROOT = os.path.join(ROOT, 'iOs')
 
-ANDROID_CORE_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'AdjustSdk.AndroidBinding')
-ANDROID_CORE_BINDING_CSPROJ = os.path.join(ANDROID_CORE_BINDING_SUBMODULE_ROOT, 'AdjustSdk.AndroidBinding.csproj')
-IOS_CORE_BINDING_SUBMODULE_ROOT = os.path.join(IOS_BINDING_SUBMODULE_ROOT, 'AdjustSdk.iOSBinding')
-IOS_CORE_BINDING_CSPROJ = os.path.join(IOS_CORE_BINDING_SUBMODULE_ROOT, 'AdjustSdk.iOSBinding.csproj')
+ANDROID_CORE_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, CORE_BINDING_ANDROID_NAME)
+ANDROID_CORE_BINDING_CSPROJ = os.path.join(ANDROID_CORE_BINDING_SUBMODULE_ROOT, f'{CORE_BINDING_ANDROID_NAME}.csproj')
+IOS_CORE_BINDING_SUBMODULE_ROOT = os.path.join(IOS_BINDING_SUBMODULE_ROOT, CORE_BINDING_IOS_NAME)
+IOS_CORE_BINDING_CSPROJ = os.path.join(IOS_CORE_BINDING_SUBMODULE_ROOT, f'{CORE_BINDING_IOS_NAME}.csproj')
 
-ANDROID_TEST_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'TestLibrary.AndroidBinding')
-ANDROID_TEST_BINDING_CSPROJ = os.path.join(ANDROID_TEST_BINDING_SUBMODULE_ROOT, 'TestLibrary.AndroidBinding.csproj')
-IOS_TEST_BINDING_SUBMODULE_ROOT = os.path.join(IOS_BINDING_SUBMODULE_ROOT, 'TestLibrary.iOSBinding')
-IOS_TEST_BINDING_CSPROJ = os.path.join(IOS_TEST_BINDING_SUBMODULE_ROOT, 'TestLibrary.iOSBinding.csproj')
+ANDROID_TEST_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, TEST_BINDING_ANDROID_NAME)
+ANDROID_TEST_BINDING_CSPROJ = os.path.join(ANDROID_TEST_BINDING_SUBMODULE_ROOT, f'{TEST_BINDING_ANDROID_NAME}.csproj')
+IOS_TEST_BINDING_SUBMODULE_ROOT = os.path.join(IOS_BINDING_SUBMODULE_ROOT, TEST_BINDING_IOS_NAME)
+IOS_TEST_BINDING_CSPROJ = os.path.join(IOS_TEST_BINDING_SUBMODULE_ROOT, f'{TEST_BINDING_IOS_NAME}.csproj')
 
-ANDROID_OAID_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'AdjustOaid.AndroidBinding')
-ANDROID_OAID_BINDING_CSPROJ = os.path.join(ANDROID_OAID_BINDING_SUBMODULE_ROOT, 'AdjustOaid.AndroidBinding.csproj')
+ANDROID_OAID_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, OAID_BINDING_ANDROID_NAME)
+ANDROID_OAID_BINDING_CSPROJ = os.path.join(ANDROID_OAID_BINDING_SUBMODULE_ROOT, f'{OAID_BINDING_ANDROID_NAME}.csproj')
 
-ANDROID_META_REFERRER_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'AdjustMetaReferrer.AndroidBinding')
-ANDROID_META_REFERRER_BINDING_CSPROJ = os.path.join(ANDROID_META_REFERRER_BINDING_SUBMODULE_ROOT, 'AdjustMetaReferrer.AndroidBinding.csproj')
+ANDROID_META_REFERRER_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, META_REFERRER_BINDING_ANDROID_NAME)
+ANDROID_META_REFERRER_BINDING_CSPROJ = os.path.join(ANDROID_META_REFERRER_BINDING_SUBMODULE_ROOT, f'{META_REFERRER_BINDING_ANDROID_NAME}.csproj')
 
-ANDROID_GOOGLE_LVL_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, 'AdjustGoogleLVL.AndroidBinding')
-ANDROID_GOOGLE_LVL_BINDING_CSPROJ = os.path.join(ANDROID_GOOGLE_LVL_BINDING_SUBMODULE_ROOT, 'AdjustGoogleLVL.AndroidBinding.csproj')
+ANDROID_GOOGLE_LVL_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, GOOGLE_LVL_BINDING_ANDROID_NAME)
+ANDROID_GOOGLE_LVL_BINDING_CSPROJ = os.path.join(ANDROID_GOOGLE_LVL_BINDING_SUBMODULE_ROOT, f'{GOOGLE_LVL_BINDING_ANDROID_NAME}.csproj')
 
-CORE_SDK_SUBMODULE_ROOT = os.path.join(ROOT, 'AdjustSdk')
-CORE_SDK_CSPROJ = os.path.join(CORE_SDK_SUBMODULE_ROOT, 'AdjustSdk.csproj')
+CORE_SDK_SUBMODULE_ROOT = os.path.join(ROOT, CORE_SDK_NAME)
+CORE_SDK_CSPROJ = os.path.join(CORE_SDK_SUBMODULE_ROOT, f'{CORE_SDK_NAME}.csproj')
 
 PLUGINS_SUBMODULE_ROOT = os.path.join(ROOT, 'plugins')
 
-OAID_SDK_SUBMODULE_ROOT = os.path.join(PLUGINS_SUBMODULE_ROOT, 'AdjustOaid')
-OAID_SDK_CSPROJ = os.path.join(OAID_SDK_SUBMODULE_ROOT, 'AdjustOaid.csproj')
+OAID_SDK_SUBMODULE_ROOT = os.path.join(PLUGINS_SUBMODULE_ROOT, OAID_SDK_NAME)
+OAID_SDK_CSPROJ = os.path.join(OAID_SDK_SUBMODULE_ROOT, f'{OAID_SDK_NAME}.csproj')
 
-META_REFERRER_SDK_SUBMODULE_ROOT = os.path.join(PLUGINS_SUBMODULE_ROOT, 'AdjustMetaReferrer')
-META_REFERRER_SDK_CSPROJ = os.path.join(META_REFERRER_SDK_SUBMODULE_ROOT, 'AdjustMetaReferrer.csproj')
+META_REFERRER_SDK_SUBMODULE_ROOT = os.path.join(PLUGINS_SUBMODULE_ROOT, META_REFERRER_SDK_NAME)
+META_REFERRER_SDK_CSPROJ = os.path.join(META_REFERRER_SDK_SUBMODULE_ROOT, f'{META_REFERRER_SDK_NAME}.csproj')
 
-GOOGLE_LVL_SDK_SUBMODULE_ROOT = os.path.join(PLUGINS_SUBMODULE_ROOT, 'AdjustGoogleLVL')
-GOOGLE_LVL_SDK_CSPROJ = os.path.join(GOOGLE_LVL_SDK_SUBMODULE_ROOT, 'AdjustGoogleLVL.csproj')
+GOOGLE_LVL_SDK_SUBMODULE_ROOT = os.path.join(PLUGINS_SUBMODULE_ROOT, GOOGLE_LVL_SDK_NAME)
+GOOGLE_LVL_SDK_CSPROJ = os.path.join(GOOGLE_LVL_SDK_SUBMODULE_ROOT, f'{GOOGLE_LVL_SDK_NAME}.csproj')
 
 TESTAPP_SUBMODULE_ROOT = os.path.join(ROOT, 'testApp')
-TESTAPP_CSPROJ = os.path.join(TESTAPP_SUBMODULE_ROOT, 'TestApp.csproj')
+TESTAPP_CSPROJ = os.path.join(TESTAPP_SUBMODULE_ROOT, f'{TEST_APP_NAME}.csproj')
 
 EXAMPLE_APP_SUBMODULE_ROOT = os.path.join(ROOT, 'ExampleApp')
-EXAMPLE_APP_CSPROJ = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, 'ExampleApp.csproj')
-EXAMPLE_APP_CSPROJ_NUGET = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, 'ExampleApp-Nuget.csproj')
+EXAMPLE_APP_CSPROJ = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}.csproj')
+EXAMPLE_APP_CSPROJ_NUGET = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}-Nuget.csproj')
 
 BINDINGS = ['test', 'core', 'oaid', 'meta_referrer', 'google_lvl']
 APPS = ['test', 'example']
@@ -211,24 +226,44 @@ def main(argv=None):
 
 ARTIFACTS_OUTPUT_DIR = os.path.join(ROOT, '.artifacts')
 
-ARTIFACTS_CORE_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustSdk.AndroidBinding')
-ARTIFACTS_CORE_BINDING_IOS_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustSdk.iOSBinding')
-ARTIFACTS_TEST_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestLibrary.AndroidBinding')
-ARTIFACTS_TEST_BINDING_IOS_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestLibrary.iOSBinding')
-ARTIFACTS_OAID_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustOaid.AndroidBinding')
-ARTIFACTS_META_REFERRER_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustMetaReferrer.AndroidBinding')
-ARTIFACTS_GOOGLE_LVL_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustGoogleLVL.AndroidBinding')
+ARTIFACTS_CORE_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, CORE_BINDING_ANDROID_NAME)
+ARTIFACTS_CORE_BINDING_IOS_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, CORE_BINDING_IOS_NAME)
+ARTIFACTS_TEST_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, TEST_BINDING_ANDROID_NAME)
+ARTIFACTS_TEST_BINDING_IOS_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, TEST_BINDING_IOS_NAME)
+ARTIFACTS_OAID_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, OAID_BINDING_ANDROID_NAME)
+ARTIFACTS_META_REFERRER_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, META_REFERRER_BINDING_ANDROID_NAME)
+ARTIFACTS_GOOGLE_LVL_BINDING_ANDROID_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, GOOGLE_LVL_BINDING_ANDROID_NAME)
 
-ARTIFACTS_CORE_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustSdk')
-ARTIFACTS_OAID_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustOaid')
-ARTIFACTS_META_REFERRER_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustMetaReferrer')
-ARTIFACTS_GOOGLE_LVL_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'AdjustGoogleLVL')
-ARTIFACTS_TEST_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'TestApp')
-ARTIFACTS_EXAMPLE_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, 'ExampleApp')
+ARTIFACTS_CORE_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, CORE_SDK_NAME)
+ARTIFACTS_OAID_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, OAID_SDK_NAME)
+ARTIFACTS_META_REFERRER_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, META_REFERRER_SDK_NAME)
+ARTIFACTS_GOOGLE_LVL_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, GOOGLE_LVL_SDK_NAME)
+ARTIFACTS_TEST_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, TEST_APP_NAME)
+ARTIFACTS_EXAMPLE_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, EXAMPLE_APP_NAME)
+
+ARTIFACTS_COPY_BIN_DIR = os.path.join(ROOT, 'artifacts_copy', 'build_bin')
+ARTIFACTS_COPY_OBJ_DIR = os.path.join(ROOT, 'artifacts_copy', 'build_obj')
+
+ARTIFACTS_COPY_OUTPUT_DIRS = [ARTIFACTS_COPY_BIN_DIR, ARTIFACTS_COPY_OBJ_DIR]
+ARTIFACTS_COPY_CORE_BINDING_ANDROID_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, CORE_BINDING_ANDROID_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, CORE_BINDING_ANDROID_NAME)]
+ARTIFACTS_COPY_CORE_BINDING_IOS_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, CORE_BINDING_IOS_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, CORE_BINDING_IOS_NAME)]
+ARTIFACTS_COPY_TEST_BINDING_ANDROID_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, TEST_BINDING_ANDROID_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, TEST_BINDING_ANDROID_NAME)]
+ARTIFACTS_COPY_TEST_BINDING_IOS_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, TEST_BINDING_IOS_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, TEST_BINDING_IOS_NAME)]
+ARTIFACTS_COPY_OAID_BINDING_ANDROID_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, OAID_BINDING_ANDROID_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, OAID_BINDING_ANDROID_NAME)]
+ARTIFACTS_COPY_META_REFERRER_BINDING_ANDROID_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, META_REFERRER_BINDING_ANDROID_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, META_REFERRER_BINDING_ANDROID_NAME)]
+ARTIFACTS_COPY_GOOGLE_LVL_BINDING_ANDROID_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, GOOGLE_LVL_BINDING_ANDROID_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, GOOGLE_LVL_BINDING_ANDROID_NAME)]
+
+ARTIFACTS_COPY_CORE_SDK_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, CORE_SDK_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, CORE_SDK_NAME)]
+ARTIFACTS_COPY_OAID_SDK_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, OAID_SDK_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, OAID_SDK_NAME)]
+ARTIFACTS_COPY_META_REFERRER_SDK_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, META_REFERRER_SDK_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, META_REFERRER_SDK_NAME)]
+ARTIFACTS_COPY_GOOGLE_LVL_SDK_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, GOOGLE_LVL_SDK_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, GOOGLE_LVL_SDK_NAME)]
+ARTIFACTS_COPY_TEST_APP_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, TEST_APP_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, TEST_APP_NAME)]
+ARTIFACTS_COPY_EXAMPLE_APP_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, EXAMPLE_APP_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, EXAMPLE_APP_NAME)]
 
 def clean(command: str, targets: list[str], dry: bool):
     if command == 'clean_all' or (command == 'clean' and has_none(targets, ('bindings', 'sdk', 'apps'))):
         clean_target(dry, ARTIFACTS_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_OUTPUT_DIRS)
     if command == 'clean_bindings' or removing(targets, 'bindings'):
         clean_bindings(targets, dry)
     if command == 'clean_sdk' or removing(targets, 'sdk'):
@@ -253,46 +288,63 @@ def clean_sdk(targets, dry):
     no_sdk_target = has_none(SDKS, targets)
     if 'core' in targets or no_sdk_target:
         clean_target(dry, ARTIFACTS_CORE_SDK_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_CORE_SDK_OUTPUT_DIRS)
     if 'oaid' in targets or no_sdk_target:
         clean_target(dry, ARTIFACTS_OAID_SDK_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_OAID_SDK_OUTPUT_DIRS)
     if 'meta_referrer' in targets or no_sdk_target:
         clean_target(dry, ARTIFACTS_META_REFERRER_SDK_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_META_REFERRER_SDK_OUTPUT_DIRS)
     if 'google_lvl' in targets or no_sdk_target:
         clean_target(dry, ARTIFACTS_GOOGLE_LVL_SDK_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_GOOGLE_LVL_SDK_OUTPUT_DIRS)
 
 def clean_apps(targets, dry):
     no_app_target = has_none(APPS, targets)
     if 'test' in targets or no_app_target:
         clean_target(dry, ARTIFACTS_TEST_APP_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_TEST_APP_OUTPUT_DIRS)
     if 'example' in targets or no_app_target:
         clean_target(dry, ARTIFACTS_EXAMPLE_APP_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_EXAMPLE_APP_OUTPUT_DIRS)
 
 def clean_test_bindings(targets, dry):
     no_platform_target = has_none(PLATFORMS, targets)
     if 'ios' in targets or no_platform_target:
         clean_target(dry, ARTIFACTS_TEST_BINDING_IOS_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_TEST_BINDING_IOS_OUTPUT_DIRS)
     if 'android' in targets or no_platform_target:
         clean_target(dry, ARTIFACTS_TEST_BINDING_ANDROID_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_TEST_BINDING_ANDROID_OUTPUT_DIRS)
 
 def clean_core_bindings(targets, dry):
     no_platform_target = has_none(PLATFORMS, targets)
     if 'ios' in targets or no_platform_target:
         clean_target(dry, ARTIFACTS_CORE_BINDING_IOS_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_CORE_BINDING_IOS_OUTPUT_DIRS)
     if 'android' in targets or no_platform_target:
         clean_target(dry, ARTIFACTS_CORE_BINDING_ANDROID_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_CORE_BINDING_ANDROID_OUTPUT_DIRS)
 
 def clean_oaid_bindings(targets, dry):
     clean_target(dry, ARTIFACTS_OAID_BINDING_ANDROID_OUTPUT_DIR)
+    clean_artifacts_copy(dry, ARTIFACTS_COPY_OAID_BINDING_ANDROID_OUTPUT_DIRS)
 
 def clean_meta_referrer_bindings(targets, dry):
     clean_target(dry, ARTIFACTS_META_REFERRER_BINDING_ANDROID_OUTPUT_DIR)
+    clean_artifacts_copy(dry, ARTIFACTS_COPY_META_REFERRER_BINDING_ANDROID_OUTPUT_DIRS)
 
 def clean_google_lvl_bindings(targets, dry):
     clean_target(dry, ARTIFACTS_GOOGLE_LVL_BINDING_ANDROID_OUTPUT_DIR)
+    clean_artifacts_copy(dry, ARTIFACTS_COPY_GOOGLE_LVL_BINDING_ANDROID_OUTPUT_DIRS)
 
 def find_bin_obj_dirs_cmd(subdir=None):
     search_root = os.path.join(ROOT, subdir) if subdir else ROOT
     return ['find', search_root, '-type', 'd', '(', '-name', 'bin', '-o', '-name', 'obj', ')', '-prune']
+
+def find_files_cmd(subdir_list: list[str]):
+    search_roots = [os.path.join(ROOT, subdir) for subdir in subdir_list]
+    return ['find'] + search_roots + ['-type', 'f']
 
 def clean_target(dry, subdir=None):
     if dry:
@@ -305,6 +357,19 @@ def clean_target(dry, subdir=None):
     else:
         print('> rm -rf bin/ and obj/ directories under %s' % subdir)
         subprocess.run(find_bin_obj_dirs_cmd(subdir) + ['-exec', 'rm', '-rf', '{}', '+'])
+def clean_artifacts_copy(dry, subdir_list: list[str]):
+    if dry:
+        print('> dry-run: listing files under %s' % subdir_list)
+        subprocess.run(find_files_cmd(subdir_list) + ['-print'])
+        return
+    if which('trash'):
+        print('> trash directories: %s' % subdir_list)
+        for subdir in subdir_list:
+            subprocess.run(['trash', subdir])
+    else:
+        print('> rm -rf directories: %s' % subdir_list)
+        for subdir in subdir_list:
+            subprocess.run(['rm', '-rf', subdir])
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
