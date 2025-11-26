@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->
+    <AndroidLibrary Remove="libs\*.aar" />
+
+    <AndroidLibrary Include="libs\adjust-android-google-lvl.aar" Bind="false" />
+  </ItemGroup>
+
+</Project>

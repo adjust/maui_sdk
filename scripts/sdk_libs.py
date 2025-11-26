@@ -34,6 +34,10 @@ ANDROID_META_REFERRER_DIR = os.path.join(ANDROID_PLUGINS_ROOT, 'sdk-plugin-meta-
 ANDROID_META_REFERRER_BINDING_LIBS_DIR = os.path.join(
     ROOT, 'android', 'AdjustMetaReferrer.AndroidBinding', 'libs'
 )
+ANDROID_GOOGLE_LVL_DIR = os.path.join(ANDROID_PLUGINS_ROOT, 'sdk-plugin-google-lvl')
+ANDROID_GOOGLE_LVL_BINDING_LIBS_DIR = os.path.join(
+    ROOT, 'android', 'AdjustGoogleLVL.AndroidBinding', 'libs'
+)
 
 #IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk')
 IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk_dev')
@@ -213,11 +217,26 @@ def build_android_meta_referrer_aar(is_release):
         search_prefix=None,
     )
 
+def build_android_google_lvl_aar(is_release):
+    return _build_and_copy_aar_common(
+        is_release=is_release,
+        gradle_task_template=':plugins:sdk-plugin-google-lvl:adjustLvlPluginAar',
+        candidate_path_templates=[
+            os.path.join(ANDROID_GOOGLE_LVL_DIR, 'build', 'outputs', 'aar', 'sdk-plugin-google-lvl-release.aar'),
+            os.path.join(ANDROID_GOOGLE_LVL_DIR, 'build', 'libs', 'sdk-plugin-google-lvl.aar'),
+        ],
+        dest_path=os.path.join(ANDROID_GOOGLE_LVL_BINDING_LIBS_DIR, 'adjust-android-google-lvl.aar'),
+        search_dir=None,
+        search_prefix=None,
+    )
+
 def build_all(targets, is_release):
     if ('oaid' in targets) or ('all' in targets):
         build_android_oaid_aar(is_release)
     if ('meta_referrer' in targets) or ('all' in targets):
         build_android_meta_referrer_aar(is_release)
+    if ('google_lvl' in targets) or ('all' in targets):
+        build_android_google_lvl_aar(is_release)
     if ('test' in targets) or ('all' in targets):
         build_test(targets, is_release)
     if ('sdk' in targets) or ('all' in targets):
@@ -324,7 +343,7 @@ def main(argv=None):
     common.add_argument(
         'targets',
         nargs='*',
-        choices=['sdk', 'test', 'oaid', 'meta_referrer', 'android', 'ios', 'all'],
+        choices=['sdk', 'test', 'oaid', 'meta_referrer', 'google_lvl', 'android', 'ios', 'all'],
         help='Which targets (can specify multiple, default: all)'
     )
 

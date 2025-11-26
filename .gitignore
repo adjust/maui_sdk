@@ -195,4 +195,5 @@ android/TestLibrary.AndroidBinding/libs/test-library-debug.aar
 android/TestLibrary.AndroidBinding/libs/test-options-debug.aar
 android/AdjustOaid.AndroidBinding/libs/adjust-android-oaid.aar
 android/AdjustMetaReferrer.AndroidBinding/libs/adjust-android-meta-referrer.aar
+android/AdjustGoogleLVL.AndroidBinding/libs/adjust-android-google-lvl.aar
 artifacts_copy/

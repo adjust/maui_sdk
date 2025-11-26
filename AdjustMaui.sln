@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdjustMetaReferrer", "plugi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdjustMetaReferrer.AndroidBinding", "android\AdjustMetaReferrer.AndroidBinding\AdjustMetaReferrer.AndroidBinding.csproj", "{40E48730-80BC-47C4-A186-233BD1ADD16D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdjustGoogleLVL.AndroidBinding", "android\AdjustGoogleLVL.AndroidBinding\AdjustGoogleLVL.AndroidBinding.csproj", "{46018A31-3A06-4994-AC41-BFF08DA25233}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,10 @@ Global
 		{40E48730-80BC-47C4-A186-233BD1ADD16D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40E48730-80BC-47C4-A186-233BD1ADD16D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40E48730-80BC-47C4-A186-233BD1ADD16D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46018A31-3A06-4994-AC41-BFF08DA25233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46018A31-3A06-4994-AC41-BFF08DA25233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46018A31-3A06-4994-AC41-BFF08DA25233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46018A31-3A06-4994-AC41-BFF08DA25233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{670FB1D9-2A58-4EC9-92F0-D286263919D4} = {1E55B27C-D7BD-41D2-8552-D7408A89239B}
@@ -98,5 +104,6 @@ Global
 		{96185491-4B3E-4DB7-91BA-77FF72AB1BFC} = {641DC183-FF5A-42F1-BA89-6A97A3728DA3}
 		{3405A47E-6C1A-44EF-A292-761B9F907FC3} = {641DC183-FF5A-42F1-BA89-6A97A3728DA3}
 		{40E48730-80BC-47C4-A186-233BD1ADD16D} = {1E55B27C-D7BD-41D2-8552-D7408A89239B}
+		{46018A31-3A06-4994-AC41-BFF08DA25233} = {1E55B27C-D7BD-41D2-8552-D7408A89239B}
 	EndGlobalSection
 EndGlobal
