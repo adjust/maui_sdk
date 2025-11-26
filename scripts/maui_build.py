@@ -238,6 +238,7 @@ def main(argv=None):
     sub.add_parser('bindings', help='Build specified bindings', parents=[common])
     sub.add_parser('sdk', help='Build maui sdk', parents=[common])
     sub.add_parser('apps', help='Build maui apps', parents=[common])
+    sub.add_parser('all', help='Build all targets', parents=[common])
 
     args = parser.parse_args(argv)
 

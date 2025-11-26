@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Adjust.Maui.Sdk.Google.LVL</id>
+    <version>5.4.6</version>
+    <title>Adjust MAUI SDK Google LVL Plugin</title>
+    <authors>Adjust GmbH</authors>
+    <owners>Adjust GmbH</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/adjust/maui_sdk</projectUrl>
+    <iconUrl>https://raw.github.com/adjust/adjust_sdk/master/Resources/windows/gravatar.gif</iconUrl>
+    <icon>gravatar.jpg</icon>
+    <description>This is the Google LVL plugin for the MAUI SDK of Adjust. http://www.adjust.com</description>
+    <summary>This is the Google LVL plugin for the MAUI SDK of Adjust. http://www.adjust.com</summary>
+    <readme>README.md</readme>
+    <releaseNotes></releaseNotes>
+    <copyright></copyright>
+    <language></language>
+    <tags>adjust maui android ios measurement analytics google lvl</tags>
+    <dependencies>
+      <group targetFramework="net8.0-android34.0">
+        <dependency id="Adjust.Maui.Sdk" version="5.4.6" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="gravatar.jpg" target="" />
+    <file src="README.md" target="" />
+
+    <file src=".artifacts/AdjustGoogleLVL/bin/Release/net8.0-android/AdjustGoogleLVL.dll" target="lib/net8.0-android34.0/AdjustGoogleLVL.dll" />
+    <file src=".artifacts/AdjustGoogleLVL/bin/Release/net8.0-android/AdjustGoogleLVL.xml" target="lib/net8.0-android34.0/AdjustGoogleLVL.xml" />
+
+    <file src=".artifacts/AdjustGoogleLVL.AndroidBinding/bin/Release/net8.0-android/AdjustGoogleLVL.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustGoogleLVL.AndroidBinding.dll" />
+    <file src=".artifacts/AdjustGoogleLVL.AndroidBinding/bin/Release/net8.0-android/AdjustGoogleLVL.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustGoogleLVL.AndroidBinding.xml" />
+
+    <file src="android/AdjustGoogleLVL.AndroidBinding/libs/adjust-android-google-lvl.aar" target="lib/net8.0-android34.0/adjust-android-google-lvl.aar" />
+  </files>
+</package>
