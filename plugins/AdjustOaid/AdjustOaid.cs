@@ -13,15 +13,15 @@ public class AdjustOaid
     public static void readOaid() {
         Com.Adjust.Sdk.Oaid.AdjustOaid.ReadOaid(AppContext);
     }
-
+/*
     public static void getOaid(OnOaidReadListener listener) {
         Com.Adjust.Sdk.Oaid.AdjustOaid.GetOaid(AppContext,
             new OnOaidReadListenerAdapter(listener));
     }
-
+*/
     private static Android.Content.Context AppContext { get { return Android.App.Application.Context; } }
 }
-
+/*
 public interface OnOaidReadListener {
     void onOaidRead(string? oaid);
     void onFail(string? message);
@@ -39,3 +39,4 @@ internal class OnOaidReadListenerAdapter(OnOaidReadListener listener)
         listener.onFail(message);
     }
 }
+*/

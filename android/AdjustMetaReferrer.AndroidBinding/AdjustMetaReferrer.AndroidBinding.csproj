@@ -9,8 +9,7 @@
     <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->
     <AndroidLibrary Remove="libs\*.aar" />
 
-    <!-- Bind only the main SDK -->
-    <AndroidLibrary Include="libs\adjust-android-meta-referrer.aar" Bind="true" />
+    <AndroidLibrary Include="libs\adjust-android-meta-referrer.aar" Bind="false" />
   </ItemGroup>
 
 </Project>

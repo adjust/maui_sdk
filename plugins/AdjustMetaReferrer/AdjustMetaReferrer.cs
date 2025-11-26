@@ -2,6 +2,7 @@
 
 public class AdjustMetaReferrer
 {
+    /*
     public static void allowToReadMetaReferrer() {
         Com.Adjust.Sdk.Meta.AdjustMetaReferrer.ReadMetaReferrer(AppContext);
     }
@@ -18,8 +19,10 @@ public class AdjustMetaReferrer
     }
 
     private static Android.Content.Context AppContext { get { return Android.App.Application.Context; } }
+    */
 }
 
+/*
 public interface OnMetaInstallReferrerReadListener {
     void onInstallReferrerDetailsRead(MetaInstallReferrerDetails referrerDetails);
     void onFail(string? message);
@@ -48,3 +51,4 @@ internal class OnMetaInstallReferrerReadListenerAdapter(OnMetaInstallReferrerRea
         listener.onFail(message);
     }
 }
+*/
