@@ -34,15 +34,6 @@
     <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net8.0-android/AdjustOaid.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.dll" />
     <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net8.0-android/AdjustOaid.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.xml" />
 
-    <!-- Main OAID AAR - contains com.adjust.sdk.oaid classes needed for generated Java code -->
     <file src="android/AdjustOaid.AndroidBinding/libs/adjust-android-oaid.aar" target="lib/net8.0-android34.0/adjust-android-oaid.aar" />
-    <!-- MSA SDK dependency (already bundles Huawei HMS ads-identifier internally) -->
-    <!-- <file src="android/AdjustOaid.AndroidBinding/libs/oaid_sdk_2.0.0.aar" target="lib/net8.0-android34.0/oaid_sdk_2.0.0.aar" /> -->
-    <!-- <file src="android/AdjustOaid.AndroidBinding/libs/oaid_sdk_2.2.0.aar" target="lib/net8.0-android34.0/oaid_sdk_2.2.0.aar" /> -->
-    <!-- Huawei HMS ads-identifier dependency -->
-    <!-- DO NOT include ads-identifier AAR separately - MSA SDK 2.2.0+ bundles it and causes duplicate class errors
-    <file src="android/AdjustOaid.AndroidBinding/libs/ads-identifier-3.4.62.300.aar" target="lib/net8.0-android34.0/ads-identifier-3.4.62.300.aar" />
-    <file src="android/AdjustOaid.AndroidBinding/libs/ads-identifier-3.4.56.300.aar" target="lib/net8.0-android34.0/ads-identifier-3.4.56.300.aar" />
-    -->
   </files>
 </package>
