@@ -72,6 +72,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
+		<!-- <ProjectReference Include="..\plugins\AdjustOaid\AdjustOaid.csproj" /> -->
 		<AndroidResource Update="Platforms/Android/Resources/**/*.*">
 			<Link>$([System.String]::Copy('%(Identity)').Replace('Platforms\\Android\\','').Replace('Platforms/Android/',''))</Link>
 		</AndroidResource>

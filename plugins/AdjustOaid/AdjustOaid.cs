@@ -2,11 +2,7 @@
 
 public class AdjustOaid
 {
-    public static void allowToReadOaid() {
-        Com.Adjust.Sdk.Oaid.AdjustOaid.ReadOaid();
-    }
-
-    public static void doNotAllowToReadOaid() {
+    public static void DoNotReadOaid() {
         Com.Adjust.Sdk.Oaid.AdjustOaid.DoNotReadOaid();
     }
 

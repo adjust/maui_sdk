@@ -13,7 +13,14 @@
     <AndroidLibrary Include="libs\adjust-android-oaid.aar" Bind="true" />
 
     <!-- Include AARs but do not bind -->
+    <!-- DO NOT include ads-identifier AAR separately - it causes duplicate class errors
+    <AndroidLibrary Include="libs\ads-identifier-3.4.62.300.aar" Bind="false" />
     <AndroidLibrary Include="libs\ads-identifier-3.4.56.300.aar" Bind="false" />
+    -->
+    <!-- Include MSA SDK (already bundles Huawei HMS ads-identifier internally) -->
+    <!--
     <AndroidLibrary Include="libs\oaid_sdk_2.0.0.aar" Bind="false" />
+    <AndroidLibrary Include="libs\oaid_sdk_2.2.0.aar" Bind="false" />
+    -->
   </ItemGroup>
 </Project>
