@@ -6,6 +6,8 @@ import os
 import subprocess
 import sys
 import time
+import pty
+import select
 from shutil import which
 
 CORE_BINDING_ANDROID_NAME = 'AdjustSdk.AndroidBinding'
@@ -69,7 +71,7 @@ EXAMPLE_APP_CSPROJ = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAM
 EXAMPLE_APP_CSPROJ_NUGET = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}-Nuget.csproj')
 
 BINDINGS = ['test', 'core', 'oaid', 'meta_referrer', 'google_lvl']
-APPS = ['test', 'example']
+APPS = ['test', 'example', 'example-nuget']
 SDKS = ['core', 'oaid', 'meta_referrer', 'google_lvl']
 PLATFORMS = ['android', 'ios']
 
@@ -96,38 +98,91 @@ def run(cmd, retry_on_file_lock=True, max_retries=3):
     print('> ' + ' '.join(cmd))
 
     for attempt in range(max_retries):
-        # Run without capturing to preserve colors and real-time output
-        result = subprocess.run(cmd)
+        # Use a pseudo-terminal to preserve colors
+        master_fd, slave_fd = pty.openpty()
 
-        if result.returncode == 0:
+        try:
+            process = subprocess.Popen(
+                cmd,
+                stdout=slave_fd,
+                stderr=slave_fd,
+                close_fds=True
+            )
+
+            os.close(slave_fd)  # Close slave in parent process
+
+            # Capture output while displaying it in real-time
+            output_lines = []
+            while True:
+                try:
+                    # Check if there's data to read
+                    readable, _, _ = select.select([master_fd], [], [], 0.1)
+                    if readable:
+                        try:
+                            data = os.read(master_fd, 1024)
+                            if not data:
+                                break
+                            text = data.decode('utf-8', errors='replace')
+                            sys.stdout.write(text)
+                            sys.stdout.flush()
+                            output_lines.append(text)
+                        except OSError:
+                            break
+
+                    # Check if process has finished
+                    if process.poll() is not None:
+                        # Read any remaining data
+                        try:
+                            while True:
+                                data = os.read(master_fd, 1024)
+                                if not data:
+                                    break
+                                text = data.decode('utf-8', errors='replace')
+                                sys.stdout.write(text)
+                                sys.stdout.flush()
+                                output_lines.append(text)
+                        except OSError:
+                            pass
+                        break
+                except KeyboardInterrupt:
+                    process.terminate()
+                    raise
+
+            return_code = process.wait()
+        finally:
+            os.close(master_fd)
+
+        if return_code == 0:
             # Success
             return
 
-        # On failure, check if it's a file locking error by running with capture
-        if retry_on_file_lock and attempt < max_retries - 1:
-            # Re-run with capture to check error type (won't affect visible output since it already failed)
-            check_result = subprocess.run(cmd, capture_output=True, text=True)
-            error_output = check_result.stderr + check_result.stdout
+        # On failure, check if it's a file locking error
+        output = ''.join(output_lines)
+        is_file_lock_error = any(err in output for err in [
+            'is being used by another process',
+            'Renaming temporary file failed',
+            'No such file or directory',
+            'XARLP7024',
+            'XARLP7000'
+        ])
 
-            is_file_lock_error = any(err in error_output for err in [
-                'is being used by another process',
-                'Renaming temporary file failed',
-                'No such file or directory',
-                'XARLP7024',
-                'XARLP7000'
-            ])
-
-            if is_file_lock_error:
-                print(f'\n > File locking error detected (attempt {attempt + 1}/{max_retries}). Retrying...\n')
-                shutdown_build_server()
-                time.sleep(2)  # Wait for file handles to be released
-                continue
+        if retry_on_file_lock and is_file_lock_error and attempt < max_retries - 1:
+            print(f'\n > File locking error detected (attempt {attempt + 1}/{max_retries}). Retrying...\n')
+            shutdown_build_server()
+            time.sleep(2)  # Wait for file handles to be released
+            continue
 
         # Either not a file lock error, or we've exhausted retries
-        sys.exit(result.returncode)
+        sys.exit(return_code)
 
-def run_with_delay(cmd, delay=1.0):
+def build_with_delay(csproj, config, delay=1.0):
     """Run a command and add a delay afterwards to prevent race conditions"""
+    if config == 'both':
+        run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Debug'], delay)
+        run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Release'], delay)
+    else:
+        run_with_delay(['dotnet', 'build', csproj, '--configuration', config], delay)
+def run_with_delay(cmd, delay):
     run(cmd)
     time.sleep(delay)
 
@@ -153,60 +208,62 @@ def build_core_bindings(targets, config):
     no_platform_target = has_none(PLATFORMS, targets)
     if 'android' in targets or no_platform_target:
         print('> Building Android SDK Core binding')
-        run_with_delay(['dotnet', 'build', ANDROID_CORE_BINDING_CSPROJ, '--configuration', config])
+        build_with_delay(ANDROID_CORE_BINDING_CSPROJ, config)
     if 'ios' in targets or no_platform_target:
         print('> Building iOS SDK Core binding')
-        run_with_delay(['dotnet', 'build', IOS_CORE_BINDING_CSPROJ, '--configuration', config])
+        build_with_delay(IOS_CORE_BINDING_CSPROJ, config)
 def build_test_bindings(targets, config):
     no_platform_target = has_none(PLATFORMS, targets)
     if 'android' in targets or no_platform_target:
         print('> Building Android Test binding')
-        run_with_delay(['dotnet', 'build', ANDROID_TEST_BINDING_CSPROJ, '--configuration', config])
+        build_with_delay(ANDROID_TEST_BINDING_CSPROJ, config)
     if 'ios' in targets or no_platform_target:
         print('> Building iOS Test binding')
-        run_with_delay(['dotnet', 'build', IOS_TEST_BINDING_CSPROJ, '--configuration', config])
+        build_with_delay(IOS_TEST_BINDING_CSPROJ, config)
 def build_oaid_bindings(targets, config):
     print('> Building Android OAID binding')
-    run_with_delay(['dotnet', 'build', ANDROID_OAID_BINDING_CSPROJ, '--configuration', config])
+    build_with_delay(ANDROID_OAID_BINDING_CSPROJ, config)
 def build_meta_referrer_bindings(targets, config):
     print('> Building Android Meta Referrer binding')
-    run_with_delay(['dotnet', 'build', ANDROID_META_REFERRER_BINDING_CSPROJ, '--configuration', config])
+    build_with_delay(ANDROID_META_REFERRER_BINDING_CSPROJ, config)
 def build_google_lvl_bindings(targets, config):
     print('> Building Android Google LVL binding')
-    run_with_delay(['dotnet', 'build', ANDROID_GOOGLE_LVL_BINDING_CSPROJ, '--configuration', config])
+    build_with_delay(ANDROID_GOOGLE_LVL_BINDING_CSPROJ, config)
 
 def build_sdk(targets, config):
     shutdown_build_server()  # Start with clean state
     no_sdk_target = has_none(SDKS, targets)
     if 'core' in targets or no_sdk_target:
         print('> Building Core SDK')
-        run_with_delay(['dotnet', 'build', CORE_SDK_CSPROJ, '--configuration', config])
+        build_with_delay(CORE_SDK_CSPROJ, config)
     if 'oaid' in targets or no_sdk_target:
         print('> Building OAID SDK plugin')
-        run_with_delay(['dotnet', 'build', OAID_SDK_CSPROJ, '--configuration', config])
+        build_with_delay(OAID_SDK_CSPROJ, config)
     if 'meta_referrer' in targets or no_sdk_target:
         print('> Building Meta Referrer SDK plugin')
-        run_with_delay(['dotnet', 'build', META_REFERRER_SDK_CSPROJ, '--configuration', config])
+        build_with_delay(META_REFERRER_SDK_CSPROJ, config)
     if 'google_lvl' in targets or no_sdk_target:
         print('> Building Google LVL SDK plugin')
-        run_with_delay(['dotnet', 'build', GOOGLE_LVL_SDK_CSPROJ, '--configuration', config])
+        build_with_delay(GOOGLE_LVL_SDK_CSPROJ, config)
 
 def build_apps(targets, config):
     shutdown_build_server()  # Start with clean state
     no_app_target = has_none(APPS, targets)
     if 'example' in targets or no_app_target:
         build_example(targets, config)
+    if 'example-nuget' in targets or no_app_target:
+        build_example_nuget(targets, config)
     if 'test' in targets or no_app_target:
         build_test(config)
 def build_test(config):
     print('> Building Test App')
-    run_with_delay(['dotnet', 'build', TESTAPP_CSPROJ, '--configuration', config])
+    build_with_delay(TESTAPP_CSPROJ, config)
 def build_example(targets, config):
     print('> Building Example')
-    if 'nuget' in targets:
-        run_with_delay(['dotnet', 'build', EXAMPLE_APP_CSPROJ_NUGET, '--configuration', config])
-    else:
-        run_with_delay(['dotnet', 'build', EXAMPLE_APP_CSPROJ, '--configuration', config])
+    build_with_delay(EXAMPLE_APP_CSPROJ, config)
+def build_example_nuget(targets, config):
+    print('> Building Example Nuget')
+    build_with_delay(EXAMPLE_APP_CSPROJ_NUGET, config)
 
 def build_all(targets, config):
     build_bindings(targets, config)
@@ -215,12 +272,19 @@ def build_all(targets, config):
 
 def main(argv=None):
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument('--release', action='store_true', help='Build in Release (default: Debug)')
+    # Allow --config to accept "Debug", "Release", or "both"
+    common.add_argument(
+        '--config',
+        default='Debug',
+        choices=['Debug', 'Release', 'both'],
+        help='Build configuration ("Debug", "Release" or "both", default: Debug)'
+    )
+
     common.add_argument(
         'targets',
         nargs='*',
         choices=['bindings', 'sdk', 'apps',
-         'test', 'example', 'nuget',
+         'test', 'example', 'example-nuget',
          'android', 'ios',
           'core', 'oaid', 'meta_referrer', 'google_lvl'],
         help='Which targets (can specify multiple)'
@@ -243,7 +307,6 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     # Derive config and default targets
-    config = 'Release' if getattr(args, 'release', False) else 'Debug'
     targets = args.targets # if getattr(args, 'targets', None) else ['all']
 
     arg_found = False
@@ -254,16 +317,16 @@ def main(argv=None):
         clean(args.command, targets[:], args.dry)
         arg_found = True
     if args.command in ('bindings', 'clean_bindings'):
-        build_bindings(targets[:], config)
+        build_bindings(targets[:], args.config)
         arg_found = True
     if args.command in ('sdk', 'clean_sdk'):
-        build_sdk(targets[:], config)
+        build_sdk(targets[:], args.config)
         arg_found = True
     if args.command in ('apps', 'clean_apps'):
-        build_apps(targets[:], config)
+        build_apps(targets[:], args.config)
         arg_found = True
     if args.command in ('all', 'clean_all'):
-        build_all(targets[:], config)
+        build_all(targets[:], args.config)
         arg_found = True
 
     if not arg_found:
@@ -288,6 +351,7 @@ ARTIFACTS_META_REFERRER_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, META
 ARTIFACTS_GOOGLE_LVL_SDK_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, GOOGLE_LVL_SDK_NAME)
 ARTIFACTS_TEST_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, TEST_APP_NAME)
 ARTIFACTS_EXAMPLE_APP_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, EXAMPLE_APP_NAME)
+ARTIFACTS_EXAMPLE_APP_NUGET_OUTPUT_DIR = os.path.join(ARTIFACTS_OUTPUT_DIR, EXAMPLE_APP_NAME + '-Nuget')
 
 ARTIFACTS_COPY_BIN_DIR = os.path.join(ROOT, 'artifacts_copy', 'build_bin')
 ARTIFACTS_COPY_OBJ_DIR = os.path.join(ROOT, 'artifacts_copy', 'build_obj')
@@ -307,6 +371,7 @@ ARTIFACTS_COPY_META_REFERRER_SDK_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_
 ARTIFACTS_COPY_GOOGLE_LVL_SDK_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, GOOGLE_LVL_SDK_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, GOOGLE_LVL_SDK_NAME)]
 ARTIFACTS_COPY_TEST_APP_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, TEST_APP_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, TEST_APP_NAME)]
 ARTIFACTS_COPY_EXAMPLE_APP_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, EXAMPLE_APP_NAME), os.path.join(ARTIFACTS_COPY_OBJ_DIR, EXAMPLE_APP_NAME)]
+ARTIFACTS_COPY_EXAMPLE_APP_NUGET_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, EXAMPLE_APP_NAME + '-Nuget'), os.path.join(ARTIFACTS_COPY_OBJ_DIR, EXAMPLE_APP_NAME + '-Nuget')]
 
 def clean(command: str, targets: list[str], dry: bool):
     if command == 'clean_all' or (command == 'clean' and has_none(targets, ('bindings', 'sdk', 'apps'))):
@@ -355,6 +420,9 @@ def clean_apps(targets, dry):
     if 'example' in targets or no_app_target:
         clean_target(dry, ARTIFACTS_EXAMPLE_APP_OUTPUT_DIR)
         clean_artifacts_copy(dry, ARTIFACTS_COPY_EXAMPLE_APP_OUTPUT_DIRS)
+    if 'example-nuget' in targets or no_app_target:
+        clean_target(dry, ARTIFACTS_EXAMPLE_APP_NUGET_OUTPUT_DIR)
+        clean_artifacts_copy(dry, ARTIFACTS_COPY_EXAMPLE_APP_NUGET_OUTPUT_DIRS)
 
 def clean_test_bindings(targets, dry):
     no_platform_target = has_none(PLATFORMS, targets)

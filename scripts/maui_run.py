@@ -12,6 +12,7 @@ import json
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 EXAMPLE_CSProj = os.path.join(ROOT, 'ExampleApp', 'ExampleApp.csproj')
+EXAMPLE_NUGET_CSProj = os.path.join(ROOT, 'ExampleApp', 'ExampleApp-Nuget.csproj')
 
 TESTAPP_CSProj = os.path.join(ROOT, 'testApp', 'TestApp.csproj')
 
@@ -30,6 +31,11 @@ def run(cmd, cwd=None, check=True) -> int:
 def ensure_example_exists() -> None:
     if not os.path.isfile(EXAMPLE_CSProj):
         log('ExampleApp.csproj not found at: %s' % EXAMPLE_CSProj)
+        sys.exit(1)
+
+def ensure_example_nuget_exists() -> None:
+    if not os.path.isfile(EXAMPLE_NUGET_CSProj):
+        log('ExampleApp-Nuget.csproj not found at: %s' % EXAMPLE_NUGET_CSProj)
         sys.exit(1)
 
 def ensure_test_exists() -> None:
@@ -96,10 +102,13 @@ def resolve_csproj(app: str) -> str:
     if app == 'example':
         ensure_example_exists()
         return EXAMPLE_CSProj
+    if app == 'example-nuget':
+        ensure_example_nuget_exists()
+        return EXAMPLE_NUGET_CSProj
     if app == 'test':
         ensure_test_exists()
         return TESTAPP_CSProj
-    log("Unknown app: %s (expected 'test' or 'example')" % app)
+    log("Unknown app: %s (expected 'test', 'example' or 'example-nuget')" % app)
     sys.exit(1)
 
 
@@ -140,11 +149,11 @@ def parse_args(argv=None):
 
     # Run
     p_run_android = sub.add_parser('run-android', parents=[common], help='Boot emulator and run selected app on Android')
-    p_run_android.add_argument('app', choices=['test', 'example'], help='Which app to run')
+    p_run_android.add_argument('app', choices=['test', 'example', 'example-nuget'], help='Which app to run')
     p_run_android.add_argument('--avd', default=os.environ.get('ANDROID_AVD', 'Pixel_5_API_34'), help='Android AVD name')
 
     p_run_ios = sub.add_parser('run-ios', parents=[common], help='Boot simulator and run selected app on iOS simulator')
-    p_run_ios.add_argument('app', choices=['test', 'example'], help='Which app to run')
+    p_run_ios.add_argument('app', choices=['test', 'example', 'example-nuget'], help='Which app to run')
     p_run_ios.add_argument('--ios-sim', default=os.environ.get('IOS_SIM', 'iPhone 15'), help='iOS Simulator name')
 
     # List devices
