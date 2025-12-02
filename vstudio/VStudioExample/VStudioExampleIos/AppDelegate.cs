@@ -1,5 +1,7 @@
 ﻿namespace VStudioExampleIos;
 
+using AdjustSdk;
+
 [Register ("AppDelegate")]
 public class AppDelegate : UIApplicationDelegate {
 	public override UIWindow? Window {
@@ -9,8 +11,10 @@ public class AppDelegate : UIApplicationDelegate {
 
 	public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
 	{
-		// create a new window instance based on the screen size
-		Window = new UIWindow (UIScreen.MainScreen.Bounds);
+        Adjust.InitSdk(new AdjustConfig("abcdef123456", AdjustEnvironment.Sandbox));
+
+        // create a new window instance based on the screen size
+        Window = new UIWindow (UIScreen.MainScreen.Bounds);
 
 		// create a UIViewController with a single UILabel
 		var vc = new UIViewController ();
