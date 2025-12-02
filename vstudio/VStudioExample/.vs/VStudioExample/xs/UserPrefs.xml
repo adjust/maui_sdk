@@ -1,0 +1,8 @@
+﻿<Properties StartupConfiguration="{1897F270-05FA-45D7-90F9-A026EC215F24}|Default">
+  <DisabledProjects>
+    <String>VStudioExample/VStudioExample.csproj</String>
+  </DisabledProjects>
+  <MonoDevelop.Ide.ItemProperties.VStudioExampleAndroid FirstBuild="True" PreferredExecutionTarget="Android.Pixel_5_API_25" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.VStudioExampleIos FirstBuild="True" />
+</Properties>
