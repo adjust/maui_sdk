@@ -1,7 +1,9 @@
 ﻿namespace ExampleApp;
 
 using AdjustSdk;
-
+#if ANDROID
+    using AdjustOaid;
+#endif
 public partial class MainPage : ContentPage
 {
 	int count = 0;
@@ -17,6 +19,10 @@ public partial class MainPage : ContentPage
 
 	private void OnCounterClicked(object sender, EventArgs e)
 	{
+#if ANDROID
+		AdjustOaid.readOaid();
+		return;
+#endif
 		var adjustEvent = new AdjustEvent("g3mfiw");
 		Adjust.TrackEvent(adjustEvent);
 

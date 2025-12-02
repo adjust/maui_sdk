@@ -62,8 +62,8 @@
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
 		<PackageReference Include="Xamarin.Android.Binding.InstallReferrer" Version="2.2.0" />
-		<!-- <PackageReference Include="Adjust.Maui.Sdk.Oaid" Version="5.4.6" /> -->
-		<!-- <PackageReference Include="Adjust.Maui.Sdk.Meta.Referrer" Version="5.4.6" /> -->
-		<!-- <PackageReference Include="Adjust.Maui.Sdk.Google.Lvl" Version="5.4.6" /> -->
+		<PackageReference Include="Adjust.Maui.Sdk.Oaid" Version="5.4.6" />
+		<PackageReference Include="Adjust.Maui.Sdk.Meta.Referrer" Version="5.4.6" />
+		<PackageReference Include="Adjust.Maui.Sdk.Google.Lvl" Version="5.4.6" />
 	</ItemGroup>
 </Project>
