@@ -73,6 +73,9 @@
 
 	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
 		<!-- <ProjectReference Include="..\plugins\AdjustOaid\AdjustOaid.csproj" /> -->
+		<ProjectReference Include="..\plugins\AdjustOaid\AdjustOaid.csproj" />
+		<ProjectReference Include="..\plugins\AdjustMetaReferrer\AdjustMetaReferrer.csproj" />
+		<ProjectReference Include="..\plugins\AdjustGoogleLvl\AdjustGoogleLvl.csproj" />
 		<AndroidResource Update="Platforms/Android/Resources/**/*.*">
 			<Link>$([System.String]::Copy('%(Identity)').Replace('Platforms\\Android\\','').Replace('Platforms/Android/',''))</Link>
 		</AndroidResource>
