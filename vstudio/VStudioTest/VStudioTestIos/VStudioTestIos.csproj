@@ -14,4 +14,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <CreatePackage>false</CreatePackage>
   </PropertyGroup>
+    <ItemGroup>
+    <ProjectReference Include="..\..\..\ios\TestLibrary.iOSBinding\TestLibrary.iOSBinding.csproj" />
+    <Compile Include="..\..\..\testApp\TestLibraryBridge.cs" Link="TestLibraryBridge.cs" />
+    <Compile Include="..\..\..\testApp\Platforms\iOS\TestLibraryBridge.cs" Link="TestLibraryBridge.iOS.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Adjust.Maui.Sdk" Version="5.4.6" />
+  </ItemGroup>
 </Project>
