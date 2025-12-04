@@ -278,6 +278,11 @@ public partial class TestLibraryBridge
             adjustConfig.IsIdfaReadingEnabled = false;
         }
 
+        if (FirstBoolValue(parameters, "allowIdfvReading") is false)
+        {
+            adjustConfig.IsIdfvReadingEnabled = false;
+        }
+
         if (FirstBoolValue(parameters, "allowAdServicesInfoReading") is false)
         {
             adjustConfig.IsAdServicesEnabled = false;
