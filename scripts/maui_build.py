@@ -70,9 +70,9 @@ EXAMPLE_APP_SUBMODULE_ROOT = os.path.join(ROOT, 'ExampleApp')
 EXAMPLE_APP_CSPROJ = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}.csproj')
 EXAMPLE_APP_CSPROJ_NUGET = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}-Nuget.csproj')
 
-BINDINGS = ['test', 'core', 'oaid', 'meta_referrer', 'google_lvl']
+BINDINGS = ['test', 'core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins']
 APPS = ['test', 'example', 'example-nuget']
-SDKS = ['core', 'oaid', 'meta_referrer', 'google_lvl']
+SDKS = ['core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins']
 PLATFORMS = ['android', 'ios']
 
 def removing(str_list: list[str], *args):
@@ -195,13 +195,13 @@ def build_bindings(targets, config):
     if 'test' in targets or no_bindings_target:
         print('> Build Test bindings')
         build_test_bindings(targets, config)
-    if 'oaid' in targets or no_bindings_target:
+    if 'oaid' in targets or 'plugins' in targets or no_bindings_target:
         print('> Build OAID bindings')
         build_oaid_bindings(targets, config)
-    if 'meta_referrer' in targets or no_bindings_target:
+    if 'meta_referrer' in targets or 'plugins' in targets or no_bindings_target:
         print('> Build Meta Referrer bindings')
         build_meta_referrer_bindings(targets, config)
-    if 'google_lvl' in targets or no_bindings_target:
+    if 'google_lvl' in targets or 'plugins' in targets or no_bindings_target:
         print('> Build Google LVL bindings')
         build_google_lvl_bindings(targets, config)
 def build_core_bindings(targets, config):
@@ -236,13 +236,13 @@ def build_sdk(targets, config):
     if 'core' in targets or no_sdk_target:
         print('> Building Core SDK')
         build_with_delay(CORE_SDK_CSPROJ, config)
-    if 'oaid' in targets or no_sdk_target:
+    if 'oaid' in targets or 'plugins' in targets or no_sdk_target:
         print('> Building OAID SDK plugin')
         build_with_delay(OAID_SDK_CSPROJ, config)
-    if 'meta_referrer' in targets or no_sdk_target:
+    if 'meta_referrer' in targets or 'plugins' in targets or no_sdk_target:
         print('> Building Meta Referrer SDK plugin')
         build_with_delay(META_REFERRER_SDK_CSPROJ, config)
-    if 'google_lvl' in targets or no_sdk_target:
+    if 'google_lvl' in targets or 'plugins' in targets or no_sdk_target:
         print('> Building Google LVL SDK plugin')
         build_with_delay(GOOGLE_LVL_SDK_CSPROJ, config)
 
@@ -286,7 +286,7 @@ def main(argv=None):
         choices=['bindings', 'sdk', 'apps',
          'test', 'example', 'example-nuget',
          'android', 'ios',
-          'core', 'oaid', 'meta_referrer', 'google_lvl'],
+          'core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins'],
         help='Which targets (can specify multiple)'
     )
     common.add_argument('--dry', action='store_true', default=False, help='Perform a dry run (list bin/obj dirs only)')
