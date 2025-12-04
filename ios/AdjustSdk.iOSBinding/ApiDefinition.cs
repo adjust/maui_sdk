@@ -509,6 +509,10 @@ namespace AdjustSdk.iOSBinding {
 		[Export ("enableFirstSessionDelay")]
 		void EnableFirstSessionDelay ();
 
+		// - (void)disableAppTrackingTransparencyUsage;
+		[Export ("disableAppTrackingTransparencyUsage")]
+		void DisableAppTrackingTransparencyUsage ();
+
 		// 531
 		// -(void)setUrlStrategy:(NSArray * _Nullable)urlStrategyDomains useSubdomains:(BOOL)useSubdomains isDataResidency:(BOOL)isDataResidency;
 		[Export ("setUrlStrategy:useSubdomains:isDataResidency:")]

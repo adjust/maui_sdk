@@ -9,6 +9,7 @@ public partial record AdjustConfig
     public bool? IsIdfvReadingEnabled { get; set; }
     public bool? IsSkanAttributionEnabled { get; set; }
     public bool? IsLinkMeEnabled { get; set; }
+    public bool? IsAppTrackingTransparencyUsageEnabled { get; set; }
     public int? AttConsentWaitingInterval { get; set; }
     public Action<Dictionary<string, string>>? SkanUpdatedDelegate { get; set; }
 
@@ -60,6 +61,11 @@ public partial record AdjustConfig
         if (IsFirstSessionDelayEnabled is true)
         {
             nativeAdjustConfig.EnableFirstSessionDelay();
+        }
+
+        if (IsAppTrackingTransparencyUsageEnabled is false)
+        {
+            nativeAdjustConfig.DisableAppTrackingTransparencyUsage();
         }
 
         if (IsCostDataInAttributionEnabled is true)

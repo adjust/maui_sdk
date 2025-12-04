@@ -304,6 +304,11 @@ public partial class TestLibraryBridge
                 SendInfoToServer(localBasePath);
             };
         }
+
+        if (FirstBoolValue(parameters, "allowAttUsage") is false)
+        {
+            adjustConfig.IsAppTrackingTransparencyUsageEnabled = false;
+        }
 #endif
         if (parameters.ContainsKey("attributionCallbackSendAll"))
         {
