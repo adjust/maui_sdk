@@ -38,8 +38,8 @@ public record class AdjustPlayStoreSubscription(
 
         if (PurchaseTime is long purchaseTimeValue)
         {
-            nativeAdjustPlayStoreSubscription.SetPurchaseTime(purchaseTimeValue);
-            //nativeAdjustPlayStoreSubscription.PurchaseTime = purchaseTimeValue;
+            //nativeAdjustPlayStoreSubscription.SetPurchaseTime(purchaseTimeValue);
+            nativeAdjustPlayStoreSubscription.PurchaseTime = purchaseTimeValue;
         }
 
         AdjustUtil.IterateTwoPairList(innerCallbackParameters,
