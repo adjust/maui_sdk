@@ -9,7 +9,6 @@ import sys
 import time
 import signal
 
-
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 ANDROID_SUBMODULE_ROOT = os.path.join(ROOT, 'android_sdk', 'Adjust')
 ANDROID_GRADLEW = os.path.join(ANDROID_SUBMODULE_ROOT, 'gradlew')
@@ -44,6 +43,8 @@ IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk_dev')
 IOS_BINDING_DIR = os.path.join(ROOT, 'iOs', 'AdjustSdk.iOSBinding')
 IOS_TEST_BINDING_DIR = os.path.join(ROOT, 'iOs', 'TestLibrary.iOSBinding')
 
+PLATFORMS = ['android', 'ios']
+SDKS = ['core', 'oaid', 'meta_referrer', 'google_lvl', 'test', 'plugins']
 
 def run(cmd, cwd=None, env=None, check=True):
     print('> ' + ' '.join(cmd))
@@ -75,7 +76,6 @@ def ensure_paths():
         os.makedirs(IOS_TEST_BINDING_DIR, exist_ok=True)
 
 def _build_and_copy_aar_common(
-    is_release,
     gradle_task_template,
     candidate_path_templates,
     dest_path,
@@ -92,8 +92,8 @@ def _build_and_copy_aar_common(
     """
     ensure_paths()
 
-    variant_cap = 'Release' if is_release else 'Debug'
-    variant_lower = 'release' if is_release else 'debug'
+    variant_cap = 'Release'
+    variant_lower = 'release'
 
     # Ensure gradlew is executable
     try:
@@ -143,9 +143,8 @@ def _build_and_copy_aar_common(
     return final_dest
 
 
-def build_android_sdk(is_release):
+def build_android_core():
     return _build_and_copy_aar_common(
-        is_release=is_release,
         gradle_task_template=':sdk-core:adjustCoreAar{Variant}',
         candidate_path_templates=[
             os.path.join(ANDROID_SDK_CORE_DIR, 'build', 'libs', 'adjust-sdk-{variant}.aar'),
@@ -157,35 +156,32 @@ def build_android_sdk(is_release):
     )
 
 
-def build_android_test_library_aar(is_release):
+def build_android_test_library():
     return _build_and_copy_aar_common(
-        is_release=is_release,
         gradle_task_template=':tests:test-library:adjustTestLibraryAar{Variant}',
         candidate_path_templates=[
             os.path.join(ANDROID_TEST_LIBRARY_DIR, 'build', 'libs', 'test-library-{variant}.aar'),
             os.path.join(ANDROID_TEST_LIBRARY_DIR, 'build', 'outputs', 'aar', 'test-library-{variant}.aar'),
         ],
-        dest_path=os.path.join(ANDROID_TEST_BINDING_LIBS_DIR, 'test-library-{variant}.aar'),
+        dest_path=os.path.join(ANDROID_TEST_BINDING_LIBS_DIR, 'test-library.aar'),
         search_dir=None,
         search_prefix=None,
     )
 
 
-def build_android_test_options_aar(is_release):
+def build_android_test_options():
     return _build_and_copy_aar_common(
-        is_release=is_release,
         gradle_task_template=':tests:test-options:assemble{Variant}',
         candidate_path_templates=[
             os.path.join(ANDROID_TEST_OPTIONS_DIR, 'build', 'outputs', 'aar', 'test-options-{variant}.aar'),
         ],
-        dest_path=os.path.join(ANDROID_TEST_BINDING_LIBS_DIR, 'test-options-{variant}.aar'),
+        dest_path=os.path.join(ANDROID_TEST_BINDING_LIBS_DIR, 'test-options.aar'),
         search_dir=os.path.join(ANDROID_TEST_OPTIONS_DIR, 'build', 'outputs', 'aar'),
         search_prefix='test-options-'
     )
 
-def build_android_oaid_aar(is_release):
+def build_android_oaid():
     return _build_and_copy_aar_common(
-        is_release=is_release,
         # OAID module defines a single copy task that always depends on assembleRelease.
         # There is no variant-suffixed task (e.g., ...AarDebug), so call the fixed task.
         gradle_task_template=':plugins:sdk-plugin-oaid:adjustOaidAndroidAar',
@@ -200,9 +196,8 @@ def build_android_oaid_aar(is_release):
         search_prefix=None,
     )
 
-def build_android_meta_referrer_aar(is_release):
+def build_android_meta_referrer():
     return _build_and_copy_aar_common(
-        is_release=is_release,
         # Meta Referrer module defines a single copy task that always depends on assembleRelease.
         # There is no variant-suffixed task (e.g., ...AarDebug), so call the fixed task.
         gradle_task_template=':plugins:sdk-plugin-meta-referrer:adjustMetaReferrerPluginAar',
@@ -217,9 +212,8 @@ def build_android_meta_referrer_aar(is_release):
         search_prefix=None,
     )
 
-def build_android_google_lvl_aar(is_release):
+def build_android_google_lvl():
     return _build_and_copy_aar_common(
-        is_release=is_release,
         gradle_task_template=':plugins:sdk-plugin-google-lvl:adjustLvlPluginAar',
         candidate_path_templates=[
             os.path.join(ANDROID_GOOGLE_LVL_DIR, 'build', 'outputs', 'aar', 'sdk-plugin-google-lvl-release.aar'),
@@ -230,30 +224,45 @@ def build_android_google_lvl_aar(is_release):
         search_prefix=None,
     )
 
-def build_all(targets, is_release):
-    if ('oaid' in targets) or ('all' in targets):
-        build_android_oaid_aar(is_release)
-    if ('meta_referrer' in targets) or ('all' in targets):
-        build_android_meta_referrer_aar(is_release)
-    if ('google_lvl' in targets) or ('all' in targets):
-        build_android_google_lvl_aar(is_release)
-    if ('test' in targets) or ('all' in targets):
-        build_test(targets, is_release)
-    if ('sdk' in targets) or ('all' in targets):
-        build_sdk(targets, is_release)
+def has_none(from_list: list[str], in_list: list[str]) -> bool:
+    return not any(arg in in_list for arg in from_list)
 
-def build_sdk(targets, is_release):
-    print('build_sdk targets: %s' % targets)
-    if ('android' in targets) or ('all' in targets):
-        build_android_sdk(is_release)
-    if ('ios' in targets) or ('all' in targets):
-        build_ios_sdk_scripts(is_release)
+def build_libs(targets):
+    no_sdk_target = has_none(SDKS, targets)
+    if 'core' in targets or no_sdk_target:
+        print('> Building Core SDK')
+        build_core(targets)
+    if 'oaid' in targets or 'plugins' in targets or no_sdk_target:
+        print('> Building OAID SDK plugin')
+        build_android_oaid()
+    if 'meta_referrer' in targets or 'plugins' in targets or no_sdk_target:
+        print('> Building Meta Referrer SDK plugin')
+        build_android_meta_referrer()
+    if 'google_lvl' in targets or 'plugins' in targets or no_sdk_target:
+        print('> Building Google LVL SDK plugin')
+        build_android_google_lvl()
+    if 'test' in targets or no_sdk_target:
+        print('> Building Test Library')
+        build_test(targets)
 
-def build_test(targets, is_release):
-    if ('android' in targets) or ('all' in targets):
-        build_android_test_library_aar(is_release)
-        build_android_test_options_aar(is_release)
-    if ('ios' in targets) or ('all' in targets):
+def build_core(targets):
+    no_platform_target = has_none(PLATFORMS, targets)
+    if 'android' in targets or no_platform_target:
+        print('> Building Android Core SDK')
+        build_android_core()
+    if 'ios' in targets or no_platform_target:
+        print('> Building iOS Core SDK')
+        build_ios_core_scripts()
+
+def build_test(targets):
+    no_platform_target = has_none(PLATFORMS, targets)
+    if 'android' in targets or no_platform_target:
+        print('> Building Android Test Library')
+        build_android_test_library()
+        print('> Building Android Test Options')
+        build_android_test_options()
+    if 'ios' in targets or no_platform_target:
+        print('> Building iOS Test Library')
         build_ios_test_library_scripts()
 
 def build_ios_test_library_scripts():
@@ -280,7 +289,7 @@ def build_ios_test_library_scripts():
     static_test_library_framework = os.path.join(
         IOS_SDK_ROOT,
         'sdk_distribution',
-        'test-static-framework',
+        'test-static-framework-simulator',
         'AdjustTestLibrary.framework'
     )
 
@@ -295,7 +304,7 @@ def build_ios_test_library_scripts():
     shutil.copytree(static_test_library_framework, dest_test_library_framework)
     print('Copied Test Library Framework to %s' % dest_test_library_framework)
 
-def build_ios_sdk_scripts(is_release):
+def build_ios_core_scripts():
     """Build AdjustSdk.xcframework using repo-provided bash scripts.
 
     Uses ios_sdk/scripts/build_frameworks.sh with dynamic xcframeworks for iOS + tvOS.
@@ -311,7 +320,7 @@ def build_ios_sdk_scripts(is_release):
     print('Before build_frameworks.sh')
     env = os.environ.copy()
     env['SDK_CODE_SIGN_IDENTITY'] = '-'
-    code = run(['bash', './scripts/build_frameworks.sh', '-xd', '-ios', '-tv'], cwd=IOS_SDK_ROOT, env=env, check=False)
+    code = run(['bash', './scripts/build_frameworks.sh', '-xd', '-ios'], cwd=IOS_SDK_ROOT, env=env, check=False)
     print('After build_frameworks.sh (exit code: %s)' % code)
 
     dynamic_out = os.path.join(
@@ -335,38 +344,28 @@ def build_ios_sdk_scripts(is_release):
     shutil.copytree(produced_xcframework, dest_xcframework)
     print('Copied XCFramework to %s' % dest_xcframework)
 
-
-
 def main(argv=None):
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument('--release', action='store_true', help='Build in Release (default: Debug)')
+
     common.add_argument(
         'targets',
         nargs='*',
-        choices=['sdk', 'test', 'oaid', 'meta_referrer', 'google_lvl', 'android', 'ios', 'all'],
-        help='Which targets (can specify multiple, default: all)'
+        choices= SDKS + PLATFORMS ,
+        help='Which targets (can specify multiple)'
     )
 
     parser = argparse.ArgumentParser(description='Build SDK libraries for MAUI bindings')
     sub = parser.add_subparsers(dest='command')
     sub.add_parser('build', help='Build specified targets', parents=[common])
-    #sub.add_parser('clean', help='Clean build artifacts (bin/obj dirs)', parents=[common])
-    #sub.add_parser('clean_build', help='Clean and build targets', parents=[common])
 
     args = parser.parse_args(argv)
 
-    targets = args.targets if getattr(args, 'targets', None) else ['all']
+    targets = args.targets
 
     arg_found = False
 
-#    if args.command in ('clean', 'clean_bindings', 'clean_build'):
-#        clean(args.dry)
-#        arg_found = True
-#    if args.command in ('bindings', 'clean_bindings'):
-#        build_bindings(targets, config)
-#        arg_found = True
-    if args.command in ('build', 'clean_build'):
-        build_all(targets, args.release)
+    if args.command in ('build'):
+        build_libs(targets)
         arg_found = True
 
     if not arg_found:
