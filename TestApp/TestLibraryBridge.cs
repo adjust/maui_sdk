@@ -196,7 +196,7 @@ public partial class TestLibraryBridge
 
         AdjustConfig adjustConfig = new (appTokenValid, environmentValid);
 
-        AdjustLogLevel? adjustLogLevel = FirstStringValue(parameters, "appToken") switch
+        AdjustLogLevel? adjustLogLevel = FirstStringValue(parameters, "logLevel") switch
         {
             "verbose" => AdjustLogLevel.VERBOSE,
             "debug" => AdjustLogLevel.DEBUG,
@@ -210,8 +210,6 @@ public partial class TestLibraryBridge
         {
             adjustConfig.LogLevel = adjustLogLevel;
         }
-
-        adjustConfig.LogLevel = AdjustLogLevel.VERBOSE;
 
         // sdk prefix not tested from non-natives
 
