@@ -1,5 +1,9 @@
 using System.Text.Json;
 using AdjustSdk;
+#if IOS
+using UIKit;
+using Foundation;
+#endif
 
 public partial class TestLibraryBridge
 {
@@ -194,6 +198,17 @@ public partial class TestLibraryBridge
             return null;
         }
 
+        #if IOS
+
+        UIPasteboard pasteboard = UIPasteboard.General;
+        pasteboard.Url = null;
+        if (FirstStringValue(parameters, "pasteboard") is string pasteboardContent)
+        {
+            pasteboard.Url = new NSUrl(pasteboardContent);
+        }
+
+        #endif
+
         AdjustConfig adjustConfig = new (appTokenValid, environmentValid);
 
         AdjustLogLevel? adjustLogLevel = FirstStringValue(parameters, "logLevel") switch
@@ -312,6 +327,12 @@ public partial class TestLibraryBridge
         {
             adjustConfig.IsAppTrackingTransparencyUsageEnabled = false;
         }
+
+        if (FirstBoolValue(parameters, "checkPasteboard") is true)
+        {
+            adjustConfig.IsLinkMeEnabled = true;
+        }
+
 #endif
         if (parameters.ContainsKey("attributionCallbackSendAll"))
         {
