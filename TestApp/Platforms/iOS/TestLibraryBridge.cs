@@ -115,6 +115,25 @@ public partial class TestLibraryBridge
             _ => null
         };
     }
+#region Commands
+    private partial void IdfaGetter(Dictionary<string, List<string>> parameters)
+    {
+        Adjust.GetIdfa(idfa =>
+        {
+            testLibrary.AddInfoToSend("idfa", idfa);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+
+    private partial void IdfvGetter(Dictionary<string, List<string>> parameters)
+    {
+        Adjust.GetIdfv(idfv =>
+        {
+            testLibrary.AddInfoToSend("idfv", idfv);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+#endregion Commands
 }
 
 internal class CommandDelegate(TestLibraryBridge testLibraryBridge) :

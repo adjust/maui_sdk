@@ -18,6 +18,12 @@ public partial class TestLibraryBridge
     private partial void AddInfoToSend(string key, string value);
     private partial void SetInfoToServer(IDictionary<string, string>? infoToSend);
     private partial void SendInfoToServer(string? extraPath);
+    #if ANDROID
+    private partial void PlayStoreKidsComplianceInDelay(Dictionary<string, List<string>> parameters);
+    #elif IOS
+    private partial void IdfaGetter(Dictionary<string, List<string>> parameters);
+    private partial void IdfvGetter(Dictionary<string, List<string>> parameters);
+    #endif
 
 #region Commands
     internal void ExecuteCommon(string className, string methodName, string jsonParameters)
@@ -58,12 +64,16 @@ public partial class TestLibraryBridge
             case "verifyPurchase": VerifyPurchase(parameters); break;
             case "processDeeplink": ProcessDeeplink(parameters); break;
             case "attributionGetter": AttributionGetter(parameters); break;
+            case "adidGetter": AdidGetter(parameters); break;
             case "verifyTrack": VerifyTrack(parameters); break;
             case "endFirstSessionDelay": EndFirstSessionDelay(parameters); break;
             case "coppaComplianceInDelay": CoppaComplianceInDelay(parameters); break;
             case "externalDeviceIdInDelay": ExternalDeviceIdInDelay(parameters); break;
             #if ANDROID
             case "playStoreKidsComplianceInDelay": PlayStoreKidsComplianceInDelay(parameters); break;
+            #elif IOS
+            case "idfaGetter": IdfaGetter(parameters); break;
+            case "idfvGetter": IdfvGetter(parameters); break;
             #endif
         }
     }
@@ -770,6 +780,15 @@ public partial class TestLibraryBridge
         Adjust.GetAttribution(attributionCallback(currentExtraPath));
     }
 
+    private void AdidGetter(Dictionary<string, List<string>> parameters)
+    {
+        Adjust.GetAdid(adid =>
+        {
+            testLibrary.AddInfoToSend("adid", adid);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+
     private void VerifyTrack(Dictionary<string, List<string>> parameters)
     {
         AdjustEvent adjustEvent = EventNative(parameters);
@@ -807,20 +826,6 @@ public partial class TestLibraryBridge
         }
     }
 
-#if ANDROID
-    private void PlayStoreKidsComplianceInDelay(Dictionary<string, List<string>> parameters)
-    {
-        if (FirstBoolValue(parameters, "isEnabled") is true)
-        {
-            Adjust.EnablePlayStoreKidsComplianceInDelay();
-        }
-
-        if (FirstBoolValue(parameters, "isEnabled") is false)
-        {
-            Adjust.DisablePlayStoreKidsComplianceInDelay();
-        }
-    }
-#endif
     #endregion
 
     private Action<AdjustPurchaseVerificationResult> VerificationResultCallback(

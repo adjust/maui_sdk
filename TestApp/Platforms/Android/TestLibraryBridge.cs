@@ -95,6 +95,21 @@ public partial class TestLibraryBridge
     {
         return jsonResponse?.ToString();
     }
+
+#region Commands
+    private partial void PlayStoreKidsComplianceInDelay(Dictionary<string, List<string>> parameters)
+    {
+        if (FirstBoolValue(parameters, "isEnabled") is true)
+        {
+            Adjust.EnablePlayStoreKidsComplianceInDelay();
+        }
+
+        if (FirstBoolValue(parameters, "isEnabled") is false)
+        {
+            Adjust.DisablePlayStoreKidsComplianceInDelay();
+        }
+    }
+#endregion Commands
 }
 
 internal class CommandJsonListener(TestLibraryBridge testLibraryBridge) :
