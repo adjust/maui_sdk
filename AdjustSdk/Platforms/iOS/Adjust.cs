@@ -116,6 +116,13 @@ public partial class Adjust
         });
     }
 
+    public static partial void GetAdidWithTimeout(long timeout, Action<string?> callback)
+    {
+        AdjustSdk.iOSBinding.Adjust.AdidWithTimeout(timeout, (string? adid) =>
+        {
+            callback(adid);
+        });
+
     public static partial void GetAttribution(Action<AdjustAttribution> callback)
     {
         AdjustSdk.iOSBinding.Adjust.AttributionWithCompletionHandler(

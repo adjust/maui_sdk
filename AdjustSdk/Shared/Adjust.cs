@@ -42,6 +42,8 @@ public partial class Adjust
 
     public static partial void GetAdid(Action<string> callback);
 
+    public static partial void GetAdidWithTimeout(long timeout, Action<string?> callback);
+
     public static partial void GetAttribution(Action<AdjustAttribution> callback);
 
     public static partial void GetSdkVersion(Action<string> callback);

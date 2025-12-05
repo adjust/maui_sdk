@@ -104,6 +104,11 @@ public partial class Adjust
         Com.Adjust.Sdk.Adjust.GetAdid(new OnAdidReadListenerAdapter(callback));
     }
 
+    public static partial void GetAdidWithTimeout(long timeout, Action<string?> callback)
+    {
+        Com.Adjust.Sdk.Adjust.GetAdidWithTimeout(AppContext, timeout, new OnAdidReadListenerAdapterNullable(callback));
+    }
+
     public static partial void GetAttribution(Action<AdjustAttribution> callback)
     {
         Com.Adjust.Sdk.Adjust.GetAttribution(new OnAttributionReadListenerAdapter(callback));

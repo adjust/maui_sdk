@@ -14,6 +14,15 @@ internal class OnAdidReadListenerAdapter(Action<string> AdidCallback)
     }
 }
 
+internal class OnAdidReadListenerAdapterNullable(Action<string> AdidCallback)
+    : Java.Lang.Object, Com.Adjust.Sdk.IOnAdidReadListener
+{
+    public void OnAdidRead(string? adid)
+    {
+        AdidCallback.Invoke(adid);
+    }
+}
+
 internal class OnAttributionReadListenerAdapter(Action<AdjustAttribution> attributionCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnAttributionReadListener
 {

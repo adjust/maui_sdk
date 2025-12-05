@@ -65,6 +65,7 @@ public partial class TestLibraryBridge
             case "processDeeplink": ProcessDeeplink(parameters); break;
             case "attributionGetter": AttributionGetter(parameters); break;
             case "adidGetter": AdidGetter(parameters); break;
+            case "adidGetterWithTimeout": AdidGetterWithTimeout(parameters); break;
             case "verifyTrack": VerifyTrack(parameters); break;
             case "endFirstSessionDelay": EndFirstSessionDelay(parameters); break;
             case "coppaComplianceInDelay": CoppaComplianceInDelay(parameters); break;
@@ -785,6 +786,19 @@ public partial class TestLibraryBridge
         Adjust.GetAdid(adid =>
         {
             testLibrary.AddInfoToSend("adid", adid);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+
+    private void AdidGetterWithTimeout(Dictionary<string, List<string>> parameters)
+    {
+        Adjust.GetAdidWithTimeout(FirstLongValue(parameters, "timeout") ?? 0, adid =>
+        {
+            if (adid is not null) {
+                testLibrary.AddInfoToSend("adid", adid);
+            } else {
+                testLibrary.AddInfoToSend("adid", "nil");
+            }
             testLibrary.SendInfoToServer(currentExtraPath);
         });
     }

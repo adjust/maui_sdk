@@ -10,7 +10,9 @@ import time
 import signal
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-ANDROID_SUBMODULE_ROOT = os.path.join(ROOT, 'android_sdk', 'Adjust')
+
+#ANDROID_SUBMODULE_ROOT = os.path.join(ROOT, 'android_sdk', 'Adjust')
+ANDROID_SUBMODULE_ROOT = os.path.join(ROOT, 'android_sdk_dev', 'Adjust')
 ANDROID_GRADLEW = os.path.join(ANDROID_SUBMODULE_ROOT, 'gradlew')
 ANDROID_SDK_CORE_DIR = os.path.join(ANDROID_SUBMODULE_ROOT, 'sdk-core')
 ANDROID_BINDING_LIBS_DIR = os.path.join(

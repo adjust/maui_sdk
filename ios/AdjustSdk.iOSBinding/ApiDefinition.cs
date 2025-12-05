@@ -183,6 +183,11 @@ namespace AdjustSdk.iOSBinding {
 		[Export ("adidWithCompletionHandler:")]
 		void AdidWithCompletionHandler (ADJAdidGetterBlock completion);
 
+		// + (void)adidWithTimeout:(NSInteger)timeoutMs completionHandler:(nonnull ADJAdidGetterBlock)completion;
+		[Static]
+		[Export ("adidWithTimeout:completionHandler:")]
+		void AdidWithTimeout (nint timeoutMs, ADJAdidGetterBlock completion);
+
 		// +(void)attributionWithCompletionHandler:(ADJAttributionGetterBlock _Nonnull)completion;
 		[Static]
 		[Export ("attributionWithCompletionHandler:")]
