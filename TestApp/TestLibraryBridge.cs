@@ -64,6 +64,7 @@ public partial class TestLibraryBridge
             case "verifyPurchase": VerifyPurchase(parameters); break;
             case "processDeeplink": ProcessDeeplink(parameters); break;
             case "attributionGetter": AttributionGetter(parameters); break;
+            case "attributionGetterWithTimeout": AttributionGetterWithTimeout(parameters); break;
             case "adidGetter": AdidGetter(parameters); break;
             case "adidGetterWithTimeout": AdidGetterWithTimeout(parameters); break;
             case "verifyTrack": VerifyTrack(parameters); break;
@@ -781,6 +782,12 @@ public partial class TestLibraryBridge
         Adjust.GetAttribution(attributionCallback(currentExtraPath));
     }
 
+    private void AttributionGetterWithTimeout(Dictionary<string, List<string>> parameters)
+    {
+        Adjust.GetAttributionWithTimeout(FirstLongValue(parameters, "timeout") ?? 0,
+            attributionCallbackNullable(currentExtraPath));
+    }
+
     private void AdidGetter(Dictionary<string, List<string>> parameters)
     {
         Adjust.GetAdid(adid =>
@@ -850,6 +857,17 @@ public partial class TestLibraryBridge
         AddInfoToSend("message", result.Message ?? "");
 
         SendInfoToServer(localBasePath);
+    };
+
+    private Action<AdjustAttribution?> attributionCallbackNullable(string? localBasePath) =>
+        (AdjustAttribution? attribution) =>
+    {
+        if (attribution is not null) {
+            attributionCallback(localBasePath)(attribution);
+        } else {
+            AddInfoToSend("attribution", "null");
+            SendInfoToServer(localBasePath);
+        }
     };
 
     private Action<AdjustAttribution> attributionCallback(string? localBasePath) =>
