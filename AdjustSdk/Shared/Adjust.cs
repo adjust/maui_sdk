@@ -46,6 +46,8 @@ public partial class Adjust
 
     public static partial void GetAttribution(Action<AdjustAttribution> callback);
 
+    public static partial void GetAttributionWithTimeout(long timeout, Action<AdjustAttribution?> callback);
+
     public static partial void GetSdkVersion(Action<string> callback);
 
     public static partial void GetLastDeeplink(Action<string?> callback);

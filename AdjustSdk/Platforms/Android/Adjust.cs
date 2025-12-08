@@ -114,6 +114,11 @@ public partial class Adjust
         Com.Adjust.Sdk.Adjust.GetAttribution(new OnAttributionReadListenerAdapter(callback));
     }
 
+    public static partial void GetAttributionWithTimeout(long timeout, Action<AdjustAttribution?> callback)
+    {
+        Com.Adjust.Sdk.Adjust.GetAttributionWithTimeout(AppContext, timeout, new OnAttributionReadListenerAdapterNullable(callback));
+    }
+
     public static partial void GetSdkVersion(Action<string> callback)
     {
         Com.Adjust.Sdk.Adjust.GetSdkVersion(new OnSdkVersionReadListenerAdapter(callback));

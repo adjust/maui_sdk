@@ -139,6 +139,14 @@ public partial class Adjust
         });
     }
 
+    public static partial void GetAttributionWithTimeout(long timeout, Action<AdjustAttribution?> callback)
+    {
+        AdjustSdk.iOSBinding.Adjust.AttributionWithTimeout(timeout, (AdjustSdk.iOSBinding.ADJAttribution? attribution) =>
+        {
+            callback(AdjustAttribution.fromNative(attribution));
+        });
+    }
+
     public static partial void GetSdkVersion(Action<string> callback)
     {
         AdjustSdk.iOSBinding.Adjust.SdkVersionWithCompletionHandler((string? sdkVersion) =>

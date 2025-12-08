@@ -39,6 +39,15 @@ internal class OnAttributionReadListenerAdapter(Action<AdjustAttribution> attrib
     }
 }
 
+internal class OnAttributionReadListenerAdapterNullable(Action<AdjustAttribution> attributionCallback)
+    : Java.Lang.Object, Com.Adjust.Sdk.IOnAttributionReadListener
+{
+    public void OnAttributionRead (Com.Adjust.Sdk.AdjustAttribution? nativeAdjustAttribution)
+    {
+        attributionCallback.Invoke(AdjustAttribution.fromNative(nativeAdjustAttribution));
+    }
+}
+
 internal class OnSdkVersionReadListenerAdapter(Action<string> SdkVersionCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnSdkVersionReadListener
 {
