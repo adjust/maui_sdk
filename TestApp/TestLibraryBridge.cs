@@ -20,6 +20,7 @@ public partial class TestLibraryBridge
     private partial void SendInfoToServer(string? extraPath);
     #if ANDROID
     private partial void PlayStoreKidsComplianceInDelay(Dictionary<string, List<string>> parameters);
+    private partial void AmazonAdIdGetter(Dictionary<string, List<string>> parameters);
     #elif IOS
     private partial void IdfaGetter(Dictionary<string, List<string>> parameters);
     private partial void IdfvGetter(Dictionary<string, List<string>> parameters);
@@ -73,6 +74,7 @@ public partial class TestLibraryBridge
             case "externalDeviceIdInDelay": ExternalDeviceIdInDelay(parameters); break;
             #if ANDROID
             case "playStoreKidsComplianceInDelay": PlayStoreKidsComplianceInDelay(parameters); break;
+            case "amazonAdIdGetter": AmazonAdIdGetter(parameters); break;
             #elif IOS
             case "idfaGetter": IdfaGetter(parameters); break;
             case "idfvGetter": IdfvGetter(parameters); break;

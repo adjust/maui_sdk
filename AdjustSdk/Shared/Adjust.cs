@@ -73,7 +73,7 @@ public partial class Adjust
 
     public static partial void GetGoogleAdId(Action<string> callback);
 
-    public static partial void GetAmazonAdId(Action<string> callback);
+    public static partial void GetAmazonAdId(Action<string?> callback);
 
     public static partial void VerifyPlayStorePurchase(
         AdjustPlayStorePurchase purchase,

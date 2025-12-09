@@ -187,7 +187,7 @@ public partial class Adjust
             AppContext, new OnGoogleAdIdReadListenerAdapter(callback));
     }
 
-    public static partial void GetAmazonAdId(Action<string> callback)
+    public static partial void GetAmazonAdId(Action<string?> callback)
     {
         Com.Adjust.Sdk.Adjust.GetAmazonAdId(
             AppContext, new OnAmazonAdIdReadListenerAdapter(callback));

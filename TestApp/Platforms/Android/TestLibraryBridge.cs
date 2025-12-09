@@ -109,6 +109,17 @@ public partial class TestLibraryBridge
             Adjust.DisablePlayStoreKidsComplianceInDelay();
         }
     }
+
+    private partial void AmazonAdIdGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetAmazonAdId(amazonAdId =>
+        {
+            testLibrary.AddInfoToSend("fire_adid", amazonAdId);
+            testLibrary.AddInfoToSend("test_callback_id", testCallbackId);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
 #endregion Commands
 }
 

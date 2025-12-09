@@ -105,15 +105,11 @@ internal class OnGoogleAdIdReadListenerAdapter(Action<string> GoogleAdIdReadCall
     }
 }
 
-internal class OnAmazonAdIdReadListenerAdapter(Action<string> AmazonAdIdReadCallback)
+internal class OnAmazonAdIdReadListenerAdapter(Action<string?> AmazonAdIdReadCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnAmazonAdIdReadListener
 {
     public void OnAmazonAdIdRead (string? nativeAmazonAdId)
     {
-        if (nativeAmazonAdId is null)
-        {
-            return;
-        }
 
         AmazonAdIdReadCallback.Invoke(nativeAmazonAdId);
     }
