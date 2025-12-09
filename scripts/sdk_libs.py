@@ -11,8 +11,8 @@ import signal
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-#ANDROID_SUBMODULE_ROOT = os.path.join(ROOT, 'android_sdk', 'Adjust')
-ANDROID_SUBMODULE_ROOT = os.path.join(ROOT, 'android_sdk_dev', 'Adjust')
+ANDROID_SUBMODULE_ROOT = os.path.join(ROOT, 'android_sdk', 'Adjust')
+#ANDROID_SUBMODULE_ROOT = os.path.join(ROOT, 'android_sdk_dev', 'Adjust')
 ANDROID_GRADLEW = os.path.join(ANDROID_SUBMODULE_ROOT, 'gradlew')
 ANDROID_SDK_CORE_DIR = os.path.join(ANDROID_SUBMODULE_ROOT, 'sdk-core')
 ANDROID_BINDING_LIBS_DIR = os.path.join(
@@ -40,8 +40,8 @@ ANDROID_GOOGLE_LVL_BINDING_LIBS_DIR = os.path.join(
     ROOT, 'android', 'AdjustGoogleLVL.AndroidBinding', 'libs'
 )
 
-#IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk')
-IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk_dev')
+IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk')
+#IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk_dev')
 IOS_BINDING_DIR = os.path.join(ROOT, 'iOs', 'AdjustSdk.iOSBinding')
 IOS_TEST_BINDING_DIR = os.path.join(ROOT, 'iOs', 'TestLibrary.iOSBinding')
 
@@ -362,17 +362,16 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
 
-    targets = args.targets
-
-    arg_found = False
-
-    if args.command in ('build'):
-        build_libs(targets)
-        arg_found = True
-
-    if not arg_found:
+    # Check if a valid command was provided
+    if args.command is None or args.command not in ('build',):
         parser.print_help()
         return 1
+
+    # Now safe to access targets since command exists
+    targets = args.targets
+
+    if args.command == 'build':
+        build_libs(targets)
 
     return 0
 
