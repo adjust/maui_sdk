@@ -118,10 +118,11 @@ public partial class Adjust
 
     public static partial void GetAdidWithTimeout(long timeout, Action<string?> callback)
     {
-        AdjustSdk.iOSBinding.Adjust.AdidWithTimeout(timeout, (string? adid) =>
+        AdjustSdk.iOSBinding.Adjust.AdidWithTimeout((nint)timeout, (string? adid) =>
         {
             callback(adid);
         });
+    }
 
     public static partial void GetAttribution(Action<AdjustAttribution> callback)
     {
@@ -141,7 +142,7 @@ public partial class Adjust
 
     public static partial void GetAttributionWithTimeout(long timeout, Action<AdjustAttribution?> callback)
     {
-        AdjustSdk.iOSBinding.Adjust.AttributionWithTimeout(timeout, (AdjustSdk.iOSBinding.ADJAttribution? attribution) =>
+        AdjustSdk.iOSBinding.Adjust.AttributionWithTimeout((nint)timeout, (AdjustSdk.iOSBinding.ADJAttribution? attribution) =>
         {
             callback(AdjustAttribution.fromNative(attribution));
         });
