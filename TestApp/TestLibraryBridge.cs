@@ -21,6 +21,7 @@ public partial class TestLibraryBridge
     #if ANDROID
     private partial void PlayStoreKidsComplianceInDelay(Dictionary<string, List<string>> parameters);
     private partial void AmazonAdIdGetter(Dictionary<string, List<string>> parameters);
+    private partial void GoogleAdIdGetter(Dictionary<string, List<string>> parameters);
     #elif IOS
     private partial void IdfaGetter(Dictionary<string, List<string>> parameters);
     private partial void IdfvGetter(Dictionary<string, List<string>> parameters);
@@ -72,9 +73,11 @@ public partial class TestLibraryBridge
             case "endFirstSessionDelay": EndFirstSessionDelay(parameters); break;
             case "coppaComplianceInDelay": CoppaComplianceInDelay(parameters); break;
             case "externalDeviceIdInDelay": ExternalDeviceIdInDelay(parameters); break;
+            case "sdkVersionGetter": SdkVersionGetter(parameters); break;
             #if ANDROID
             case "playStoreKidsComplianceInDelay": PlayStoreKidsComplianceInDelay(parameters); break;
             case "amazonAdIdGetter": AmazonAdIdGetter(parameters); break;
+            case "googleAdIdGetter": GoogleAdIdGetter(parameters); break;
             #elif IOS
             case "idfaGetter": IdfaGetter(parameters); break;
             case "idfvGetter": IdfvGetter(parameters); break;
@@ -810,7 +813,11 @@ public partial class TestLibraryBridge
             if (adid is not null) {
                 testLibrary.AddInfoToSend("adid", adid);
             } else {
+                #if ANDROID
+                testLibrary.AddInfoToSend("adid", "null");
+                #else
                 testLibrary.AddInfoToSend("adid", "nil");
+                #endif
             }
             testLibrary.SendInfoToServer(currentExtraPath);
         });
@@ -851,6 +858,17 @@ public partial class TestLibraryBridge
         {
             Adjust.SetExternalDeviceIdInDelay(externalDeviceId);
         }
+    }
+
+    private void SdkVersionGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetSdkVersion(sdkVersion =>
+        {
+            AddInfoToSend("sdk_version", sdkVersion);
+            AddInfoToSend("test_callback_id", testCallbackId);
+            SendInfoToServer(currentExtraPath);
+        });
     }
 
     #endregion

@@ -120,6 +120,17 @@ public partial class TestLibraryBridge
             testLibrary.SendInfoToServer(currentExtraPath);
         });
     }
+
+    private partial void GoogleAdIdGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetGoogleAdId(googleAdId =>
+        {
+            testLibrary.AddInfoToSend("gps_adid", googleAdId);
+            testLibrary.AddInfoToSend("test_callback_id", testCallbackId);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
 #endregion Commands
 }
 
