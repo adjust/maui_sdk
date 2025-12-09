@@ -214,12 +214,16 @@ public partial class TestLibraryBridge
 
         #if IOS
 
-        UIPasteboard pasteboard = UIPasteboard.General;
-        pasteboard.Url = null;
-        if (FirstStringValue(parameters, "pasteboard") is string pasteboardContent)
+        string? pasteboardContent = FirstStringValue(parameters, "pasteboard");
+        MainThread.InvokeOnMainThreadAsync(() =>
         {
-            pasteboard.Url = new NSUrl(pasteboardContent);
-        }
+            UIPasteboard pasteboard = UIPasteboard.General;
+            pasteboard.Url = null;
+            if (pasteboardContent is not null)
+            {
+                pasteboard.Url = new NSUrl(pasteboardContent);
+            }
+        }).Wait();
 
         #endif
 
