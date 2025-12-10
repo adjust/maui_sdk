@@ -303,10 +303,16 @@ public partial class TestLibraryBridge
             adjustConfig.IsPlayStoreKidsComplianceEnabled = true;
         }
 
+        if (FirstBoolValue(parameters, "appSetIdReadingEnabled") is false)
+        {
+            adjustConfig.IsAppSetIdReadingEnabled = false;
+        }
+
         /* not being tested:
             IsPreinstallTrackingEnabled
             PreinstallFilePath
             FbAppId
+
         */
 #elif IOS
         if (FirstBoolValue(parameters, "allowIdfaReading") is false)

@@ -5,6 +5,7 @@ public partial record AdjustConfig {
     public bool? IsPreinstallTrackingEnabled { get; set; }
     public string? PreinstallFilePath { get; set; }
     public string? FbAppId { get; set; }
+    public bool? IsAppSetIdReadingEnabled { get; set; }
 
     internal Com.Adjust.Sdk.AdjustConfig toNative()
     {
@@ -144,6 +145,11 @@ public partial record AdjustConfig {
         if (StoreInfo is AdjustStoreInfo storeInfoValue)
         {
             nativeAdjustConfig.StoreInfo = storeInfoValue.toNative();
+        }
+
+        if (IsAppSetIdReadingEnabled is false)
+        {
+            nativeAdjustConfig.DisableAppSetIdReading();
         }
 
         return nativeAdjustConfig;
