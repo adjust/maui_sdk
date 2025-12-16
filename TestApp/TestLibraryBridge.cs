@@ -354,16 +354,16 @@ public partial class TestLibraryBridge
         {
             adjustConfig.IsAppTrackingTransparencyUsageEnabled = false;
         }
-
+/*
         if (FirstBoolValue(parameters, "checkPasteboard") is true)
         {
             adjustConfig.IsLinkMeEnabled = true;
         }
-
+*/
 #endif
         if (parameters.ContainsKey("attributionCallbackSendAll"))
         {
-            adjustConfig.AttributionChangedDelegate = attributionCallback(currentExtraPath);
+            adjustConfig.AttributionChangedDelegate = attributionCallback(currentExtraPath, parameters);
         }
 
         if (parameters.ContainsKey("sessionCallbackSendSuccess"))
@@ -760,10 +760,12 @@ public partial class TestLibraryBridge
 
     private void GetLastDeeplink(Dictionary<string, List<string>> parameters)
     {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
         string? localBasePath = currentExtraPath;
         Adjust.GetLastDeeplink((string? lastDeeplink) =>
         {
             AddInfoToSend("last_deeplink", lastDeeplink ?? "");
+            AddInfoToSend("test_callback_id", testCallbackId);
             SendInfoToServer(localBasePath);
         });
     }
@@ -794,26 +796,29 @@ public partial class TestLibraryBridge
 
     private void AttributionGetter(Dictionary<string, List<string>> parameters)
     {
-        Adjust.GetAttribution(attributionCallback(currentExtraPath));
+        Adjust.GetAttribution(attributionCallback(currentExtraPath, parameters));
     }
 
     private void AttributionGetterWithTimeout(Dictionary<string, List<string>> parameters)
     {
         Adjust.GetAttributionWithTimeout(FirstLongValue(parameters, "timeout") ?? 0,
-            attributionCallbackNullable(currentExtraPath));
+            attributionCallbackNullable(currentExtraPath, parameters));
     }
 
     private void AdidGetter(Dictionary<string, List<string>> parameters)
     {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
         Adjust.GetAdid(adid =>
         {
-            testLibrary.AddInfoToSend("adid", adid);
+            AddInfoToSend("adid", adid);
+            AddInfoToSend("test_callback_id", testCallbackId);
             testLibrary.SendInfoToServer(currentExtraPath);
         });
     }
 
     private void AdidGetterWithTimeout(Dictionary<string, List<string>> parameters)
     {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
         Adjust.GetAdidWithTimeout(FirstLongValue(parameters, "timeout") ?? 0, adid =>
         {
             if (adid is not null) {
@@ -825,6 +830,7 @@ public partial class TestLibraryBridge
                 testLibrary.AddInfoToSend("adid", "nil");
                 #endif
             }
+            AddInfoToSend("test_callback_id", testCallbackId);
             testLibrary.SendInfoToServer(currentExtraPath);
         });
     }
@@ -889,22 +895,37 @@ public partial class TestLibraryBridge
         SendInfoToServer(localBasePath);
     };
 
-    private Action<AdjustAttribution?> attributionCallbackNullable(string? localBasePath) =>
+    private Action<AdjustAttribution?> attributionCallbackNullable(
+        string? localBasePath, Dictionary<string, List<string>> parameters) =>
         (AdjustAttribution? attribution) =>
     {
         if (attribution is not null) {
-            attributionCallback(localBasePath)(attribution);
+            attributionCallback(localBasePath, parameters)(attribution);
         } else {
+            string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+            if (testCallbackId is not null)
+            {
+                AddInfoToSend("test_callback_id", testCallbackId);
+            }
+            #if ANDROID
             AddInfoToSend("attribution", "null");
+            #else
+            AddInfoToSend("attribution", "nil");
+            #endif
             SendInfoToServer(localBasePath);
         }
     };
 
-    private Action<AdjustAttribution> attributionCallback(string? localBasePath) =>
+    private Action<AdjustAttribution> attributionCallback(
+        string? localBasePath, Dictionary<string, List<string>> parameters) =>
         (AdjustAttribution attribution) =>
     {
         Dictionary<string, string> infoToSend = new();
-
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        if (testCallbackId is not null)
+        {
+            infoToSend.Add("test_callback_id", testCallbackId);
+        }
         if (attribution.TrackerToken is not null)
         {
             infoToSend.Add("tracker_token", attribution.TrackerToken);

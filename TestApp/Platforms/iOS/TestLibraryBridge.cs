@@ -122,18 +122,22 @@ public partial class TestLibraryBridge
 #region Commands
     private partial void IdfaGetter(Dictionary<string, List<string>> parameters)
     {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
         Adjust.GetIdfa(idfa =>
         {
             testLibrary.AddInfoToSend("idfa", idfa);
+            testLibrary.AddInfoToSend("test_callback_id", testCallbackId);
             testLibrary.SendInfoToServer(currentExtraPath);
         });
     }
 
     private partial void IdfvGetter(Dictionary<string, List<string>> parameters)
     {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
         Adjust.GetIdfv(idfv =>
         {
             testLibrary.AddInfoToSend("idfv", idfv);
+            testLibrary.AddInfoToSend("test_callback_id", testCallbackId);
             testLibrary.SendInfoToServer(currentExtraPath);
         });
     }
