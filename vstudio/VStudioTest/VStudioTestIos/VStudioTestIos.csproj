@@ -20,6 +20,6 @@
     <Compile Include="..\..\..\testApp\Platforms\iOS\TestLibraryBridge.cs" Link="TestLibraryBridge.iOS.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Adjust.Maui.Sdk" Version="5.4.6" />
+    <PackageReference Include="Adjust.Maui.Sdk" Version="5.5.0" />
   </ItemGroup>
 </Project>

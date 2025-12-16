@@ -53,6 +53,18 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
+		<PackageReference Include="Xamarin.GooglePlayServices.AppSet" Version="116.1.0.7" />
+		<!-- Force consistent AndroidX versions to avoid duplicate class errors -->
+		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx" Version="1.5.0.3" />
+		<PackageReference Include="Xamarin.AndroidX.SavedState.SavedState.Ktx" Version="1.3.1.1" />
+		<PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.10.1.3" />
+		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.8.8.1" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Ktx" Version="2.9.2.1" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel.Ktx" Version="2.9.2.1" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Fragment.Ktx" Version="2.8.4.1" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.UI.Ktx" Version="2.8.4.1" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Runtime.Ktx" Version="2.8.4.1" />
+		<PackageReference Include="Xamarin.AndroidX.Navigation.Common.Ktx" Version="2.8.4.1" />
 		<ProjectReference Include="..\android\TestLibrary.AndroidBinding\TestLibrary.AndroidBinding.csproj" />
 	<!-- 
 		<AndroidLibrary Include="..\android\TestLibrary.AndroidBinding\libs\gson-2.11.0.jar">

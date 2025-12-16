@@ -15,7 +15,7 @@
     <Compile Include="..\..\..\testApp\Platforms\Android\TestLibraryBridge.cs" Link="TestLibraryBridge.Android.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Adjust.Maui.Sdk" Version="5.4.6" />
     <PackageReference Include="Xamarin.Android.Google.Code.Gson" Version="2.8.8" />
+    <PackageReference Include="Adjust.Maui.Sdk" Version="5.5.0" />
   </ItemGroup>
 </Project>
