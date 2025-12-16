@@ -8,15 +8,19 @@ public partial class TestLibraryBridge
     //private const string baseIp = "192.168.1.11";
     //private const string baseIp = "127.0.0.1";
     private Com.Adjust.Test.TestLibrary testLibrary { get; init; }
+    // Must keep a strong reference to prevent GC from collecting the listener
+    // while native code still holds a reference to it
+    private CommandJsonListener commandJsonListener { get; init; }
 
     public TestLibraryBridge()
     {
         overwriteUrl = $"https://{baseIp}:8443";
         controlUrl = $"ws://{baseIp}:1987";
 
+        commandJsonListener = new CommandJsonListener(this);
         testLibrary = new Com.Adjust.Test.TestLibrary(
             overwriteUrl, controlUrl, Android.App.Application.Context,
-            new CommandJsonListener(this));
+            commandJsonListener);
     }
 
     public partial void Start()

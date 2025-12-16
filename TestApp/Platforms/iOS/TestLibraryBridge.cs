@@ -10,14 +10,18 @@ public partial class TestLibraryBridge
     //private const string baseIp = "192.168.86.227";
 
     private TestLibrary.iOSBinding.ATLTestLibrary testLibrary { get; init; }
+    // Must keep a strong reference to prevent GC from collecting the delegate
+    // while native code still holds a weak reference to it
+    private CommandDelegate commandDelegate { get; init; }
 
     public TestLibraryBridge()
     {
         overwriteUrl = $"http://{baseIp}:8080";
         controlUrl = $"ws://{baseIp}:1987";
 
+        commandDelegate = new CommandDelegate(this);
         testLibrary = TestLibrary.iOSBinding.ATLTestLibrary.TestLibraryWithBaseUrl(
-            overwriteUrl, controlUrl, new CommandDelegate(this));
+            overwriteUrl, controlUrl, commandDelegate);
     }
 
     public partial void Start()
