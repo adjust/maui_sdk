@@ -19,7 +19,12 @@
     <language></language>
     <tags>adjust maui android ios measurement analytics oaid</tags>
     <dependencies>
+      <!-- .NET 8 -->
       <group targetFramework="net8.0-android34.0">
+        <dependency id="Adjust.Maui.Sdk" version="5.5.0" />
+      </group>
+      <!-- .NET 10 -->
+      <group targetFramework="net10.0-android36.0">
         <dependency id="Adjust.Maui.Sdk" version="5.5.0" />
       </group>
     </dependencies>
@@ -28,12 +33,18 @@
     <file src="gravatar.jpg" target="" />
     <file src="README.md" target="" />
 
-    <file src=".artifacts/AdjustOaid/bin/Release/net8.0-android/AdjustOaid.dll" target="lib/net8.0-android34.0/AdjustOaid.dll" />
-    <file src=".artifacts/AdjustOaid/bin/Release/net8.0-android/AdjustOaid.xml" target="lib/net8.0-android34.0/AdjustOaid.xml" />
-
-    <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net8.0-android/AdjustOaid.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.dll" />
-    <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net8.0-android/AdjustOaid.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.xml" />
-
+    <!-- .NET 8 Android -->
+    <file src=".artifacts/AdjustOaid/bin/Release/net8.0-android34.0/AdjustOaid.dll" target="lib/net8.0-android34.0/AdjustOaid.dll" />
+    <file src=".artifacts/AdjustOaid/bin/Release/net8.0-android34.0/AdjustOaid.xml" target="lib/net8.0-android34.0/AdjustOaid.xml" />
+    <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net8.0-android34.0/AdjustOaid.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.dll" />
+    <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net8.0-android34.0/AdjustOaid.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustOaid.AndroidBinding.xml" />
     <file src="android/AdjustOaid.AndroidBinding/libs/adjust-android-oaid.aar" target="lib/net8.0-android34.0/adjust-android-oaid.aar" />
+
+    <!-- .NET 10 Android -->
+    <file src=".artifacts/AdjustOaid/bin/Release/net10.0-android36.0/AdjustOaid.dll" target="lib/net10.0-android36.0/AdjustOaid.dll" />
+    <file src=".artifacts/AdjustOaid/bin/Release/net10.0-android36.0/AdjustOaid.xml" target="lib/net10.0-android36.0/AdjustOaid.xml" />
+    <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net10.0-android36.0/AdjustOaid.AndroidBinding.dll" target="lib/net10.0-android36.0/AdjustOaid.AndroidBinding.dll" />
+    <file src=".artifacts/AdjustOaid.AndroidBinding/bin/Release/net10.0-android36.0/AdjustOaid.AndroidBinding.xml" target="lib/net10.0-android36.0/AdjustOaid.AndroidBinding.xml" />
+    <file src="android/AdjustOaid.AndroidBinding/libs/adjust-android-oaid.aar" target="lib/net10.0-android36.0/adjust-android-oaid.aar" />
   </files>
 </package>

@@ -9,6 +9,7 @@ import time
 import pty
 import select
 from shutil import which
+import json
 
 CORE_BINDING_ANDROID_NAME = 'AdjustSdk.AndroidBinding'
 CORE_BINDING_IOS_NAME = 'AdjustSdk.iOSBinding'
@@ -65,15 +66,28 @@ GOOGLE_LVL_SDK_CSPROJ = os.path.join(GOOGLE_LVL_SDK_SUBMODULE_ROOT, f'{GOOGLE_LV
 
 TESTAPP_SUBMODULE_ROOT = os.path.join(ROOT, 'testApp')
 TESTAPP_CSPROJ = os.path.join(TESTAPP_SUBMODULE_ROOT, f'{TEST_APP_NAME}.csproj')
+TESTAPP_CSPROJ_NET10 = os.path.join(TESTAPP_SUBMODULE_ROOT, f'{TEST_APP_NAME}-Net10.csproj')
 
 EXAMPLE_APP_SUBMODULE_ROOT = os.path.join(ROOT, 'ExampleApp')
 EXAMPLE_APP_CSPROJ = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}.csproj')
+EXAMPLE_APP_CSPROJ_NET10 = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}-Net10.csproj')
 EXAMPLE_APP_CSPROJ_NUGET = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}-Nuget.csproj')
+EXAMPLE_APP_CSPROJ_NUGET_NET10 = os.path.join(EXAMPLE_APP_SUBMODULE_ROOT, f'{EXAMPLE_APP_NAME}-Nuget-Net10.csproj')
 
 BINDINGS = ['test', 'core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins']
 APPS = ['test', 'example', 'example-nuget']
 SDKS = ['core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins']
 PLATFORMS = ['android', 'ios']
+NET_VERSIONS = ['net8', 'net10']
+
+def set_net_version(net_version: bool):
+    if net_version == 'net8':
+        version = "8.0.402"
+    else:
+        version = "10.0.101"
+    global_json = {"sdk": {"version": version, "rollForward": "latestFeature"}}
+    with open(os.path.join(ROOT, "global.json"), "w") as f:
+        json.dump(global_json, f, indent=2)
 
 def removing(str_list: list[str], *args):
     for arg in args:
@@ -186,7 +200,17 @@ def run_with_delay(cmd, delay):
     run(cmd)
     time.sleep(delay)
 
+
 def build_bindings(targets, config):
+    if 'net10' in targets:
+        build_bindings_with_net_version(targets, config, 'net10')
+    elif 'net8' in targets:
+        build_bindings_with_net_version(targets, config, 'net8')
+    else:
+        build_bindings_with_net_version(targets, config, 'net8')
+        build_bindings_with_net_version(targets, config, 'net10')
+def build_bindings_with_net_version(targets, config, net_version):
+    set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
     no_bindings_target = has_none(BINDINGS, targets)
     if 'core' in targets or no_bindings_target:
@@ -231,6 +255,15 @@ def build_google_lvl_bindings(targets, config):
     build_with_delay(ANDROID_GOOGLE_LVL_BINDING_CSPROJ, config)
 
 def build_sdk(targets, config):
+    if 'net10' in targets:
+        build_sdk_with_net_version(targets, config, 'net10')
+    elif 'net8' in targets:
+        build_sdk_with_net_version(targets, config, 'net8')
+    else:
+        build_sdk_with_net_version(targets, config, 'net8')
+        build_sdk_with_net_version(targets, config, 'net10')
+def build_sdk_with_net_version(targets, config, net_version):
+    set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
     no_sdk_target = has_none(SDKS, targets)
     if 'core' in targets or no_sdk_target:
@@ -247,23 +280,44 @@ def build_sdk(targets, config):
         build_with_delay(GOOGLE_LVL_SDK_CSPROJ, config)
 
 def build_apps(targets, config):
+    if 'net10' in targets:
+        build_apps_with_net_version(targets, config, 'net10')
+    elif 'net8' in targets:
+        build_apps_with_net_version(targets, config, 'net8')
+    else:
+        build_apps_with_net_version(targets, config, 'net8')
+        build_apps_with_net_version(targets, config, 'net10')
+def build_apps_with_net_version(targets, config, net_version):
+    set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
     no_app_target = has_none(APPS, targets)
     if 'example' in targets or no_app_target:
-        build_example(targets, config)
+        build_example(targets, config, net_version)
     if 'example-nuget' in targets or no_app_target:
-        build_example_nuget(targets, config)
+        build_example_nuget(targets, config, net_version)
     if 'test' in targets or no_app_target:
-        build_test(config)
-def build_test(config):
-    print('> Building Test App')
-    build_with_delay(TESTAPP_CSPROJ, config)
-def build_example(targets, config):
-    print('> Building Example')
-    build_with_delay(EXAMPLE_APP_CSPROJ, config)
-def build_example_nuget(targets, config):
-    print('> Building Example Nuget')
-    build_with_delay(EXAMPLE_APP_CSPROJ_NUGET, config)
+        build_test(targets, config, net_version)
+def build_test(targets, config, net_version):
+    if 'net10' in net_version:
+        print('> Building Test App Net10')
+        build_with_delay(TESTAPP_CSPROJ_NET10, config)
+    else:
+        print('> Building Test App Net8')
+        build_with_delay(TESTAPP_CSPROJ, config)
+def build_example(targets, config, net_version):
+    if 'net10' in net_version:
+        print('> Building Example App Net10')
+        build_with_delay(EXAMPLE_APP_CSPROJ_NET10, config)
+    else:
+        print('> Building Example App Net8')
+        build_with_delay(EXAMPLE_APP_CSPROJ, config)
+def build_example_nuget(targets, config, net_version):
+    if 'net10' in net_version:
+        print('> Building Example Nuget Net10')
+        build_with_delay(EXAMPLE_APP_CSPROJ_NUGET_NET10, config)
+    else:
+        print('> Building Example Nuget Net8')
+        build_with_delay(EXAMPLE_APP_CSPROJ_NUGET, config)
 
 def build_all(targets, config):
     build_bindings(targets, config)
@@ -286,7 +340,8 @@ def main(argv=None):
         choices=['bindings', 'sdk', 'apps',
          'test', 'example', 'example-nuget',
          'android', 'ios',
-          'core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins'],
+          'core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins',
+          'net8', 'net10'],
         help='Which targets (can specify multiple)'
     )
     common.add_argument('--dry', action='store_true', default=False, help='Perform a dry run (list bin/obj dirs only)')
@@ -306,27 +361,24 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
 
-    # Derive config and default targets
-    targets = args.targets # if getattr(args, 'targets', None) else ['all']
-
     arg_found = False
 
-    print('targets: %s' % targets)
+    print('targets: %s' % args.targets)
 
     if args.command in ('clean', 'clean_all', 'clean_bindings', 'clean_sdk', 'clean_apps'):
-        clean(args.command, targets[:], args.dry)
+        clean(args.command, args.targets[:], args.dry)
         arg_found = True
     if args.command in ('bindings', 'clean_bindings'):
-        build_bindings(targets[:], args.config)
+        build_bindings(args.targets[:], args.config)
         arg_found = True
     if args.command in ('sdk', 'clean_sdk'):
-        build_sdk(targets[:], args.config)
+        build_sdk(args.targets[:], args.config)
         arg_found = True
     if args.command in ('apps', 'clean_apps'):
-        build_apps(targets[:], args.config)
+        build_apps(args.targets[:], args.config)
         arg_found = True
     if args.command in ('all', 'clean_all'):
-        build_all(targets[:], args.config)
+        build_all(args.targets[:], args.config)
         arg_found = True
 
     if not arg_found:

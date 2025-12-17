@@ -19,7 +19,12 @@
     <language></language>
     <tags>adjust maui android ios measurement analytics google lvl</tags>
     <dependencies>
+      <!-- .NET 8 -->
       <group targetFramework="net8.0-android34.0">
+        <dependency id="Adjust.Maui.Sdk" version="5.5.0" />
+      </group>
+      <!-- .NET 10 -->
+      <group targetFramework="net10.0-android36.0">
         <dependency id="Adjust.Maui.Sdk" version="5.5.0" />
       </group>
     </dependencies>
@@ -28,12 +33,18 @@
     <file src="gravatar.jpg" target="" />
     <file src="README.md" target="" />
 
-    <file src=".artifacts/AdjustGoogleLVL/bin/Release/net8.0-android/AdjustGoogleLVL.dll" target="lib/net8.0-android34.0/AdjustGoogleLVL.dll" />
-    <file src=".artifacts/AdjustGoogleLVL/bin/Release/net8.0-android/AdjustGoogleLVL.xml" target="lib/net8.0-android34.0/AdjustGoogleLVL.xml" />
-
-    <file src=".artifacts/AdjustGoogleLVL.AndroidBinding/bin/Release/net8.0-android/AdjustGoogleLVL.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustGoogleLVL.AndroidBinding.dll" />
-    <file src=".artifacts/AdjustGoogleLVL.AndroidBinding/bin/Release/net8.0-android/AdjustGoogleLVL.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustGoogleLVL.AndroidBinding.xml" />
-
+    <!-- .NET 8 Android -->
+    <file src=".artifacts/AdjustGoogleLVL/bin/Release/net8.0-android34.0/AdjustGoogleLVL.dll" target="lib/net8.0-android34.0/AdjustGoogleLVL.dll" />
+    <file src=".artifacts/AdjustGoogleLVL/bin/Release/net8.0-android34.0/AdjustGoogleLVL.xml" target="lib/net8.0-android34.0/AdjustGoogleLVL.xml" />
+    <file src=".artifacts/AdjustGoogleLVL.AndroidBinding/bin/Release/net8.0-android34.0/AdjustGoogleLVL.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustGoogleLVL.AndroidBinding.dll" />
+    <file src=".artifacts/AdjustGoogleLVL.AndroidBinding/bin/Release/net8.0-android34.0/AdjustGoogleLVL.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustGoogleLVL.AndroidBinding.xml" />
     <file src="android/AdjustGoogleLVL.AndroidBinding/libs/adjust-android-google-lvl.aar" target="lib/net8.0-android34.0/adjust-android-google-lvl.aar" />
+
+    <!-- .NET 10 Android -->
+    <file src=".artifacts/AdjustGoogleLVL/bin/Release/net10.0-android36.0/AdjustGoogleLVL.dll" target="lib/net10.0-android36.0/AdjustGoogleLVL.dll" />
+    <file src=".artifacts/AdjustGoogleLVL/bin/Release/net10.0-android36.0/AdjustGoogleLVL.xml" target="lib/net10.0-android36.0/AdjustGoogleLVL.xml" />
+    <file src=".artifacts/AdjustGoogleLVL.AndroidBinding/bin/Release/net10.0-android36.0/AdjustGoogleLVL.AndroidBinding.dll" target="lib/net10.0-android36.0/AdjustGoogleLVL.AndroidBinding.dll" />
+    <file src=".artifacts/AdjustGoogleLVL.AndroidBinding/bin/Release/net10.0-android36.0/AdjustGoogleLVL.AndroidBinding.xml" target="lib/net10.0-android36.0/AdjustGoogleLVL.AndroidBinding.xml" />
+    <file src="android/AdjustGoogleLVL.AndroidBinding/libs/adjust-android-google-lvl.aar" target="lib/net10.0-android36.0/adjust-android-google-lvl.aar" />
   </files>
 </package>
