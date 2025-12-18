@@ -294,6 +294,7 @@ def build_sdk_specific(targets, config, net_version):
         build_with_delay(GOOGLE_LVL_SDK_CSPROJ, config)
 
 def build_apps(targets):
+    # build apps only in Debug to avoid Release long build times
     config = 'Debug'
 
     if 'net10' in targets:
@@ -309,7 +310,7 @@ def build_apps_specific(targets, config, net_version):
     no_app_target = has_none(APPS, targets)
     if 'example' in targets or no_app_target:
         build_example(targets, config, net_version)
-    if 'example-nuget' in targets or no_app_target:
+    if 'example-nuget' in targets: # don't build example-nuget by default before packages are published
         build_example_nuget(targets, config, net_version)
     if 'test' in targets or no_app_target:
         build_test(targets, config, net_version)
