@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 import json
+from typing import Optional, List
 
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -15,13 +16,13 @@ EXAMPLE_CSProj = os.path.join(ROOT, 'ExampleApp', 'ExampleApp.csproj')
 EXAMPLE_CSProj_NET10 = os.path.join(ROOT, 'ExampleApp', 'ExampleApp-Net10.csproj')
 EXAMPLE_NUGET_CSProj = os.path.join(ROOT, 'ExampleApp', 'ExampleApp-Nuget.csproj')
 EXAMPLE_NUGET_CSProj_NET10 = os.path.join(ROOT, 'ExampleApp', 'ExampleApp-Nuget-Net10.csproj')
-TESTAPP_CSProj = os.path.join(ROOT, 'testApp', 'TestApp.csproj')
-TESTAPP_CSProj_NET10 = os.path.join(ROOT, 'testApp', 'TestApp-Net10.csproj')
+TESTAPP_CSProj = os.path.join(ROOT, 'TestApp', 'TestApp.csproj')
+TESTAPP_CSProj_NET10 = os.path.join(ROOT, 'TestApp', 'TestApp-Net10.csproj')
 
 def log(msg: str) -> None:
     print(msg)
 
-def set_net_version(net_version: bool):
+def set_net_version(net_version: str):
     if net_version == 'net8':
         version = "8.0.402"
     else:
@@ -95,13 +96,13 @@ def boot_ios_sim(sim_name: str) -> None:
     run(['open', '-a', 'Simulator'], check=False)
 
 
-def get_ios_sim_udid(sim_name: str) -> str | None:
+def get_ios_sim_udid(sim_name: str) -> Optional[str]:
     """Return UDID of the requested simulator name, preferring Booted if multiple."""
     try:
         out = subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json'])
         data = json.loads(out)
-        booted: list[str] = []
-        matches: list[str] = []
+        booted: List[str] = []
+        matches: List[str] = []
         for runtime_devices in data.get('devices', {}).values():
             for dev in runtime_devices:
                 if dev.get('name') == sim_name:
@@ -218,7 +219,7 @@ def main(argv=None) -> int:
         print('Usage: maui_run.py [run-android|run-ios|list-avds|list-sims] [options]')
         return 1
     net_version = 'net8'
-    if args.net10:
+    if hasattr(args, 'net10') and args.net10:
         net_version = 'net10'
     if args.command == 'run-android':
         run_android(args.config, args.avd, args.app, net_version)
