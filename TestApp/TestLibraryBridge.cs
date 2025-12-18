@@ -215,21 +215,6 @@ public partial class TestLibraryBridge
             return null;
         }
 
-        #if IOS
-
-        string? pasteboardContent = FirstStringValue(parameters, "pasteboard");
-        MainThread.InvokeOnMainThreadAsync(() =>
-        {
-            UIPasteboard pasteboard = UIPasteboard.General;
-            pasteboard.Url = null;
-            if (pasteboardContent is not null)
-            {
-                pasteboard.Url = new NSUrl(pasteboardContent);
-            }
-        }).Wait();
-
-        #endif
-
         AdjustConfig adjustConfig = new (appTokenValid, environmentValid);
 
         AdjustLogLevel? adjustLogLevel = FirstStringValue(parameters, "logLevel") switch

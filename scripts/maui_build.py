@@ -191,7 +191,7 @@ def run(cmd, retry_on_file_lock=True, max_retries=3):
 
 def build_with_delay(csproj, config, delay=1.0):
     """Run a command and add a delay afterwards to prevent race conditions"""
-    if config == 'both':
+    if config == 'DebugAndRelease':
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Debug'], delay)
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Release'], delay)
     else:
@@ -201,15 +201,22 @@ def run_with_delay(cmd, delay):
     time.sleep(delay)
 
 
-def build_bindings(targets, config):
-    if 'net10' in targets:
-        build_bindings_with_net_version(targets, config, 'net10')
-    elif 'net8' in targets:
-        build_bindings_with_net_version(targets, config, 'net8')
+def build_bindings(targets):
+    if 'debug' in targets:
+        config = 'Debug'
+    elif 'release' in targets:
+        config = 'Release'
     else:
-        build_bindings_with_net_version(targets, config, 'net8')
-        build_bindings_with_net_version(targets, config, 'net10')
-def build_bindings_with_net_version(targets, config, net_version):
+        config = 'DebugAndRelease'
+
+    if 'net10' in targets:
+        build_bindings_specific(targets, config, 'net10')
+    elif 'net8' in targets:
+        build_bindings_specific(targets, config, 'net8')
+    else:
+        build_bindings_specific(targets, config, 'net8')
+        build_bindings_specific(targets, config, 'net10')
+def build_bindings_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
     no_bindings_target = has_none(BINDINGS, targets)
@@ -254,15 +261,22 @@ def build_google_lvl_bindings(targets, config):
     print('> Building Android Google LVL binding')
     build_with_delay(ANDROID_GOOGLE_LVL_BINDING_CSPROJ, config)
 
-def build_sdk(targets, config):
-    if 'net10' in targets:
-        build_sdk_with_net_version(targets, config, 'net10')
-    elif 'net8' in targets:
-        build_sdk_with_net_version(targets, config, 'net8')
+def build_sdk(targets):
+    if 'debug' in targets:
+        config = 'Debug'
+    elif 'release' in targets:
+        config = 'Release'
     else:
-        build_sdk_with_net_version(targets, config, 'net8')
-        build_sdk_with_net_version(targets, config, 'net10')
-def build_sdk_with_net_version(targets, config, net_version):
+        config = 'DebugAndRelease'
+
+    if 'net10' in targets:
+        build_sdk_specific(targets, config, 'net10')
+    elif 'net8' in targets:
+        build_sdk_specific(targets, config, 'net8')
+    else:
+        build_sdk_specific(targets, config, 'net8')
+        build_sdk_specific(targets, config, 'net10')
+def build_sdk_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
     no_sdk_target = has_none(SDKS, targets)
@@ -279,15 +293,17 @@ def build_sdk_with_net_version(targets, config, net_version):
         print('> Building Google LVL SDK plugin')
         build_with_delay(GOOGLE_LVL_SDK_CSPROJ, config)
 
-def build_apps(targets, config):
+def build_apps(targets):
+    config = 'Debug'
+
     if 'net10' in targets:
-        build_apps_with_net_version(targets, config, 'net10')
+        build_apps_specific(targets, config, 'net10')
     elif 'net8' in targets:
-        build_apps_with_net_version(targets, config, 'net8')
+        build_apps_specific(targets, config, 'net8')
     else:
-        build_apps_with_net_version(targets, config, 'net8')
-        build_apps_with_net_version(targets, config, 'net10')
-def build_apps_with_net_version(targets, config, net_version):
+        build_apps_specific(targets, config, 'net8')
+        build_apps_specific(targets, config, 'net10')
+def build_apps_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
     no_app_target = has_none(APPS, targets)
@@ -319,66 +335,95 @@ def build_example_nuget(targets, config, net_version):
         print('> Building Example Nuget Net8')
         build_with_delay(EXAMPLE_APP_CSPROJ_NUGET, config)
 
-def build_all(targets, config):
-    build_bindings(targets, config)
-    build_sdk(targets, config)
-    build_apps(targets, config)
+target_help = '''Which targets to build or clean (can specify multiple):
+
+  Clean targets:
+    bindings        - Native binding projects only
+    sdk             - SDK wrapper projects only
+    apps            - App projects only
+
+  Platforms:
+    android         - Android targets only
+    ios             - iOS targets only
+
+  SDKs:
+    core            - Core SDK binding/wrapper
+    oaid            - OAID plugin
+    meta_referrer   - Meta Referrer plugin
+    google_lvl      - Google LVL plugin
+    plugins         - All plugins (oaid, meta_referrer, google_lvl)
+
+  Apps:
+    test            - Test app
+    example         - Example app (project references)
+    example-nuget   - Example app (NuGet references)
+
+  .NET version:
+    net8            - .NET 8 targets only
+    net10           - .NET 10 targets only
+
+  Configuration:
+    debug           - Debug configuration
+    release         - Release configuration
+'''
 
 def main(argv=None):
     common = argparse.ArgumentParser(add_help=False)
-    # Allow --config to accept "Debug", "Release", or "both"
-    common.add_argument(
-        '--config',
-        default='Debug',
-        choices=['Debug', 'Release', 'both'],
-        help='Build configuration ("Debug", "Release" or "both", default: Debug)'
-    )
 
     common.add_argument(
         'targets',
         nargs='*',
         choices=['bindings', 'sdk', 'apps',
-         'test', 'example', 'example-nuget',
-         'android', 'ios',
-          'core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins',
-          'net8', 'net10'],
-        help='Which targets (can specify multiple)'
+            'test', 'example', 'example-nuget',
+            'android', 'ios',
+            'core', 'oaid', 'meta_referrer', 'google_lvl', 'plugins',
+            'net8', 'net10',
+            'debug', 'release'
+        ],
+        metavar='TARGET',
+        help=target_help
     )
     common.add_argument('--dry', action='store_true', default=False, help='Perform a dry run (list bin/obj dirs only)')
 
-    parser = argparse.ArgumentParser(description='Python3 build tool for Adjust Maui repo')
+    parser = argparse.ArgumentParser(
+        description='Python3 build tool for Adjust Maui repo',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=target_help
+    )
     sub = parser.add_subparsers(dest='command')
     sub.add_parser('clean', help='Clean build artifacts (bin/obj dirs)', parents=[common])
     sub.add_parser('clean_bindings', help='Clean and build bindings', parents=[common])
     sub.add_parser('clean_sdk', help='Clean and build SDK', parents=[common])
     sub.add_parser('clean_apps', help='Clean and build apps', parents=[common])
-    sub.add_parser('clean_all', help='Clean and build all targets', parents=[common])
 
     sub.add_parser('bindings', help='Build specified bindings', parents=[common])
     sub.add_parser('sdk', help='Build maui sdk', parents=[common])
     sub.add_parser('apps', help='Build maui apps', parents=[common])
-    sub.add_parser('all', help='Build all targets', parents=[common])
+
+    sub.add_parser('all', help='Clean and build all targets', parents=[common])
+
 
     args = parser.parse_args(argv)
+
+    if args.command is None:
+        parser.print_help()
+        return 1
 
     arg_found = False
 
     print('targets: %s' % args.targets)
 
-    if args.command in ('clean', 'clean_all', 'clean_bindings', 'clean_sdk', 'clean_apps'):
-        clean(args.command, args.targets[:], args.dry)
+    if args.command == 'all' or args.command.startswith('clean'):
+        clean(args.command, args.targets, args.dry)
         arg_found = True
-    if args.command in ('bindings', 'clean_bindings'):
-        build_bindings(args.targets[:], args.config)
+    if args.command == 'all' or args.command.endswith('bindings'):
+        build_bindings(args.targets)
         arg_found = True
-    if args.command in ('sdk', 'clean_sdk'):
-        build_sdk(args.targets[:], args.config)
+    if args.command == 'all' or args.command.endswith('sdk'):
+        build_sdk(args.targets)
         arg_found = True
-    if args.command in ('apps', 'clean_apps'):
-        build_apps(args.targets[:], args.config)
-        arg_found = True
-    if args.command in ('all', 'clean_all'):
-        build_all(args.targets[:], args.config)
+    if args.command == 'all' or args.command.endswith('apps'):
+        build_apps(args.targets)
         arg_found = True
 
     if not arg_found:
@@ -426,7 +471,8 @@ ARTIFACTS_COPY_EXAMPLE_APP_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, E
 ARTIFACTS_COPY_EXAMPLE_APP_NUGET_OUTPUT_DIRS = [os.path.join(ARTIFACTS_COPY_BIN_DIR, EXAMPLE_APP_NAME + '-Nuget'), os.path.join(ARTIFACTS_COPY_OBJ_DIR, EXAMPLE_APP_NAME + '-Nuget')]
 
 def clean(command: str, targets: list[str], dry: bool):
-    if command == 'clean_all' or (command == 'clean' and has_none(targets, ('bindings', 'sdk', 'apps'))):
+    targets = targets[:] # copy the list to avoid modifying the original list
+    if (command == 'clean' or command == 'all') and has_none(targets, ('bindings', 'sdk', 'apps')):
         clean_target(dry, ARTIFACTS_OUTPUT_DIR)
         clean_artifacts_copy(dry, ARTIFACTS_COPY_OUTPUT_DIRS)
     if command == 'clean_bindings' or removing(targets, 'bindings'):
