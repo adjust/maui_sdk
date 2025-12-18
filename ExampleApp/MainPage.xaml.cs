@@ -2,7 +2,7 @@
 
 using AdjustSdk;
 #if ANDROID
-    using AdjustOaid;
+    //using AdjustOaid;
 #endif
 public partial class MainPage : ContentPage
 {
@@ -20,8 +20,8 @@ public partial class MainPage : ContentPage
 	private void OnCounterClicked(object sender, EventArgs e)
 	{
 #if ANDROID
-		AdjustOaid.readOaid();
-		return;
+		//AdjustOaid.readOaid();
+		//return;
 #endif
 		var adjustEvent = new AdjustEvent("g3mfiw");
 		Adjust.TrackEvent(adjustEvent);
