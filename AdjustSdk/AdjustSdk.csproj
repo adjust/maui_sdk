@@ -11,6 +11,7 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
 
 		<!-- iOS SupportedOSPlatformVersion: 11.0 for .NET 8, 12.2 for .NET 10 (minimum for iOS 26.2) -->
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios' AND $([MSBuild]::VersionLessThan($(NETCoreSdkVersion), '10.0.0'))">11.0</SupportedOSPlatformVersion>
