@@ -11,5 +11,4 @@
     <AndroidLibrary Update="libs\slf4j-api-2.0.13.jar" Bind="false" />
     <AndroidLibrary Update="libs\Java-WebSocket-1.5.7.jar" Bind="false" />
   </ItemGroup>
-
 </Project>

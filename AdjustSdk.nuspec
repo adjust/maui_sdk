@@ -24,7 +24,7 @@
       <group targetFramework="net8.0-ios18.0" />
       <!-- .NET 10 -->
       <group targetFramework="net10.0-android36.0" />
-      <group targetFramework="net10.0-ios26.1" />
+      <group targetFramework="net10.0-ios26.2" />
     </dependencies>
   </metadata>
   <files>
@@ -53,8 +53,8 @@
     <file src="android/AdjustSdk.AndroidBinding/libs/adjust-android.aar" target="lib/net10.0-android36.0/adjust-android.aar" />
 
     <!-- .NET 10 iOS -->
-    <file src=".artifacts/AdjustSdk/bin/Release/net10.0-ios26.1/AdjustSdk.dll" target="lib/net10.0-ios26.1/AdjustSdk.dll" />
-    <file src=".artifacts/AdjustSdk.iOSBinding/bin/Release/net10.0-ios26.1/AdjustSdk.iOSBinding.dll" target="lib/net10.0-ios26.1/AdjustSdk.iOSBinding.dll" />
-    <file src=".artifacts/AdjustSdk.iOSBinding/bin/Release/net10.0-ios26.1/AdjustSdk.iOSBinding.resources.zip" target="lib/net10.0-ios26.1/AdjustSdk.iOSBinding.resources.zip" />
+    <file src=".artifacts/AdjustSdk/bin/Release/net10.0-ios26.2/AdjustSdk.dll" target="lib/net10.0-ios26.2/AdjustSdk.dll" />
+    <file src=".artifacts/AdjustSdk.iOSBinding/bin/Release/net10.0-ios26.2/AdjustSdk.iOSBinding.dll" target="lib/net10.0-ios26.2/AdjustSdk.iOSBinding.dll" />
+    <file src=".artifacts/AdjustSdk.iOSBinding/bin/Release/net10.0-ios26.2/AdjustSdk.iOSBinding.resources.zip" target="lib/net10.0-ios26.2/AdjustSdk.iOSBinding.resources.zip" />
   </files>
 </package>

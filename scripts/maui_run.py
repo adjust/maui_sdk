@@ -155,7 +155,7 @@ def get_android_tfm(net_version: str) -> str:
 def get_ios_tfm(net_version: str) -> str:
     """Get the target framework moniker for iOS based on .NET version."""
     if net_version == 'net10':
-        return 'net10.0-ios26.1'
+        return 'net10.0-ios26.2'
     else:
         return 'net8.0-ios'  # .NET 8 doesn't require explicit version
 
