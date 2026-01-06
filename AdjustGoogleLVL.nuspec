@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Adjust.Maui.Sdk.Google.LVL</id>
-    <version>5.5.0</version>
+    <version>5.5.1</version>
     <title>Adjust MAUI SDK Google LVL Plugin</title>
     <authors>Adjust GmbH</authors>
     <owners>Adjust GmbH</owners>
@@ -21,11 +21,11 @@
     <dependencies>
       <!-- .NET 8 -->
       <group targetFramework="net8.0-android34.0">
-        <dependency id="Adjust.Maui.Sdk" version="5.5.0" />
+        <dependency id="Adjust.Maui.Sdk" version="5.5.1" />
       </group>
       <!-- .NET 10 -->
       <group targetFramework="net10.0-android36.0">
-        <dependency id="Adjust.Maui.Sdk" version="5.5.0" />
+        <dependency id="Adjust.Maui.Sdk" version="5.5.1" />
       </group>
     </dependencies>
   </metadata>

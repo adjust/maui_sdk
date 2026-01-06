@@ -15,6 +15,6 @@
     <CreatePackage>false</CreatePackage>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Adjust.Maui.Sdk" Version="5.4.6" />
+    <PackageReference Include="Adjust.Maui.Sdk" Version="5.5.1" />
   </ItemGroup>
 </Project>

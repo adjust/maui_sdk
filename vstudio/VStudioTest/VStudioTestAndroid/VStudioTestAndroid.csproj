@@ -16,6 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Android.Google.Code.Gson" Version="2.8.8" />
-    <PackageReference Include="Adjust.Maui.Sdk" Version="5.5.0" />
+    <PackageReference Include="Adjust.Maui.Sdk" Version="5.5.1" />
   </ItemGroup>
 </Project>

@@ -46,14 +46,14 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
-		<PackageReference Include="Adjust.Maui.Sdk" Version="5.5.0" />
+		<PackageReference Include="Adjust.Maui.Sdk" Version="5.5.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
 		<PackageReference Include="Xamarin.Android.Binding.InstallReferrer" Version="2.2.0" />
-		<PackageReference Include="Adjust.Maui.Sdk.Oaid" Version="5.5.0" />
-		<PackageReference Include="Adjust.Maui.Sdk.Meta.Referrer" Version="5.5.0" />
-		<PackageReference Include="Adjust.Maui.Sdk.Google.Lvl" Version="5.5.0" />
+		<PackageReference Include="Adjust.Maui.Sdk.Oaid" Version="5.5.1" />
+		<PackageReference Include="Adjust.Maui.Sdk.Meta.Referrer" Version="5.5.1" />
+		<PackageReference Include="Adjust.Maui.Sdk.Google.LVL" Version="5.5.1" />
 	</ItemGroup>
 
 </Project>

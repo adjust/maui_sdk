@@ -10,9 +10,9 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Adjust.Maui.Sdk" Version="5.4.6" />
-    <PackageReference Include="Adjust.Maui.Sdk.Oaid" Version="5.4.6" />
-    <PackageReference Include="Adjust.Maui.Sdk.Google.LVL" Version="5.4.6" />
-    <PackageReference Include="Adjust.Maui.Sdk.Meta.Referrer" Version="5.4.6" />
+    <PackageReference Include="Adjust.Maui.Sdk" Version="5.5.1" />
+    <PackageReference Include="Adjust.Maui.Sdk.Oaid" Version="5.5.1" />
+    <PackageReference Include="Adjust.Maui.Sdk.Google.LVL" Version="5.5.1" />
+    <PackageReference Include="Adjust.Maui.Sdk.Meta.Referrer" Version="5.5.1" />
   </ItemGroup>
 </Project>
