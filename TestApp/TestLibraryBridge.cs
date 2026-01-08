@@ -952,13 +952,18 @@ public partial class TestLibraryBridge
         {
             infoToSend.Add("cost_currency", attribution.CostCurrency);
         }
+        Console.WriteLine("before fb_install_referrer");
 #if ANDROID
+        Console.WriteLine("in ANDROID fb_install_referrer");
         if (attribution.FbInstallReferrer is not null)
         {
             infoToSend.Add("fb_install_referrer", attribution.FbInstallReferrer);
         }
 #endif
-        infoToSend.Add("json_response", attribution.JsonResponse);
+        if (attribution.JsonResponse is not null)
+        {
+            infoToSend.Add("json_response", attribution.JsonResponse);
+        }
         SetInfoToServer(infoToSend);
         SendInfoToServer(localBasePath);
     };

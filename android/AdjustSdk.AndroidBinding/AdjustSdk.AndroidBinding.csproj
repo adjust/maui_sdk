@@ -6,6 +6,11 @@
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Suppress unavoidable binding warnings for internal SDK types -->
+    <!-- BG8605: Missing '$' (synthetic accessor methods), Callable<V> (generic type parameter) -->
+    <!-- BG8606: Types auto-removed due to missing dependencies -->
+    <!-- BG8503/BG8800: Types referencing removed dependencies during transformation -->
+    <NoWarn>$(NoWarn);BG8605;BG8606;BG8503;BG8800</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->

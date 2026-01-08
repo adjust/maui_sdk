@@ -1,4 +1,4 @@
-﻿<metadata>
+<metadata>
   <!--
   This sample removes the class: android.support.v4.content.AsyncTaskLoader.LoadTask:
   <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='AsyncTaskLoader.LoadTask']" />
@@ -70,6 +70,9 @@
     @name='IInstallReferrerReadListener' or
     @name='IRunActivityHandler']" />
 
+  <!-- Remove orphaned nested types whose parent classes are removed -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='AdjustFactory.URLGetConnection']" />
+
   <!-- Remove problematic listener not used by MAUI wrapper to avoid duplicate EventArgs -->
   <remove-node path="/api/package[@name='com.adjust.sdk']/interface[@name='OnGooglePlayInstallReferrerReadListener']" />
 
@@ -86,5 +89,4 @@
   <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'GooglePlayServicesClient.')]" />
   <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'DeviceInfo.')]" />
   <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'PackageBuilder.')]" />
-
 </metadata>

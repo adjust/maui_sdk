@@ -99,7 +99,7 @@ namespace TestLibrary.iOSBinding
 		void StartTestSession(string clientSdk);
 
 		[Export("addInfoToSend:value:")]
-		void AddInfoToSend(string key, string value);
+		void AddInfoToSend(string key, [NullAllowed] string value);
 
 		[Export("sendInfoToServer:")]
 		void SendInfoToServer([NullAllowed] string basePath);

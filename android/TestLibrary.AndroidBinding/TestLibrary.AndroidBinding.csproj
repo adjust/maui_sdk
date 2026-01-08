@@ -6,9 +6,18 @@
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Suppress unavoidable binding warnings for types in compiled AAR that reference removed SDK internals -->
+    <!-- BG8605: Missing Java types (IConnectionOptions, WebSocketClient) - from compiled AAR bytecode -->
+    <!-- BG8606: Types auto-removed due to missing dependencies - expected behavior -->
+    <NoWarn>$(NoWarn);BG8605;BG8606</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Include dependencies for type resolution (not bound, only for resolving references) -->
     <AndroidLibrary Update="libs\slf4j-api-2.0.13.jar" Bind="false" />
     <AndroidLibrary Update="libs\Java-WebSocket-1.5.7.jar" Bind="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Reference main Adjust SDK for type resolution (network.UtilNetworking types) -->
+    <AndroidLibrary Include="../AdjustSdk.AndroidBinding/libs/adjust-android.aar" Bind="false" />
   </ItemGroup>
 </Project>

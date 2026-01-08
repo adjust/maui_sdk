@@ -39,6 +39,11 @@
 		<!--<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>-->
 	</PropertyGroup>
 
+	<PropertyGroup Condition="$(TargetFramework.Contains('android'))">
+		<AndroidJavaSourceVersion>11</AndroidJavaSourceVersion>
+		<AndroidJavaTargetVersion>11</AndroidJavaTargetVersion>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />

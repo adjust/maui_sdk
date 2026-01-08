@@ -472,7 +472,7 @@ namespace AdjustSdk.iOSBinding {
 		// 486
 		// -(ADJConfig * _Nullable)initWithAppToken:(NSString * _Nonnull)appToken environment:(NSString * _Nonnull)environment suppressLogLevel:(BOOL)allowSuppressLogLevel;
 		[Export ("initWithAppToken:environment:suppressLogLevel:")]
-		NativeHandle Constructor (string appToken, string environment, bool allowSuppressLogLevel);
+		NativeHandle Constructor (string appToken, [NullAllowed] string environment, bool allowSuppressLogLevel);
 
 		// 495
 		// -(void)disableAdServices;

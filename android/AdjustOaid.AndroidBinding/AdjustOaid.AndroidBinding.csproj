@@ -6,12 +6,16 @@
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Suppress unavoidable binding warnings for types in compiled AAR that reference removed SDK internals -->
+    <!-- BG8605: Missing Java types (ILogger, AsyncTaskExecutor, IIdentifierListener) - from compiled AAR bytecode -->
+    <!-- BG8606: Types auto-removed due to missing dependencies - expected behavior -->
+    <NoWarn>$(NoWarn);BG8605;BG8606</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->
     <AndroidLibrary Remove="libs\*.aar" />
 
-    <!-- Bind only the main SDK -->
+    <!-- Bind only the adjust OAID SDK -->
     <AndroidLibrary Include="libs\adjust-android-oaid.aar" Bind="true" />
   </ItemGroup>
 </Project>
