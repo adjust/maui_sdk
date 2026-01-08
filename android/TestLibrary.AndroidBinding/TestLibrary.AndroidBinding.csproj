@@ -17,6 +17,13 @@
     <AndroidLibrary Update="libs\Java-WebSocket-1.5.7.jar" Bind="false" />
   </ItemGroup>
   <ItemGroup>
+    <!-- test-options.aar depends on sdk-core, which is already provided via adjust-android.aar -->
+    <!-- We bind test-options but mark adjust-android as a reference to avoid duplicates -->
+    <AndroidLibrary Update="libs\test-options.aar">
+      <TransitiveDepth>0</TransitiveDepth>
+    </AndroidLibrary>
+  </ItemGroup>
+  <ItemGroup>
     <!-- Reference main Adjust SDK for type resolution (network.UtilNetworking types) -->
     <AndroidLibrary Include="../AdjustSdk.AndroidBinding/libs/adjust-android.aar" Bind="false" />
   </ItemGroup>
