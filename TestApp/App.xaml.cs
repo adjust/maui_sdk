@@ -9,6 +9,11 @@ public partial class App : Application
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		return new Window(new AppShell());
+		// Use NavigationPage instead of Shell to avoid layout loops during startup
+		var navPage = new NavigationPage(new MainPage())
+		{
+			Title = "TestApp"
+		};
+		return new Window(navPage);
 	}
 }
