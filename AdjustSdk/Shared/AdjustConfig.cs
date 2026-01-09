@@ -39,7 +39,7 @@ public partial record AdjustConfig(string AppToken, AdjustEnvironment Environmen
     public Action<AdjustSessionFailure>? SessionFailureDelegate { get; set; }
     public Func<string, bool>? DeferredDeeplinkDelegate { get; set; }
 
-    internal const string SdkPrefix = "maui5.4.6";
+    internal const string SdkPrefix = "maui5.5.0";
 
     public void SetUrlStrategy(
         List<string> urlStrategyDomains,
