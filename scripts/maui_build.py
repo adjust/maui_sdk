@@ -29,7 +29,7 @@ EXAMPLE_APP_NAME = 'ExampleApp'
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 ANDROID_BINDING_SUBMODULE_ROOT = os.path.join(ROOT, 'android')
-IOS_BINDING_SUBMODULE_ROOT = os.path.join(ROOT, 'iOs')
+IOS_BINDING_SUBMODULE_ROOT = os.path.join(ROOT, 'ios')
 
 ANDROID_CORE_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, CORE_BINDING_ANDROID_NAME)
 ANDROID_CORE_BINDING_CSPROJ = os.path.join(ANDROID_CORE_BINDING_SUBMODULE_ROOT, f'{CORE_BINDING_ANDROID_NAME}.csproj')
@@ -193,6 +193,8 @@ def build_with_delay(csproj, config, delay=1.0):
     """Run a command and add a delay afterwards to prevent race conditions"""
     # Clean actool artifacts right before each build to prevent corruption during build
     _clean_ios_actool_artifacts()
+    # Also clean any iOS-specific obj directories that might contain corrupted artifacts
+    _clean_ios_obj_artifacts(csproj, config)
     if config == 'DebugAndRelease':
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Debug'], delay)
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Release'], delay)
@@ -586,6 +588,7 @@ def _clean_ios_actool_artifacts():
     actool_paths_to_remove = []
     plist_paths_to_remove = []
     
+    # Walk the artifacts directory and collect all actool directories and plist files
     for root, dirs, files in os.walk(artifacts_dir):
         # Collect actool directories to remove
         for d in dirs:
@@ -596,19 +599,71 @@ def _clean_ios_actool_artifacts():
             if f == 'asset-manifest.plist':
                 plist_paths_to_remove.append(os.path.join(root, f))
     
-    # Remove actool directories
+    # Remove actool directories (this will also remove any plist files inside them)
     for actool_path in actool_paths_to_remove:
         try:
-            shutil.rmtree(actool_path, ignore_errors=True)
+            if os.path.exists(actool_path):
+                shutil.rmtree(actool_path, ignore_errors=True)
         except Exception:
             pass
     
-    # Remove corrupted plist files
+    # Remove any remaining corrupted plist files (outside actool directories)
     for plist_path in plist_paths_to_remove:
         try:
-            os.remove(plist_path)
+            if os.path.exists(plist_path):
+                os.remove(plist_path)
         except Exception:
             pass
+    
+    # Also clean any parent directories that might be empty after cleanup
+    # This helps prevent stale directory structures
+    for actool_path in actool_paths_to_remove:
+        try:
+            parent = os.path.dirname(actool_path)
+            # Try to remove empty parent directories up to 3 levels deep
+            for _ in range(3):
+                if os.path.exists(parent) and not os.listdir(parent):
+                    os.rmdir(parent)
+                    parent = os.path.dirname(parent)
+                else:
+                    break
+        except Exception:
+            pass
+
+def _clean_ios_obj_artifacts(csproj, config):
+    """Clean iOS-specific obj directories that might contain corrupted actool artifacts."""
+    import shutil
+    import os.path
+    
+    # Extract project name from csproj path
+    csproj_name = os.path.basename(csproj).replace('.csproj', '')
+    artifacts_obj_dir = os.path.join(ROOT, '.artifacts', csproj_name, 'obj', config)
+    
+    if not os.path.exists(artifacts_obj_dir):
+        return
+    
+    # Find all iOS-related subdirectories (net8.0-ios, net10.0-ios, etc.)
+    for item in os.listdir(artifacts_obj_dir):
+        item_path = os.path.join(artifacts_obj_dir, item)
+        if os.path.isdir(item_path) and 'ios' in item.lower():
+            # Clean actool directories within iOS obj directories
+            for root, dirs, files in os.walk(item_path):
+                for d in dirs:
+                    if d == 'actool':
+                        actool_path = os.path.join(root, d)
+                        try:
+                            if os.path.exists(actool_path):
+                                shutil.rmtree(actool_path, ignore_errors=True)
+                        except Exception:
+                            pass
+                for f in files:
+                    if f == 'asset-manifest.plist':
+                        plist_path = os.path.join(root, f)
+                        try:
+                            if os.path.exists(plist_path):
+                                os.remove(plist_path)
+                        except Exception:
+                            pass
 
 def clean_target(dry, subdir=None):
     if dry:
