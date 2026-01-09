@@ -191,12 +191,17 @@ def run(cmd, retry_on_file_lock=True, max_retries=3):
 
 def build_with_delay(csproj, config, delay=1.0):
     """Run a command and add a delay afterwards to prevent race conditions"""
+    # Clean actool artifacts right before each build to prevent corruption during build
+    _clean_ios_actool_artifacts()
     if config == 'DebugAndRelease':
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Debug'], delay)
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Release'], delay)
     else:
         run_with_delay(['dotnet', 'build', csproj, '--configuration', config], delay)
 def run_with_delay(cmd, delay):
+    # Clean actool artifacts right before running dotnet build
+    if 'dotnet' in cmd and 'build' in cmd:
+        _clean_ios_actool_artifacts()
     run(cmd)
     time.sleep(delay)
 
