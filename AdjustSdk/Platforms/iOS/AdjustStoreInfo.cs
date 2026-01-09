@@ -1,6 +1,7 @@
 namespace AdjustSdk;
 
-public partial record AdjustStoreInfo {
+public partial record AdjustStoreInfo
+{
     internal AdjustSdk.iOSBinding.ADJStoreInfo toNative()
     {
         AdjustSdk.iOSBinding.ADJStoreInfo nativeStoreInfo = new(StoreName);

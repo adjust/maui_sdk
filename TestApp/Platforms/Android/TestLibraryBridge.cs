@@ -5,7 +5,7 @@ public partial class TestLibraryBridge
     // emulator
     private const string baseIp = "10.0.2.2";
     // device
-    //private const string baseIp = "192.168.1.11";
+    // private const string baseIp = "192.168.86.211";
     //private const string baseIp = "127.0.0.1";
     private Com.Adjust.Test.TestLibrary testLibrary { get; init; }
     // Must keep a strong reference to prevent GC from collecting the listener
@@ -38,9 +38,12 @@ public partial class TestLibraryBridge
         testLibrary.AddTestDirectory(testDirectory);
     }
 
-    private partial void AddInfoToSend(string key, string value)
+    private partial void AddInfoToSend(string key, string? value)
     {
-        testLibrary.AddInfoToSend(key, value);
+        if (value is not null)
+        {
+            testLibrary.AddInfoToSend(key, value);
+        }
     }
 
     private partial void SetInfoToServer(IDictionary<string, string>? infoToSend)
@@ -65,7 +68,7 @@ public partial class TestLibraryBridge
             return;
         }
 
-        AdjustPlayStoreSubscription adjustPlayStoreSubscription = new (
+        AdjustPlayStoreSubscription adjustPlayStoreSubscription = new(
             price, currency, productId, orderId, signature, purchaseToken);
 
         if (FirstLongValue(parameters, "transactionDate") is long purchaseTime)
@@ -91,7 +94,7 @@ public partial class TestLibraryBridge
         }
 
         string? localBasePath = currentExtraPath;
-        Adjust.VerifyPlayStorePurchase(new (productId, purchaseToken),
+        Adjust.VerifyPlayStorePurchase(new(productId, purchaseToken),
             VerificationResultCallback(localBasePath));
     }
 
@@ -119,8 +122,8 @@ public partial class TestLibraryBridge
         string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
         Adjust.GetAmazonAdId(amazonAdId =>
         {
-            testLibrary.AddInfoToSend("fire_adid", amazonAdId);
-            testLibrary.AddInfoToSend("test_callback_id", testCallbackId);
+            AddInfoToSend("fire_adid", amazonAdId);
+            AddInfoToSend("test_callback_id", testCallbackId);
             testLibrary.SendInfoToServer(currentExtraPath);
         });
     }
@@ -131,7 +134,7 @@ public partial class TestLibraryBridge
         Adjust.GetGoogleAdId(googleAdId =>
         {
             testLibrary.AddInfoToSend("gps_adid", googleAdId);
-            testLibrary.AddInfoToSend("test_callback_id", testCallbackId);
+            AddInfoToSend("test_callback_id", testCallbackId);
             testLibrary.SendInfoToServer(currentExtraPath);
         });
     }

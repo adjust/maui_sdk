@@ -9,13 +9,13 @@ public partial class TestLibraryBridge
 {
     private string? currentExtraPath;
 
-    private string overwriteUrl { get ; init; }
-    private string controlUrl { get ; init; }
+    private string overwriteUrl { get; init; }
+    private string controlUrl { get; init; }
 
     public partial void Start();
     public partial void AddTest(string testName);
     public partial void AddTestDirectory(string testDirectory);
-    private partial void AddInfoToSend(string key, string value);
+    private partial void AddInfoToSend(string key, string? value);
     private partial void SetInfoToServer(IDictionary<string, string>? infoToSend);
     private partial void SendInfoToServer(string? extraPath);
     #if ANDROID
@@ -215,7 +215,7 @@ public partial class TestLibraryBridge
             return null;
         }
 
-        AdjustConfig adjustConfig = new (appTokenValid, environmentValid);
+        AdjustConfig adjustConfig = new(appTokenValid, environmentValid);
 
         AdjustLogLevel? adjustLogLevel = FirstStringValue(parameters, "logLevel") switch
         {
@@ -226,7 +226,8 @@ public partial class TestLibraryBridge
             "error" => AdjustLogLevel.ERROR,
             "assert" => AdjustLogLevel.ASSERT,
             "suppress" => AdjustLogLevel.SUPPRESS,
-            _ => null };
+            _ => null
+        };
         if (adjustLogLevel is not null)
         {
             adjustConfig.LogLevel = adjustLogLevel;
@@ -255,7 +256,7 @@ public partial class TestLibraryBridge
         }
 
         if (FirstIntValue(parameters, "eventDeduplicationIdsMaxSize")
-            is int eventDeduplicationIdsMaxSize) 
+            is int eventDeduplicationIdsMaxSize)
         {
             adjustConfig.EventDeduplicationIdsMaxSize = eventDeduplicationIdsMaxSize;
         }
@@ -488,7 +489,7 @@ public partial class TestLibraryBridge
         if (parameters.ContainsKey("deferredDeeplinkCallback"))
         {
             string? localBasePath = currentExtraPath;
-            bool launchDeferredDeeplink = 
+            bool launchDeferredDeeplink =
                 FirstBoolValue(parameters, "deferredDeeplinkCallback") is true;
             adjustConfig.DeferredDeeplinkDelegate = (string deeplink) =>
             {
@@ -514,7 +515,7 @@ public partial class TestLibraryBridge
     private AdjustEvent EventNative(Dictionary<string, List<string>> parameters)
     {
         string eventToken = FirstStringValue(parameters, "eventToken") ?? "";
-        AdjustEvent adjustEvent = new (eventToken);
+        AdjustEvent adjustEvent = new(eventToken);
 
         if (RevenueCurrencyValues(parameters) is (string currency, double amount))
         {
@@ -749,7 +750,7 @@ public partial class TestLibraryBridge
         string? localBasePath = currentExtraPath;
         Adjust.GetLastDeeplink((string? lastDeeplink) =>
         {
-            AddInfoToSend("last_deeplink", lastDeeplink ?? "");
+            AddInfoToSend("last_deeplink", lastDeeplink);
             AddInfoToSend("test_callback_id", testCallbackId);
             SendInfoToServer(localBasePath);
         });
@@ -806,9 +807,12 @@ public partial class TestLibraryBridge
         string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
         Adjust.GetAdidWithTimeout(FirstLongValue(parameters, "timeout") ?? 0, adid =>
         {
-            if (adid is not null) {
+            if (adid is not null)
+            {
                 testLibrary.AddInfoToSend("adid", adid);
-            } else {
+            }
+            else
+            {
                 #if ANDROID
                 testLibrary.AddInfoToSend("adid", "null");
                 #else
@@ -873,9 +877,9 @@ public partial class TestLibraryBridge
     private Action<AdjustPurchaseVerificationResult> VerificationResultCallback(
         string? localBasePath) => (AdjustPurchaseVerificationResult result) =>
     {
-        AddInfoToSend("verification_status", result.VerificationStatus ?? "");
+        AddInfoToSend("verification_status", result.VerificationStatus);
         AddInfoToSend("code", Convert.ToString(result.Code));
-        AddInfoToSend("message", result.Message ?? "");
+        AddInfoToSend("message", result.Message);
 
         SendInfoToServer(localBasePath);
     };
@@ -884,14 +888,14 @@ public partial class TestLibraryBridge
         string? localBasePath, Dictionary<string, List<string>> parameters) =>
         (AdjustAttribution? attribution) =>
     {
-        if (attribution is not null) {
+        if (attribution is not null)
+        {
             attributionCallback(localBasePath, parameters)(attribution);
-        } else {
+        }
+        else
+        {
             string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
-            if (testCallbackId is not null)
-            {
-                AddInfoToSend("test_callback_id", testCallbackId);
-            }
+            AddInfoToSend("test_callback_id", testCallbackId);
             #if ANDROID
             AddInfoToSend("attribution", "null");
             #else

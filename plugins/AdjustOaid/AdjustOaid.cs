@@ -2,15 +2,18 @@
 
 public class AdjustOaid
 {
-    public static void DoNotReadOaid() {
+    public static void DoNotReadOaid()
+    {
         Com.Adjust.Sdk.Oaid.AdjustOaid.DoNotReadOaid();
     }
 
-    public static void readOaid() {
+    public static void ReadOaid()
+    {
         Com.Adjust.Sdk.Oaid.AdjustOaid.ReadOaid(AppContext);
     }
 /*
-    public static void getOaid(OnOaidReadListener listener) {
+    public static void getOaid(OnOaidReadListener listener)
+    {
         Com.Adjust.Sdk.Oaid.AdjustOaid.GetOaid(AppContext,
             new OnOaidReadListenerAdapter(listener));
     }
@@ -18,7 +21,8 @@ public class AdjustOaid
     private static Android.Content.Context AppContext { get { return Android.App.Application.Context; } }
 }
 /*
-public interface OnOaidReadListener {
+public interface OnOaidReadListener
+{
     void onOaidRead(string? oaid);
     void onFail(string? message);
 }

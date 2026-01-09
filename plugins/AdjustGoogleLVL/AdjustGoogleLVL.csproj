@@ -20,5 +20,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\android\AdjustGoogleLVL.AndroidBinding\AdjustGoogleLVL.AndroidBinding.csproj" />
 	</ItemGroup>
-
 </Project>

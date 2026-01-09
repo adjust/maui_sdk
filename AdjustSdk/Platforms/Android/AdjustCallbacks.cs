@@ -26,7 +26,7 @@ internal class OnAdidReadListenerAdapterNullable(Action<string?> AdidCallback)
 internal class OnAttributionReadListenerAdapter(Action<AdjustAttribution> attributionCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnAttributionReadListener
 {
-    public void OnAttributionRead (Com.Adjust.Sdk.AdjustAttribution? nativeAdjustAttribution)
+    public void OnAttributionRead(Com.Adjust.Sdk.AdjustAttribution? nativeAdjustAttribution)
     {
         var adjustAttribution = AdjustAttribution.fromNative(nativeAdjustAttribution);
 
@@ -42,7 +42,7 @@ internal class OnAttributionReadListenerAdapter(Action<AdjustAttribution> attrib
 internal class OnAttributionReadListenerAdapterNullable(Action<AdjustAttribution?> attributionCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnAttributionReadListener
 {
-    public void OnAttributionRead (Com.Adjust.Sdk.AdjustAttribution? nativeAdjustAttribution)
+    public void OnAttributionRead(Com.Adjust.Sdk.AdjustAttribution? nativeAdjustAttribution)
     {
         attributionCallback.Invoke(AdjustAttribution.fromNative(nativeAdjustAttribution));
     }
@@ -51,7 +51,7 @@ internal class OnAttributionReadListenerAdapterNullable(Action<AdjustAttribution
 internal class OnSdkVersionReadListenerAdapter(Action<string> SdkVersionCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnSdkVersionReadListener
 {
-    public void OnSdkVersionRead (string? sdkVersion)
+    public void OnSdkVersionRead(string? sdkVersion)
     {
         if (sdkVersion is null)
         {
@@ -65,7 +65,7 @@ internal class OnSdkVersionReadListenerAdapter(Action<string> SdkVersionCallback
 internal class OnLastDeeplinkReadListenerAdapter(Action<string?> LastDeeplinkReadCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnLastDeeplinkReadListener
 {
-    public void OnLastDeeplinkRead (Android.Net.Uri? nativeDeeplink)
+    public void OnLastDeeplinkRead(Android.Net.Uri? nativeDeeplink)
     {
         LastDeeplinkReadCallback(nativeDeeplink?.ToString());
     }
@@ -74,7 +74,7 @@ internal class OnLastDeeplinkReadListenerAdapter(Action<string?> LastDeeplinkRea
 internal class OnDeeplinkResolvedListenerAdapter(Action<string> DeeplinkResolvedCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnDeeplinkResolvedListener
 {
-    public void OnDeeplinkResolved (string? nativeDeeplink)
+    public void OnDeeplinkResolved(string? nativeDeeplink)
     {
         if (nativeDeeplink is null)
         {
@@ -94,7 +94,7 @@ internal class OnDeeplinkResolvedListenerAdapter(Action<string> DeeplinkResolved
 internal class OnGoogleAdIdReadListenerAdapter(Action<string> GoogleAdIdReadCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnGoogleAdIdReadListener
 {
-    public void OnGoogleAdIdRead (string? nativeGoogleAdId)
+    public void OnGoogleAdIdRead(string? nativeGoogleAdId)
     {
         if (nativeGoogleAdId is null)
         {
@@ -108,9 +108,8 @@ internal class OnGoogleAdIdReadListenerAdapter(Action<string> GoogleAdIdReadCall
 internal class OnAmazonAdIdReadListenerAdapter(Action<string?> AmazonAdIdReadCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnAmazonAdIdReadListener
 {
-    public void OnAmazonAdIdRead (string? nativeAmazonAdId)
+    public void OnAmazonAdIdRead(string? nativeAmazonAdId)
     {
-
         AmazonAdIdReadCallback.Invoke(nativeAmazonAdId);
     }
 }
@@ -119,7 +118,7 @@ internal class OnPurchaseVerificationFinishedListenerAdapter(
     Action<AdjustPurchaseVerificationResult> AdjustPurchaseVerificationCallback)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnPurchaseVerificationFinishedListener
 {
-    public void OnVerificationFinished (
+    public void OnVerificationFinished(
         Com.Adjust.Sdk.AdjustPurchaseVerificationResult? nativeAdjustPurchaseVerificationResult)
     {
         var result =

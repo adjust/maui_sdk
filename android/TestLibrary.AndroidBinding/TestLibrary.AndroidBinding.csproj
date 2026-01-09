@@ -14,7 +14,7 @@
   <ItemGroup>
     <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->
     <AndroidLibrary Remove="libs\*.aar" />
-    
+
     <!-- Bind test-library.aar (contains TestLibrary and Constants classes) -->
     <AndroidLibrary Include="libs\test-library.aar" Bind="true" />
     

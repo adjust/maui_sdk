@@ -166,14 +166,17 @@ public partial class AdjustAttribution
         };
     }
 
-    private static string? JsonResponseToString(NSDictionary jsonResponse) {
-        if (jsonResponse is null) {
+    private static string? JsonResponseToString(NSDictionary jsonResponse)
+    {
+        if (jsonResponse is null)
+        {
             return null;
         }
 
         NSError? error = null;
         NSData? jsonData = NSJsonSerialization.Serialize(jsonResponse, 0, out error);
-        if (error != null || jsonData is null) {
+        if (error != null || jsonData is null)
+        {
             return null;
         }
 
@@ -239,7 +242,7 @@ internal class AdjustDelegateAdapter : AdjustSdk.iOSBinding.AdjustDelegate
         }
     }
 
-	public override void AdjustEventTrackingFailed(AdjustSdk.iOSBinding.ADJEventFailure? eventFailureResponse)
+    public override void AdjustEventTrackingFailed(AdjustSdk.iOSBinding.ADJEventFailure? eventFailureResponse)
     {
         if (EventFailureDelegate is null)
         {
@@ -278,7 +281,7 @@ internal class AdjustDelegateAdapter : AdjustSdk.iOSBinding.AdjustDelegate
         }
     }
 
-	public override bool AdjustDeferredDeeplinkReceived(NSUrl? nativeDeeplink)
+    public override bool AdjustDeferredDeeplinkReceived(NSUrl? nativeDeeplink)
     {
         if (DeferredDeeplinkDelegate is null)
         {
@@ -293,14 +296,14 @@ internal class AdjustDelegateAdapter : AdjustSdk.iOSBinding.AdjustDelegate
         return false;
     }
 
-	public override void AdjustSkanUpdatedWithConversionData(NSDictionary<NSString, NSString> nativeData)
+    public override void AdjustSkanUpdatedWithConversionData(NSDictionary<NSString, NSString> nativeData)
     {
         if (SkanUpdatedDelegate is null)
         {
             return;
         }
 
-        Dictionary<string, string> data = new ();
+        Dictionary<string, string> data = new();
         foreach (KeyValuePair<NSObject, NSObject> kvp in nativeData)
         {
             data.Add(kvp.Key.ToString(), kvp.Value.ToString());

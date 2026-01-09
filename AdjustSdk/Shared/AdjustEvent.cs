@@ -1,6 +1,7 @@
 namespace AdjustSdk;
 
-public partial record AdjustEvent(string EventToken) {
+public partial record AdjustEvent(string EventToken)
+{
     public double? Revenue { get; private set; }
     public string? Currency { get; private set; }
     public string? CallbackId { get; set; }

@@ -26,7 +26,7 @@ public record class AdjustAppStoreSubscription(string Price, string Currency, st
     internal AdjustSdk.iOSBinding.ADJAppStoreSubscription toNative()
     {
         AdjustSdk.iOSBinding.ADJAppStoreSubscription nativeAppStoreSubscription =
-            new (new NSDecimalNumber(Price), Currency, TransactionId);
+            new(new NSDecimalNumber(Price), Currency, TransactionId);
 
         if (TransactionDate is not null)
         {

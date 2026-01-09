@@ -17,7 +17,8 @@ public enum AdjustEnvironment
     Production
 }
 
-public partial record AdjustConfig(string AppToken, AdjustEnvironment Environment, bool AllowSuppressLogLevel = false) {
+public partial record AdjustConfig(string AppToken, AdjustEnvironment Environment, bool AllowSuppressLogLevel = false)
+{
     public string? DefaultTracker { get; set; }
     public string? ExternalDeviceId { get; set; }
     public bool? IsCoppaComplianceEnabled { get; set; }
@@ -84,7 +85,6 @@ public partial class AdjustEventFailure
     public string? EventToken { get; private set; }
     public bool WillRetry { get; private set; }
     public string? CallbackId { get; private set; }
-
 }
 
 public partial class AdjustSessionSuccess

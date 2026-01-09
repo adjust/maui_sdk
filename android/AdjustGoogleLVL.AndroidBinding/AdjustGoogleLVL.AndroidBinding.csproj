@@ -13,5 +13,4 @@
 
     <AndroidLibrary Include="libs\adjust-android-google-lvl.aar" Bind="false" />
   </ItemGroup>
-
 </Project>

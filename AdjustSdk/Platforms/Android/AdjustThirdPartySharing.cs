@@ -1,9 +1,12 @@
 namespace AdjustSdk;
 
-public partial record AdjustThirdPartySharing  {
-    internal Com.Adjust.Sdk.AdjustThirdPartySharing toNative() {
+public partial record AdjustThirdPartySharing
+{
+    internal Com.Adjust.Sdk.AdjustThirdPartySharing toNative()
+    {
         // public unsafe AdjustThirdPartySharing (global::Java.Lang.Boolean? isEnabled) : base (IntPtr.Zero, JniHandleOwnership.DoNotTransfer)
-        Java.Lang.Boolean? nativeIsEnabled = IsEnabled switch {
+        Java.Lang.Boolean? nativeIsEnabled = IsEnabled switch
+        {
             true => Java.Lang.Boolean.True,
             false => Java.Lang.Boolean.False,
             _ => null,
