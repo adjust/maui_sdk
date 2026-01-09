@@ -198,3 +198,6 @@ android/AdjustMetaReferrer.AndroidBinding/libs/adjust-android-meta-referrer.aar
 android/AdjustGoogleLVL.AndroidBinding/libs/adjust-android-google-lvl.aar
 artifacts_copy/
 .vs/
+
+# Python cache files
+__pycache__/
