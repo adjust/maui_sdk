@@ -201,3 +201,6 @@ artifacts_copy/
 
 # Python cache files
 __pycache__/
+
+# .NET platform selection
+global.json
