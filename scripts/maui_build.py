@@ -226,6 +226,9 @@ def build_bindings(targets):
 def build_bindings_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
+    # Clean Android binding artifacts before building bindings to prevent corrupted XML errors
+    # This is especially important when switching between net8 and net10 builds
+    _clean_android_binding_artifacts()
     no_bindings_target = has_none(BINDINGS, targets)
     if 'core' in targets or no_bindings_target:
         print('> Build SDK Core bindings')
@@ -286,6 +289,8 @@ def build_sdk(targets):
 def build_sdk_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
+    # Clean Android binding artifacts before building SDKs to prevent corrupted XML errors
+    _clean_android_binding_artifacts()
     no_sdk_target = has_none(SDKS, targets)
     if 'core' in targets or no_sdk_target:
         print('> Building Core SDK')
@@ -316,6 +321,8 @@ def build_apps_specific(targets, config, net_version):
     shutdown_build_server()  # Start with clean state
     # Clean corrupted iOS actool artifacts before building
     _clean_ios_actool_artifacts()
+    # Clean Android binding artifacts before building apps (apps depend on bindings)
+    _clean_android_binding_artifacts()
     no_app_target = has_none(APPS, targets)
     if 'example' in targets or no_app_target:
         build_example(targets, config, net_version)
@@ -664,6 +671,60 @@ def _clean_ios_obj_artifacts(csproj, config):
                                 os.remove(plist_path)
                         except Exception:
                             pass
+
+def _clean_android_binding_artifacts():
+    """Clean Android binding artifacts that might contain corrupted XML files.
+
+    This prevents 'Root element is missing' errors when building SDKs that depend
+    on Android bindings, especially when switching between net8 and net10 builds.
+    """
+    import shutil
+
+    # List of Android binding projects that might have corrupted XML artifacts
+    android_binding_names = [
+        CORE_BINDING_ANDROID_NAME,
+        TEST_BINDING_ANDROID_NAME,
+        OAID_BINDING_ANDROID_NAME,
+        META_REFERRER_BINDING_ANDROID_NAME,
+        GOOGLE_LVL_BINDING_ANDROID_NAME
+    ]
+
+    for binding_name in android_binding_names:
+        artifacts_obj_dir = os.path.join(ROOT, '.artifacts', binding_name, 'obj')
+
+        if not os.path.exists(artifacts_obj_dir):
+            continue
+
+        # Clean corrupted XML files in obj directories
+        # These can be empty or incomplete when builds are interrupted or when
+        # switching between .NET versions
+        for root, dirs, files in os.walk(artifacts_obj_dir):
+            for f in files:
+                # Check for potentially corrupted XML files
+                if f.endswith('.xml'):
+                    xml_path = os.path.join(root, f)
+                    try:
+                        if os.path.exists(xml_path):
+                            file_size = os.path.getsize(xml_path)
+                            # Empty files are definitely corrupted
+                            if file_size == 0:
+                                os.remove(xml_path)
+                                continue
+
+                            # Read first bytes to check if it's valid XML
+                            # Valid XML should start with '<' or have XML declaration '<?xml'
+                            with open(xml_path, 'rb') as check_file:
+                                first_bytes = check_file.read(50)  # Read more to handle BOM/whitespace
+                                first_text = first_bytes.decode('utf-8', errors='ignore').strip()
+
+                                # Check if it starts with valid XML content
+                                # Allow for BOM, whitespace, and XML declaration
+                                if not (first_text.startswith('<') or first_text.startswith('<?xml')):
+                                    # Not valid XML - likely corrupted
+                                    os.remove(xml_path)
+                    except Exception:
+                        # If we can't check/remove, continue - better to leave it than crash
+                        pass
 
 def clean_target(dry, subdir=None):
     if dry:
