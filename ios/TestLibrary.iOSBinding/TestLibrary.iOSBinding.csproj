@@ -16,7 +16,9 @@
   <ItemGroup>
     <NativeReference Include="AdjustTestLibrary.framework">
       <Kind>Framework</Kind>
+      <ForceLoad>True</ForceLoad>
+      <IsCxx>False</IsCxx>
+      <SmartLink>False</SmartLink>
     </NativeReference>
   </ItemGroup>
-
 </Project>

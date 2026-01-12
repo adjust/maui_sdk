@@ -122,6 +122,32 @@ def get_ios_sim_udid(sim_name: str) -> Optional[str]:
     return None
 
 
+def get_ios_device_udid(device_name: str) -> Optional[str]:
+    """Return UDID of the requested physical device name."""
+    try:
+        out = subprocess.check_output(['xcrun', 'xctrace', 'list', 'devices'], stderr=subprocess.DEVNULL)
+        lines = out.decode('utf-8').split('\n')
+        in_devices_section = False
+        for line in lines:
+            line = line.strip()
+            if line == '== Devices ==':
+                in_devices_section = True
+                continue
+            if line.startswith('==') and line.endswith('=='):
+                in_devices_section = False
+                continue
+            if in_devices_section and device_name in line:
+                # Extract UDID from line like "uPhone (26.1) (00008120-001645063C43A01E)"
+                parts = line.split('(')
+                if len(parts) >= 3:
+                    udid = parts[-1].rstrip(')').strip()
+                    if len(udid) > 20:  # UDIDs are typically long
+                        return udid
+    except Exception as e:
+        log(f'Error getting device UDID: {e}')
+    return None
+
+
 def resolve_csproj(app: str, net_version: str) -> str:
     if app == 'example':
         ensure_example_exists(net_version)
@@ -166,15 +192,48 @@ def run_android(config: str, avd_name: str, app: str, net_version: str) -> None:
     tfm = get_android_tfm(net_version)
     run(['dotnet', 'build', csproj, '-c', config, '-f', tfm, '-t:Run'])
 
-def run_ios(config: str, sim_name: str, app: str, net_version: str) -> None:
+def run_ios(config: str, sim_name: Optional[str], app: str, net_version: str, device_name: Optional[str] = None) -> None:
     csproj = resolve_csproj(app, net_version)
-    boot_ios_sim(sim_name)
-    udid = get_ios_sim_udid(sim_name)
-    tfm = get_ios_tfm(net_version)
-    cmd = ['dotnet', 'build', csproj, '-c', config, '-f', tfm, '-p:RuntimeIdentifier=iossimulator-arm64', '-t:Run']
-    if udid:
-        cmd.append(f'-p:_DeviceName=:v2:udid={udid}')
     set_net_version(net_version)
+    tfm = get_ios_tfm(net_version)
+    
+    if device_name:
+        # Running on physical device
+        log(f'Running on iOS device: {device_name}')
+        udid = get_ios_device_udid(device_name)
+        if not udid:
+            log(f'Error: Device "{device_name}" not found. Use "list-devices" to see available devices.')
+            sys.exit(1)
+        log(f'Found device UDID: {udid}')
+        # Clean iOS simulator build artifacts to ensure we rebuild for device
+        log('Cleaning iOS simulator build artifacts to ensure device build...')
+        app_name = os.path.basename(csproj).replace('.csproj', '')
+        artifacts_obj_dir = os.path.join(ROOT, '.artifacts', app_name, 'obj', config, tfm)
+        artifacts_bin_dir = os.path.join(ROOT, '.artifacts', app_name, 'bin', config, tfm)
+        # Remove all simulator-related build artifacts
+        for artifacts_dir in [artifacts_obj_dir, artifacts_bin_dir]:
+            if os.path.exists(artifacts_dir):
+                for item in os.listdir(artifacts_dir):
+                    item_path = os.path.join(artifacts_dir, item)
+                    if os.path.isdir(item_path) and 'simulator' in item.lower():
+                        log(f'Removing simulator build artifacts: {item}')
+                        shutil.rmtree(item_path, ignore_errors=True)
+        # Build and run for device (clean build to avoid simulator artifacts)
+        log('Building for iOS device (this may take a moment)...')
+        cmd = ['dotnet', 'build', csproj, '-c', config, '-f', tfm, '-p:RuntimeIdentifier=ios-arm64', '-t:Run']
+        # Use just the UDID for _DeviceName (mlaunch expects UDID directly)
+        cmd.append(f'-p:_DeviceName={udid}')
+    else:
+        # Running on simulator (default behavior)
+        if sim_name:
+            boot_ios_sim(sim_name)
+            udid = get_ios_sim_udid(sim_name)
+        else:
+            udid = None
+        cmd = ['dotnet', 'build', csproj, '-c', config, '-f', tfm, '-p:RuntimeIdentifier=iossimulator-arm64', '-t:Run']
+        if udid:
+            cmd.append(f'-p:_DeviceName=:v2:udid={udid}')
+    
     run(cmd)
 
 def list_android_avds() -> None:
@@ -187,6 +246,11 @@ def list_android_avds() -> None:
 
 def list_ios_sims() -> None:
     run(['xcrun', 'simctl', 'list', 'devices', 'available'], check=False)
+
+
+def list_ios_devices() -> None:
+    """List available physical iOS devices."""
+    run(['xcrun', 'xctrace', 'list', 'devices'], check=False)
 
 
 def parse_args(argv=None):
@@ -202,21 +266,23 @@ def parse_args(argv=None):
     p_run_android.add_argument('--net10', action='store_true', help='Use .NET 10')
     p_run_android.add_argument('--avd', default=os.environ.get('ANDROID_AVD', 'Pixel_5_API_34'), help='Android AVD name')
 
-    p_run_ios = sub.add_parser('run-ios', parents=[common], help='Boot simulator and run selected app on iOS simulator')
+    p_run_ios = sub.add_parser('run-ios', parents=[common], help='Run selected app on iOS simulator or device')
     p_run_ios.add_argument('app', choices=['test', 'example', 'example-nuget'], help='Which app to run')
     p_run_ios.add_argument('--net10', action='store_true', help='Use .NET 10')
-    p_run_ios.add_argument('--ios-sim', default=os.environ.get('IOS_SIM', 'iPhone 15'), help='iOS Simulator name')
+    p_run_ios.add_argument('--ios-sim', default=os.environ.get('IOS_SIM', 'iPhone 15'), help='iOS Simulator name (used if --device not specified)')
+    p_run_ios.add_argument('--device', help='Physical iOS device name (e.g., "uPhone"). Overrides --ios-sim.')
 
     # List devices
     sub.add_parser('list-avds', help='List Android AVDs')
     sub.add_parser('list-sims', help='List available iOS simulators')
+    sub.add_parser('list-devices', help='List available physical iOS devices')
 
     return parser.parse_args(argv)
 
 def main(argv=None) -> int:
     args = parse_args(argv)
     if not args.command:
-        print('Usage: maui_run.py [run-android|run-ios|list-avds|list-sims] [options]')
+        print('Usage: maui_run.py [run-android|run-ios|list-avds|list-sims|list-devices] [options]')
         return 1
     net_version = 'net8'
     if hasattr(args, 'net10') and args.net10:
@@ -225,13 +291,18 @@ def main(argv=None) -> int:
         run_android(args.config, args.avd, args.app, net_version)
         return 0
     if args.command == 'run-ios':
-        run_ios(args.config, args.ios_sim, args.app, net_version)
+        device_name = getattr(args, 'device', None)
+        sim_name = args.ios_sim if not device_name else None
+        run_ios(args.config, sim_name, args.app, net_version, device_name)
         return 0
     if args.command == 'list-avds':
         list_android_avds()
         return 0
     if args.command == 'list-sims':
         list_ios_sims()
+        return 0
+    if args.command == 'list-devices':
+        list_ios_devices()
         return 0
 
     print('Unknown command')

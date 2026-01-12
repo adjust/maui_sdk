@@ -42,8 +42,8 @@ ANDROID_GOOGLE_LVL_BINDING_LIBS_DIR = os.path.join(
 
 IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk')
 #IOS_SDK_ROOT = os.path.join(ROOT, 'ios_sdk_dev')
-IOS_BINDING_DIR = os.path.join(ROOT, 'iOs', 'AdjustSdk.iOSBinding')
-IOS_TEST_BINDING_DIR = os.path.join(ROOT, 'iOs', 'TestLibrary.iOSBinding')
+IOS_BINDING_DIR = os.path.join(ROOT, 'ios', 'AdjustSdk.iOSBinding')
+IOS_TEST_BINDING_DIR = os.path.join(ROOT, 'ios', 'TestLibrary.iOSBinding')
 
 PLATFORMS = ['android', 'ios']
 SDKS = ['core', 'oaid', 'meta_referrer', 'google_lvl', 'test', 'plugins']
@@ -283,15 +283,16 @@ def build_ios_test_library_scripts():
     print('Before build_frameworks.sh')
     env = os.environ.copy()
     env['SDK_CODE_SIGN_IDENTITY'] = '-'
-    #code = run(['bash', './scripts/build_frameworks.sh', '-test'], cwd=IOS_SDK_ROOT, env=env, check=False)
-    code = run(['bash', './scripts/build_frameworks.sh', '-test-sim'], cwd=IOS_SDK_ROOT, env=env, check=False)
+    code = run(['bash', './scripts/build_frameworks.sh', '-test'], cwd=IOS_SDK_ROOT, env=env, check=False)
+    #code = run(['bash', './scripts/build_frameworks.sh', '-test-sim'], cwd=IOS_SDK_ROOT, env=env, check=False)
     print('After build_frameworks.sh (exit code: %s)' % code)
 
     # Preferred static test library framework output path
     static_test_library_framework = os.path.join(
         IOS_SDK_ROOT,
         'sdk_distribution',
-        'test-static-framework-simulator',
+        #'test-static-framework-simulator',
+        'test-static-framework-device',
         'AdjustTestLibrary.framework'
     )
 

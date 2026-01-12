@@ -13,5 +13,4 @@
 
     <AndroidLibrary Include="libs\adjust-android-meta-referrer.aar" Bind="false" />
   </ItemGroup>
-
 </Project>

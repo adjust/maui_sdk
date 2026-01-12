@@ -82,8 +82,8 @@ public partial record AdjustConfig {
         {
             nativeAdjustConfig.SetUrlStrategy(
                 urlStrategyDomainsValue,
-                ShouldUseSubdomains?? false,
-                IsDataResidency?? false);
+                ShouldUseSubdomains ?? false,
+                IsDataResidency ?? false);
         }
 
         if (AttributionChangedDelegate is Action<AdjustAttribution> attributionChangedDelegateValue)
@@ -156,7 +156,8 @@ public partial record AdjustConfig {
     }
 }
 
-public partial class AdjustAttribution {
+public partial class AdjustAttribution
+{
     public string? FbInstallReferrer { get; private set; }
 
     internal static AdjustAttribution? fromNative(
@@ -223,7 +224,7 @@ public partial class AdjustEventSuccess
 internal class OnEventTrackingSucceededListenerAdapter(Action<AdjustEventSuccess> EventSuccessDelegate)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnEventTrackingSucceededListener
 {
-    public void OnEventTrackingSucceeded (Com.Adjust.Sdk.AdjustEventSuccess? nativeAdjustEventSuccess)
+    public void OnEventTrackingSucceeded(Com.Adjust.Sdk.AdjustEventSuccess? nativeAdjustEventSuccess)
     {
         if (AdjustEventSuccess.fromNativeAdjustEventSuccess(nativeAdjustEventSuccess)
         is AdjustEventSuccess adjustEventSuccess)
@@ -293,7 +294,7 @@ public partial class AdjustSessionSuccess
 internal class OnSessionTrackingSucceededListenerAdapter(Action<AdjustSessionSuccess> SessionSuccessDelegate)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnSessionTrackingSucceededListener
 {
-    public void OnSessionTrackingSucceeded (Com.Adjust.Sdk.AdjustSessionSuccess? nativeAdjustSessionSuccess)
+    public void OnSessionTrackingSucceeded(Com.Adjust.Sdk.AdjustSessionSuccess? nativeAdjustSessionSuccess)
     {
         if (AdjustSessionSuccess.fromNativeAdjustSessionSuccess(nativeAdjustSessionSuccess)
         is AdjustSessionSuccess adjustSessionSuccess)

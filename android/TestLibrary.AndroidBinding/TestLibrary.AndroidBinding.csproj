@@ -12,16 +12,23 @@
     <NoWarn>$(NoWarn);BG8605;BG8606</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->
+    <AndroidLibrary Remove="libs\*.aar" />
+
+    <!-- Bind test-library.aar (contains TestLibrary and Constants classes) -->
+    <AndroidLibrary Include="libs\test-library.aar" Bind="true" />
+    
+    <!-- Bind test-options.aar (contains TestConnectionOptions) -->
+    <!-- Set TransitiveDepth to 0 to prevent pulling in test-library.aar transitively -->
+    <!-- This avoids duplicate Constants class definitions -->
+    <AndroidLibrary Include="libs\test-options.aar" Bind="true">
+      <TransitiveDepth>0</TransitiveDepth>
+    </AndroidLibrary>
+  </ItemGroup>
+  <ItemGroup>
     <!-- Include dependencies for type resolution (not bound, only for resolving references) -->
     <AndroidLibrary Update="libs\slf4j-api-2.0.13.jar" Bind="false" />
     <AndroidLibrary Update="libs\Java-WebSocket-1.5.7.jar" Bind="false" />
-  </ItemGroup>
-  <ItemGroup>
-    <!-- test-options.aar depends on sdk-core, which is already provided via adjust-android.aar -->
-    <!-- We bind test-options but mark adjust-android as a reference to avoid duplicates -->
-    <AndroidLibrary Update="libs\test-options.aar">
-      <TransitiveDepth>0</TransitiveDepth>
-    </AndroidLibrary>
   </ItemGroup>
   <ItemGroup>
     <!-- Reference main Adjust SDK for type resolution (network.UtilNetworking types) -->

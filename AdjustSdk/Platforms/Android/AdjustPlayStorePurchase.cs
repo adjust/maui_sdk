@@ -6,6 +6,6 @@ public record class AdjustPlayStorePurchase(
 {
     internal Com.Adjust.Sdk.AdjustPlayStorePurchase toNative()
     {
-        return new (ProductId, PurchaseToken);
+        return new(ProductId, PurchaseToken);
     }
 }

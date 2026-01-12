@@ -225,7 +225,6 @@ public partial class Adjust
         AdjustSdk.iOSBinding.Adjust
             .RequestAppTrackingAuthorizationWithCompletionHandler(
                 (nuint status) => callback((int) status));
-
     }
 
     public static partial void TrackAppStoreSubscription(AdjustAppStoreSubscription subscription)

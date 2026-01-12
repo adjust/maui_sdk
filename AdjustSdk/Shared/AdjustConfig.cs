@@ -17,7 +17,8 @@ public enum AdjustEnvironment
     Production
 }
 
-public partial record AdjustConfig(string AppToken, AdjustEnvironment Environment, bool AllowSuppressLogLevel = false) {
+public partial record AdjustConfig(string AppToken, AdjustEnvironment Environment, bool AllowSuppressLogLevel = false)
+{
     public string? DefaultTracker { get; set; }
     public string? ExternalDeviceId { get; set; }
     public bool? IsCoppaComplianceEnabled { get; set; }
@@ -39,7 +40,7 @@ public partial record AdjustConfig(string AppToken, AdjustEnvironment Environmen
     public Action<AdjustSessionFailure>? SessionFailureDelegate { get; set; }
     public Func<string, bool>? DeferredDeeplinkDelegate { get; set; }
 
-    internal const string SdkPrefix = "maui5.4.6";
+    internal const string SdkPrefix = "maui5.5.0";
 
     public void SetUrlStrategy(
         List<string> urlStrategyDomains,
@@ -84,7 +85,6 @@ public partial class AdjustEventFailure
     public string? EventToken { get; private set; }
     public bool WillRetry { get; private set; }
     public string? CallbackId { get; private set; }
-
 }
 
 public partial class AdjustSessionSuccess

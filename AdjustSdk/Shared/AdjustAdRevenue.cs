@@ -1,6 +1,7 @@
 namespace AdjustSdk;
 
-public partial record AdjustAdRevenue(string Source) {
+public partial record AdjustAdRevenue(string Source)
+{
     public double? Revenue { get; private set; }
     public string? Currency { get; private set; }
     public int? AdImpressionsCount { get; set; }

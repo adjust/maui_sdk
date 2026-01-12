@@ -29,7 +29,7 @@ EXAMPLE_APP_NAME = 'ExampleApp'
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 ANDROID_BINDING_SUBMODULE_ROOT = os.path.join(ROOT, 'android')
-IOS_BINDING_SUBMODULE_ROOT = os.path.join(ROOT, 'iOs')
+IOS_BINDING_SUBMODULE_ROOT = os.path.join(ROOT, 'ios')
 
 ANDROID_CORE_BINDING_SUBMODULE_ROOT = os.path.join(ANDROID_BINDING_SUBMODULE_ROOT, CORE_BINDING_ANDROID_NAME)
 ANDROID_CORE_BINDING_CSPROJ = os.path.join(ANDROID_CORE_BINDING_SUBMODULE_ROOT, f'{CORE_BINDING_ANDROID_NAME}.csproj')
@@ -191,12 +191,19 @@ def run(cmd, retry_on_file_lock=True, max_retries=3):
 
 def build_with_delay(csproj, config, delay=1.0):
     """Run a command and add a delay afterwards to prevent race conditions"""
+    # Clean actool artifacts right before each build to prevent corruption during build
+    _clean_ios_actool_artifacts()
+    # Also clean any iOS-specific obj directories that might contain corrupted artifacts
+    _clean_ios_obj_artifacts(csproj, config)
     if config == 'DebugAndRelease':
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Debug'], delay)
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Release'], delay)
     else:
         run_with_delay(['dotnet', 'build', csproj, '--configuration', config], delay)
 def run_with_delay(cmd, delay):
+    # Clean actool artifacts right before running dotnet build
+    if 'dotnet' in cmd and 'build' in cmd:
+        _clean_ios_actool_artifacts()
     run(cmd)
     time.sleep(delay)
 
@@ -307,6 +314,8 @@ def build_apps(targets):
 def build_apps_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
+    # Clean corrupted iOS actool artifacts before building
+    _clean_ios_actool_artifacts()
     no_app_target = has_none(APPS, targets)
     if 'example' in targets or no_app_target:
         build_example(targets, config, net_version)
@@ -315,13 +324,19 @@ def build_apps_specific(targets, config, net_version):
     if 'test' in targets or no_app_target:
         build_test(targets, config, net_version)
 def build_test(targets, config, net_version):
+    _clean_ios_actool_artifacts()  # Clean before each app build
+    # TestApp uses TestLibrary framework which is device-only, so skip iOS simulator build
+    # It will be built for device in maui_run.py when --device is specified
     if 'net10' in net_version:
-        print('> Building Test App Net10')
-        build_with_delay(TESTAPP_CSPROJ_NET10, config)
+        print('> Building Test App Net10 (Android only - iOS will be built for device in run script)')
+        # Build only Android target to avoid simulator/device framework mismatch
+        run_with_delay(['dotnet', 'build', TESTAPP_CSPROJ_NET10, '--configuration', config, '-f', 'net10.0-android36.0'], 1.0)
     else:
-        print('> Building Test App Net8')
-        build_with_delay(TESTAPP_CSPROJ, config)
+        print('> Building Test App Net8 (Android only - iOS will be built for device in run script)')
+        # Build only Android target to avoid simulator/device framework mismatch
+        run_with_delay(['dotnet', 'build', TESTAPP_CSPROJ, '--configuration', config, '-f', 'net8.0-android'], 1.0)
 def build_example(targets, config, net_version):
+    _clean_ios_actool_artifacts()  # Clean before each app build
     if 'net10' in net_version:
         print('> Building Example App Net10')
         build_with_delay(EXAMPLE_APP_CSPROJ_NET10, config)
@@ -329,6 +344,7 @@ def build_example(targets, config, net_version):
         print('> Building Example App Net8')
         build_with_delay(EXAMPLE_APP_CSPROJ, config)
 def build_example_nuget(targets, config, net_version):
+    _clean_ios_actool_artifacts()  # Clean before each app build
     if 'net10' in net_version:
         print('> Building Example Nuget Net10')
         build_with_delay(EXAMPLE_APP_CSPROJ_NUGET_NET10, config)
@@ -561,6 +577,94 @@ def find_files_cmd(subdir_list: list[str]):
     search_roots = [os.path.join(ROOT, subdir) for subdir in subdir_list]
     return ['find'] + search_roots + ['-type', 'f']
 
+def _clean_ios_actool_artifacts():
+    """Clean corrupted iOS actool artifacts that can cause build failures."""
+    artifacts_dir = os.path.join(ROOT, '.artifacts')
+    if not os.path.exists(artifacts_dir):
+        return
+    # Remove all actool directories and corrupted plist files
+    # Use shutil.rmtree for more reliable cleanup
+    import shutil
+    actool_paths_to_remove = []
+    plist_paths_to_remove = []
+    
+    # Walk the artifacts directory and collect all actool directories and plist files
+    for root, dirs, files in os.walk(artifacts_dir):
+        # Collect actool directories to remove
+        for d in dirs:
+            if d == 'actool':
+                actool_paths_to_remove.append(os.path.join(root, d))
+        # Collect corrupted plist files to remove
+        for f in files:
+            if f == 'asset-manifest.plist':
+                plist_paths_to_remove.append(os.path.join(root, f))
+    
+    # Remove actool directories (this will also remove any plist files inside them)
+    for actool_path in actool_paths_to_remove:
+        try:
+            if os.path.exists(actool_path):
+                shutil.rmtree(actool_path, ignore_errors=True)
+        except Exception:
+            pass
+    
+    # Remove any remaining corrupted plist files (outside actool directories)
+    for plist_path in plist_paths_to_remove:
+        try:
+            if os.path.exists(plist_path):
+                os.remove(plist_path)
+        except Exception:
+            pass
+    
+    # Also clean any parent directories that might be empty after cleanup
+    # This helps prevent stale directory structures
+    for actool_path in actool_paths_to_remove:
+        try:
+            parent = os.path.dirname(actool_path)
+            # Try to remove empty parent directories up to 3 levels deep
+            for _ in range(3):
+                if os.path.exists(parent) and not os.listdir(parent):
+                    os.rmdir(parent)
+                    parent = os.path.dirname(parent)
+                else:
+                    break
+        except Exception:
+            pass
+
+def _clean_ios_obj_artifacts(csproj, config):
+    """Clean iOS-specific obj directories that might contain corrupted actool artifacts."""
+    import shutil
+    import os.path
+    
+    # Extract project name from csproj path
+    csproj_name = os.path.basename(csproj).replace('.csproj', '')
+    artifacts_obj_dir = os.path.join(ROOT, '.artifacts', csproj_name, 'obj', config)
+    
+    if not os.path.exists(artifacts_obj_dir):
+        return
+    
+    # Find all iOS-related subdirectories (net8.0-ios, net10.0-ios, etc.)
+    for item in os.listdir(artifacts_obj_dir):
+        item_path = os.path.join(artifacts_obj_dir, item)
+        if os.path.isdir(item_path) and 'ios' in item.lower():
+            # Clean actool directories within iOS obj directories
+            for root, dirs, files in os.walk(item_path):
+                for d in dirs:
+                    if d == 'actool':
+                        actool_path = os.path.join(root, d)
+                        try:
+                            if os.path.exists(actool_path):
+                                shutil.rmtree(actool_path, ignore_errors=True)
+                        except Exception:
+                            pass
+                for f in files:
+                    if f == 'asset-manifest.plist':
+                        plist_path = os.path.join(root, f)
+                        try:
+                            if os.path.exists(plist_path):
+                                os.remove(plist_path)
+                        except Exception:
+                            pass
+
 def clean_target(dry, subdir=None):
     if dry:
         print('> dry-run: listing bin/ and obj/ directories under %s' % subdir)
@@ -572,6 +676,15 @@ def clean_target(dry, subdir=None):
     else:
         print('> rm -rf bin/ and obj/ directories under %s' % subdir)
         subprocess.run(find_bin_obj_dirs_cmd(subdir) + ['-exec', 'rm', '-rf', '{}', '+'])
+    # Also clean any corrupted iOS actool artifacts that might cause build failures
+    # This handles cases where actool creates corrupted plist files or fails to create them
+    if subdir and os.path.exists(subdir):
+        # Remove any corrupted asset-manifest.plist files and actool directories
+        plist_cleanup = ['find', subdir, '-type', 'f', '-name', 'asset-manifest.plist', '-delete']
+        subprocess.run(plist_cleanup, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        # Remove actool directories that might have corrupted state
+        actool_cleanup = ['find', subdir, '-type', 'd', '-name', 'actool', '-exec', 'rm', '-rf', '{}', '+']
+        subprocess.run(actool_cleanup, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 def clean_artifacts_copy(dry, subdir_list: list[str]):
     if dry:
         print('> dry-run: listing files under %s' % subdir_list)
