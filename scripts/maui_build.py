@@ -191,22 +191,20 @@ def run(cmd, retry_on_file_lock=True, max_retries=3):
 
 def build_with_delay(csproj, config, delay=1.0):
     """Run a command and add a delay afterwards to prevent race conditions"""
-    # Clean actool artifacts right before each build to prevent corruption during build
-    _clean_ios_actool_artifacts()
-    # Also clean any iOS-specific obj directories that might contain corrupted artifacts
     _clean_ios_obj_artifacts(csproj, config)
     if config == 'DebugAndRelease':
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Debug'], delay)
+        _clean_ios_obj_artifacts(csproj, config)
         run_with_delay(['dotnet', 'build', csproj, '--configuration', 'Release'], delay)
     else:
         run_with_delay(['dotnet', 'build', csproj, '--configuration', config], delay)
 def run_with_delay(cmd, delay):
+    # Clean Android binding artifacts before building bindings to prevent corrupted XML errors
+    _clean_android_binding_artifacts()
     # Clean actool artifacts right before running dotnet build
-    if 'dotnet' in cmd and 'build' in cmd:
-        _clean_ios_actool_artifacts()
+    _clean_ios_actool_artifacts()
     run(cmd)
     time.sleep(delay)
-
 
 def build_bindings(targets):
     if 'debug' in targets:
@@ -226,9 +224,6 @@ def build_bindings(targets):
 def build_bindings_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
-    # Clean Android binding artifacts before building bindings to prevent corrupted XML errors
-    # This is especially important when switching between net8 and net10 builds
-    _clean_android_binding_artifacts()
     no_bindings_target = has_none(BINDINGS, targets)
     if 'core' in targets or no_bindings_target:
         print('> Build SDK Core bindings')
@@ -289,8 +284,6 @@ def build_sdk(targets):
 def build_sdk_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
-    # Clean Android binding artifacts before building SDKs to prevent corrupted XML errors
-    _clean_android_binding_artifacts()
     no_sdk_target = has_none(SDKS, targets)
     if 'core' in targets or no_sdk_target:
         print('> Building Core SDK')
@@ -319,10 +312,6 @@ def build_apps(targets):
 def build_apps_specific(targets, config, net_version):
     set_net_version(net_version)
     shutdown_build_server()  # Start with clean state
-    # Clean corrupted iOS actool artifacts before building
-    _clean_ios_actool_artifacts()
-    # Clean Android binding artifacts before building apps (apps depend on bindings)
-    _clean_android_binding_artifacts()
     no_app_target = has_none(APPS, targets)
     if 'example' in targets or no_app_target:
         build_example(targets, config, net_version)
@@ -331,19 +320,13 @@ def build_apps_specific(targets, config, net_version):
     if 'test' in targets or no_app_target:
         build_test(targets, config, net_version)
 def build_test(targets, config, net_version):
-    _clean_ios_actool_artifacts()  # Clean before each app build
-    # TestApp uses TestLibrary framework which is device-only, so skip iOS simulator build
-    # It will be built for device in maui_run.py when --device is specified
     if 'net10' in net_version:
-        print('> Building Test App Net10 (Android only - iOS will be built for device in run script)')
-        # Build only Android target to avoid simulator/device framework mismatch
-        run_with_delay(['dotnet', 'build', TESTAPP_CSPROJ_NET10, '--configuration', config, '-f', 'net10.0-android36.0'], 1.0)
+        print('> Building Test App Net10')
+        build_with_delay(TESTAPP_CSPROJ_NET10, config)
     else:
-        print('> Building Test App Net8 (Android only - iOS will be built for device in run script)')
-        # Build only Android target to avoid simulator/device framework mismatch
-        run_with_delay(['dotnet', 'build', TESTAPP_CSPROJ, '--configuration', config, '-f', 'net8.0-android'], 1.0)
+        print('> Building Test App Net8')
+        build_with_delay(TESTAPP_CSPROJ, config)
 def build_example(targets, config, net_version):
-    _clean_ios_actool_artifacts()  # Clean before each app build
     if 'net10' in net_version:
         print('> Building Example App Net10')
         build_with_delay(EXAMPLE_APP_CSPROJ_NET10, config)
@@ -351,7 +334,6 @@ def build_example(targets, config, net_version):
         print('> Building Example App Net8')
         build_with_delay(EXAMPLE_APP_CSPROJ, config)
 def build_example_nuget(targets, config, net_version):
-    _clean_ios_actool_artifacts()  # Clean before each app build
     if 'net10' in net_version:
         print('> Building Example Nuget Net10')
         build_with_delay(EXAMPLE_APP_CSPROJ_NUGET_NET10, config)

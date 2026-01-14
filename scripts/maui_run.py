@@ -196,7 +196,7 @@ def run_ios(config: str, sim_name: Optional[str], app: str, net_version: str, de
     csproj = resolve_csproj(app, net_version)
     set_net_version(net_version)
     tfm = get_ios_tfm(net_version)
-    
+
     if device_name:
         # Running on physical device
         log(f'Running on iOS device: {device_name}')
