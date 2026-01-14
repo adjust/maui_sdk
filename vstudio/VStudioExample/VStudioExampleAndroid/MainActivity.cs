@@ -14,6 +14,6 @@ public class MainActivity : Activity
         SetContentView(Resource.Layout.activity_main);
 
         Adjust.InitSdk(new AdjustConfig("qwerty123456", AdjustEnvironment.Sandbox));
-        AdjustOaid.readOaid();
+        AdjustOaid.ReadOaid();
     }
 }
