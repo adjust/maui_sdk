@@ -1,4 +1,4 @@
-### Version 5.5.0 (14th January 2026)
+### Version 5.5.0 (15th January 2026)
 
 #### Added
 - Added `GetAdidWithTimeout` method to the `Adjust` API to allow retrieving the ADID with a specified timeout. If the value is not obtained in time, `null` is returned via the callback.
