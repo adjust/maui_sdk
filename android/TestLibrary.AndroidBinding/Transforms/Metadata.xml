@@ -17,7 +17,13 @@
       or @name='setInfoToSend'
       or @name='sendInfoToServer'
       )]"/>
+    <!-- Keep TestConnectionOptions class, remove others in package -->
     <remove-node path="/api/package[@name='com.adjust.test_options']/class[not(@name='TestConnectionOptions')]"/>
 
+    <!-- Note: TestConnectionOptions.1 and other nested classes are automatically removed -->
+    <!-- during class-parse phase due to missing IConnectionOptions dependency. -->
+
+    <!-- Make addInfoToSend value parameter nullable -->
+    <attr path="/api/package[@name='com.adjust.test']/class[@name='TestLibrary']/method[@name='addInfoToSend']/parameter[@name='value']" name="managedNullable">true</attr>
 
 </metadata>

@@ -1,4 +1,4 @@
-﻿<metadata>
+<metadata>
   <!--
   This sample removes the class: android.support.v4.content.AsyncTaskLoader.LoadTask:
   <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='AsyncTaskLoader.LoadTask']" />
@@ -7,76 +7,86 @@
   <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
   -->
 
-  <remove-node path="/api/package[@name='com.adjust.sdk']/class[
-    not(@name='Adjust'
-    or @name='AdjustConfig'
-    or @name='AdjustTestOptions'
-    or @name='AdjustAdRevenue'
-    or @name='AdjustAttribution'
-    or @name='AdjustPurchaseVerificationResult'
-    or @name='AdjustDeeplink'
-    or @name='AdjustEvent'
-    or @name='AdjustPlayStorePurchase'
-    or @name='AdjustPlayStoreSubscription'
-    or @name='AdjustThirdPartySharing'
-    or @name='LogLevel'
-
-    or @name='AdjustEventFailure'
-    or @name='AdjustEventSuccess'
-    or @name='AdjustSessionFailure'
-    or @name='AdjustSessionSuccess'
-    
-    )]"/>
-
-  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='Adjust']/method[
-    @name='getDefaultInstance'
-    or @name='getGooglePlayInstallReferrer']"/>
-  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='AdjustConfig']/method[
-    @name='getLogger']"/>
-
+  <!-- Keep only minimal, safe removals compatible with updated SDK -->
   <remove-node path="/api/package[@name='com.adjust.sdk.network']" />
-  <remove-node path="/api/package[@name='com.adjust.sdk.Sig']" />
-  <remove-node path="/api/package[@name='com.adjust.sdk.Signer']" />
+  <remove-node path="/api/package[@name='com.adjust.sdk.scheduler']" />
 
+  <!-- Remove specific methods that are not needed/exposed -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='Adjust']/method[
+    @name='getDefaultInstance' or @name='getGooglePlayInstallReferrer']" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='AdjustConfig']/method[@name='getLogger']" />
+
+  <!-- Remove AdjustSigner methods that reference removed ILogger interface -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='AdjustSigner']/method[@name='onResume']" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='AdjustSigner']/method[@name='sign']" />
+
+  <!-- Remove internal handler interfaces/classes that depend on pruned network package -->
   <remove-node path="/api/package[@name='com.adjust.sdk']/interface[
-    not(@name='OnAdidReadListener'
-    or @name='OnAmazonAdIdReadListener'
-    or @name='OnAttributionReadListener'
-    or @name='OnAttributionChangedListener'
-    or @name='OnDeeplinkResolvedListener'
-    or @name='OnDeferredDeeplinkResponseListener'
-    or @name='OnEventTrackingFailedListener'
-    or @name='OnEventTrackingSucceededListener'
-    or @name='OnGoogleAdIdReadListener'
-    or @name='OnIsEnabledListener'
-    or @name='OnLastDeeplinkReadListener'
-    or @name='OnPurchaseVerificationFinishedListener'
-    or @name='OnSdkVersionReadListener'
-    or @name='OnSessionTrackingFailedListener'
-    or @name='OnSessionTrackingSucceededListener'
+    @name='IAttributionHandler' or
+    @name='IPackageHandler' or
+    @name='IPurchaseVerificationHandler' or
+    @name='ISdkClickHandler' or
+    @name='IActivityHandler' or
+    @name='ILogger']" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[
+    @name='AttributionHandler' or
+    @name='PackageHandler' or
+    @name='PurchaseVerificationHandler' or
+    @name='SdkClickHandler' or
+    @name='ActivityHandler' or
+    @name='PackageBuilder' or
+    @name='Logger' or
+    @name='Reflection']" />
 
-    or @name='IOnAdidReadListener'
-    or @name='IOnAmazonAdIdReadListener'
-    or @name='IOnAttributionReadListener'
-    or @name='IOnAttributionChangedListener'
-    or @name='IOnDeeplinkResolvedListener'
-    or @name='IOnDeferredDeeplinkResponseListener'
-    or @name='IOnEventTrackingFailedListener'
-    or @name='IOnEventTrackingSucceededListener'
-    or @name='IOnGoogleAdIdReadListener'
+  <!-- Remove internal response data classes -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[contains(@name, 'ResponseData')]" />
 
-    or @name='IOnIsEnabledListener'
-    or @name='IOnLastDeeplinkReadListener'
-    or @name='IOnPurchaseVerificationFinishedListener'
-    or @name='IOnSdkVersionReadListener'
-    or @name='IOnSessionTrackingFailedListener'
-    or @name='IOnSessionTrackingSucceededListener'
+  <!-- Remove internal state/package classes -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[
+    @name='ActivityPackage' or
+    @name='ActivityState' or
+    @name='BackoffStrategy' or
+    @name='DeviceInfo' or
+    @name='PackageFactory']" />
 
-    )]" />
-<!-- 
-TODO add OnGooglePlayInstallReferrerReadListener ?
-  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='ActivityHandler']" />
+  <!-- Remove internal utility classes that depend on removed types -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[
+    @name='PreinstallUtil' or
+    @name='SharedPreferencesManager' or
+    @name='StoreInfoUtil' or
+    @name='Util' or
+    @name='InstallReferrer' or
+    @name='InstallReferrerReadListener' or
+    @name='ReferrerDetails' or
+    @name='GooglePlayServicesClient' or
+    @name='LicenseData' or
+    @name='AdjustFactory' or
+    @name='AdjustInstance' or
+    @name='AdjustTimeoutCallback' or
+    @name='GooglePlayInstallReferrerDetails']" />
+
+  <!-- Remove internal test/callback interfaces -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/interface[
+    @name='IInstallReferrerReadListener' or
+    @name='IRunActivityHandler']" />
+
+  <!-- Remove orphaned nested types whose parent classes are removed -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[@name='AdjustFactory.URLGetConnection']" />
+
+  <!-- Remove problematic listener not used by MAUI wrapper to avoid duplicate EventArgs -->
   <remove-node path="/api/package[@name='com.adjust.sdk']/interface[@name='OnGooglePlayInstallReferrerReadListener']" />
--->
 
+  <!-- Remove obfuscated synthetic nested types (addresses BG8604 warnings) -->
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'ActivityHandler.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'AttributionHandler.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'PackageHandler.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'PurchaseVerificationHandler.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'SdkClickHandler.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'AdjustInstance.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'InstallReferrer.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'AdjustLinkResolution.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'Util.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'GooglePlayServicesClient.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'DeviceInfo.')]" />
+  <remove-node path="/api/package[@name='com.adjust.sdk']/class[starts-with(@name, 'PackageBuilder.')]" />
 </metadata>

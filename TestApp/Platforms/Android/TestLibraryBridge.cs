@@ -3,19 +3,24 @@ using AdjustSdk;
 public partial class TestLibraryBridge
 {
     // emulator
-    // private const string baseIp = "10.0.2.2";
+    private const string baseIp = "10.0.2.2";
     // device
-    private const string baseIp = "192.168.86.227";
+    // private const string baseIp = "192.168.86.211";
+    //private const string baseIp = "127.0.0.1";
     private Com.Adjust.Test.TestLibrary testLibrary { get; init; }
+    // Must keep a strong reference to prevent GC from collecting the listener
+    // while native code still holds a reference to it
+    private CommandJsonListener commandJsonListener { get; init; }
 
     public TestLibraryBridge()
     {
         overwriteUrl = $"https://{baseIp}:8443";
         controlUrl = $"ws://{baseIp}:1987";
 
+        commandJsonListener = new CommandJsonListener(this);
         testLibrary = new Com.Adjust.Test.TestLibrary(
             overwriteUrl, controlUrl, Android.App.Application.Context,
-            new CommandJsonListener(this));
+            commandJsonListener);
     }
 
     public partial void Start()
@@ -33,9 +38,12 @@ public partial class TestLibraryBridge
         testLibrary.AddTestDirectory(testDirectory);
     }
 
-    private partial void AddInfoToSend(string key, string value)
+    private partial void AddInfoToSend(string key, string? value)
     {
-        testLibrary.AddInfoToSend(key, value);
+        if (value is not null)
+        {
+            testLibrary.AddInfoToSend(key, value);
+        }
     }
 
     private partial void SetInfoToServer(IDictionary<string, string>? infoToSend)
@@ -60,7 +68,7 @@ public partial class TestLibraryBridge
             return;
         }
 
-        AdjustPlayStoreSubscription adjustPlayStoreSubscription = new (
+        AdjustPlayStoreSubscription adjustPlayStoreSubscription = new(
             price, currency, productId, orderId, signature, purchaseToken);
 
         if (FirstLongValue(parameters, "transactionDate") is long purchaseTime)
@@ -86,7 +94,7 @@ public partial class TestLibraryBridge
         }
 
         string? localBasePath = currentExtraPath;
-        Adjust.VerifyPlayStorePurchase(new (productId, purchaseToken),
+        Adjust.VerifyPlayStorePurchase(new(productId, purchaseToken),
             VerificationResultCallback(localBasePath));
     }
 
@@ -94,6 +102,43 @@ public partial class TestLibraryBridge
     {
         return jsonResponse?.ToString();
     }
+
+#region Commands
+    private partial void PlayStoreKidsComplianceInDelay(Dictionary<string, List<string>> parameters)
+    {
+        if (FirstBoolValue(parameters, "isEnabled") is true)
+        {
+            Adjust.EnablePlayStoreKidsComplianceInDelay();
+        }
+
+        if (FirstBoolValue(parameters, "isEnabled") is false)
+        {
+            Adjust.DisablePlayStoreKidsComplianceInDelay();
+        }
+    }
+
+    private partial void AmazonAdIdGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetAmazonAdId(amazonAdId =>
+        {
+            AddInfoToSend("fire_adid", amazonAdId);
+            AddInfoToSend("test_callback_id", testCallbackId);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+
+    private partial void GoogleAdIdGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetGoogleAdId(googleAdId =>
+        {
+            testLibrary.AddInfoToSend("gps_adid", googleAdId);
+            AddInfoToSend("test_callback_id", testCallbackId);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+#endregion Commands
 }
 
 internal class CommandJsonListener(TestLibraryBridge testLibraryBridge) :

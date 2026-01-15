@@ -9,6 +9,7 @@ public partial record AdjustConfig
     public bool? IsIdfvReadingEnabled { get; set; }
     public bool? IsSkanAttributionEnabled { get; set; }
     public bool? IsLinkMeEnabled { get; set; }
+    public bool? IsAppTrackingTransparencyUsageEnabled { get; set; }
     public int? AttConsentWaitingInterval { get; set; }
     public Action<Dictionary<string, string>>? SkanUpdatedDelegate { get; set; }
 
@@ -55,6 +56,16 @@ public partial record AdjustConfig
         if (IsSendingInBackgroundEnabled is true)
         {
             nativeAdjustConfig.EnableSendingInBackground();
+        }
+
+        if (IsFirstSessionDelayEnabled is true)
+        {
+            nativeAdjustConfig.EnableFirstSessionDelay();
+        }
+
+        if (IsAppTrackingTransparencyUsageEnabled is false)
+        {
+            nativeAdjustConfig.DisableAppTrackingTransparencyUsage();
         }
 
         if (IsCostDataInAttributionEnabled is true)
@@ -121,6 +132,11 @@ public partial record AdjustConfig
             nativeAdjustConfig.AttConsentWaitingInterval = (nuint)attConsentWaitingIntervalValue;
         }
 
+        if (StoreInfo is AdjustStoreInfo storeInfoValue)
+        {
+            nativeAdjustConfig.StoreInfo = storeInfoValue.toNative();
+        }
+
         return nativeAdjustConfig;
     }
 }
@@ -145,8 +161,26 @@ public partial class AdjustAttribution
             ClickLabel = nativeAttribution.ClickLabel,
             CostType = nativeAttribution.CostType,
             CostAmount = nativeAttribution.CostAmount?.DoubleValue,
-            CostCurrency = nativeAttribution.CostCurrency
+            CostCurrency = nativeAttribution.CostCurrency,
+            JsonResponse = JsonResponseToString(nativeAttribution.JsonResponse),
         };
+    }
+
+    private static string? JsonResponseToString(NSDictionary jsonResponse)
+    {
+        if (jsonResponse is null)
+        {
+            return null;
+        }
+
+        NSError? error = null;
+        NSData? jsonData = NSJsonSerialization.Serialize(jsonResponse, 0, out error);
+        if (error != null || jsonData is null)
+        {
+            return null;
+        }
+
+        return NSString.FromData(jsonData, NSStringEncoding.UTF8)?.ToString();
     }
 }
 
@@ -208,7 +242,7 @@ internal class AdjustDelegateAdapter : AdjustSdk.iOSBinding.AdjustDelegate
         }
     }
 
-	public override void AdjustEventTrackingFailed(AdjustSdk.iOSBinding.ADJEventFailure? eventFailureResponse)
+    public override void AdjustEventTrackingFailed(AdjustSdk.iOSBinding.ADJEventFailure? eventFailureResponse)
     {
         if (EventFailureDelegate is null)
         {
@@ -247,7 +281,7 @@ internal class AdjustDelegateAdapter : AdjustSdk.iOSBinding.AdjustDelegate
         }
     }
 
-	public override bool AdjustDeferredDeeplinkReceived(NSUrl? nativeDeeplink)
+    public override bool AdjustDeferredDeeplinkReceived(NSUrl? nativeDeeplink)
     {
         if (DeferredDeeplinkDelegate is null)
         {
@@ -262,14 +296,14 @@ internal class AdjustDelegateAdapter : AdjustSdk.iOSBinding.AdjustDelegate
         return false;
     }
 
-	public override void AdjustSkanUpdatedWithConversionData(NSDictionary<NSString, NSString> nativeData)
+    public override void AdjustSkanUpdatedWithConversionData(NSDictionary<NSString, NSString> nativeData)
     {
         if (SkanUpdatedDelegate is null)
         {
             return;
         }
 
-        Dictionary<string, string> data = new ();
+        Dictionary<string, string> data = new();
         foreach (KeyValuePair<NSObject, NSObject> kvp in nativeData)
         {
             data.Add(kvp.Key.ToString(), kvp.Value.ToString());

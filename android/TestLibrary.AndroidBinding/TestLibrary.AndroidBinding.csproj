@@ -1,13 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-android</TargetFramework>
+    <!-- Conditional targeting: .NET 8 SDK builds net8.0, .NET 10 SDK builds net10.0 -->
+    <TargetFrameworks Condition="$([MSBuild]::VersionLessThan($(NETCoreSdkVersion), '10.0.0'))">net8.0-android34.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::VersionGreaterThanOrEquals($(NETCoreSdkVersion), '10.0.0'))">net10.0-android36.0</TargetFrameworks>
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Suppress unavoidable binding warnings for types in compiled AAR that reference removed SDK internals -->
+    <!-- BG8605: Missing Java types (IConnectionOptions, WebSocketClient) - from compiled AAR bytecode -->
+    <!-- BG8606: Types auto-removed due to missing dependencies - expected behavior -->
+    <NoWarn>$(NoWarn);BG8605;BG8606</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->
+    <AndroidLibrary Remove="libs\*.aar" />
+
+    <!-- Bind test-library.aar (contains TestLibrary and Constants classes) -->
+    <AndroidLibrary Include="libs\test-library.aar" Bind="true" />
+    
+    <!-- Bind test-options.aar (contains TestConnectionOptions) -->
+    <!-- Set TransitiveDepth to 0 to prevent pulling in test-library.aar transitively -->
+    <!-- This avoids duplicate Constants class definitions -->
+    <AndroidLibrary Include="libs\test-options.aar" Bind="true">
+      <TransitiveDepth>0</TransitiveDepth>
+    </AndroidLibrary>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Include dependencies for type resolution (not bound, only for resolving references) -->
     <AndroidLibrary Update="libs\slf4j-api-2.0.13.jar" Bind="false" />
     <AndroidLibrary Update="libs\Java-WebSocket-1.5.7.jar" Bind="false" />
   </ItemGroup>
-
+  <ItemGroup>
+    <!-- Reference main Adjust SDK for type resolution (network.UtilNetworking types) -->
+    <AndroidLibrary Include="../AdjustSdk.AndroidBinding/libs/adjust-android.aar" Bind="false" />
+  </ItemGroup>
 </Project>

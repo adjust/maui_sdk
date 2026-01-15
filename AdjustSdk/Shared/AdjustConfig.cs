@@ -17,11 +17,13 @@ public enum AdjustEnvironment
     Production
 }
 
-public partial record AdjustConfig(string AppToken, AdjustEnvironment Environment, bool AllowSuppressLogLevel = false) {
+public partial record AdjustConfig(string AppToken, AdjustEnvironment Environment, bool AllowSuppressLogLevel = false)
+{
     public string? DefaultTracker { get; set; }
     public string? ExternalDeviceId { get; set; }
     public bool? IsCoppaComplianceEnabled { get; set; }
     public bool? IsSendingInBackgroundEnabled { get; set; }
+    public bool? IsFirstSessionDelayEnabled { get; set; }
     public bool? IsCostDataInAttributionEnabled { get; set; }
     public bool? IsDeviceIdsReadingOnceEnabled { get; set; }
     public bool? IsDataResidency { get; private set; }
@@ -29,6 +31,7 @@ public partial record AdjustConfig(string AppToken, AdjustEnvironment Environmen
     public int? EventDeduplicationIdsMaxSize { get; set; }
     public List<string>? UrlStrategyDomains { get; private set; }
     public AdjustLogLevel? LogLevel { get; set; }
+    public AdjustStoreInfo? StoreInfo { get; set; }
     public Action<AdjustAttribution>? AttributionChangedDelegate { get; set; }
 
     public Action<AdjustEventSuccess>? EventSuccessDelegate { get; set; }
@@ -37,7 +40,7 @@ public partial record AdjustConfig(string AppToken, AdjustEnvironment Environmen
     public Action<AdjustSessionFailure>? SessionFailureDelegate { get; set; }
     public Func<string, bool>? DeferredDeeplinkDelegate { get; set; }
 
-    internal const string SdkPrefix = "maui5.1.1";
+    internal const string SdkPrefix = "maui5.5.0";
 
     public void SetUrlStrategy(
         List<string> urlStrategyDomains,
@@ -62,6 +65,7 @@ public partial class AdjustAttribution
     public string? CostType { get; private set; }
     public double? CostAmount { get; private set; }
     public string? CostCurrency { get; private set; }
+    public string? JsonResponse { get; private set; }
 }
 
 public partial class AdjustEventSuccess
@@ -81,7 +85,6 @@ public partial class AdjustEventFailure
     public string? EventToken { get; private set; }
     public bool WillRetry { get; private set; }
     public string? CallbackId { get; private set; }
-
 }
 
 public partial class AdjustSessionSuccess

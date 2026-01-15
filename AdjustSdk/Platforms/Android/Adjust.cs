@@ -104,9 +104,19 @@ public partial class Adjust
         Com.Adjust.Sdk.Adjust.GetAdid(new OnAdidReadListenerAdapter(callback));
     }
 
+    public static partial void GetAdidWithTimeout(long timeout, Action<string?> callback)
+    {
+        Com.Adjust.Sdk.Adjust.GetAdidWithTimeout(AppContext, timeout, new OnAdidReadListenerAdapterNullable(callback));
+    }
+
     public static partial void GetAttribution(Action<AdjustAttribution> callback)
     {
         Com.Adjust.Sdk.Adjust.GetAttribution(new OnAttributionReadListenerAdapter(callback));
+    }
+
+    public static partial void GetAttributionWithTimeout(long timeout, Action<AdjustAttribution?> callback)
+    {
+        Com.Adjust.Sdk.Adjust.GetAttributionWithTimeout(AppContext, timeout, new OnAttributionReadListenerAdapterNullable(callback));
     }
 
     public static partial void GetSdkVersion(Action<string> callback)
@@ -143,6 +153,26 @@ public partial class Adjust
     {
         Com.Adjust.Sdk.Adjust.OnPause();
     }
+
+    public static partial void EndFirstSessionDelay()
+    {
+        Com.Adjust.Sdk.Adjust.EndFirstSessionDelay();
+    }
+
+    public static partial void EnableCoppaComplianceInDelay()
+    {
+        Com.Adjust.Sdk.Adjust.EnableCoppaComplianceInDelay();
+    }
+
+    public static partial void DisableCoppaComplianceInDelay()
+    {
+        Com.Adjust.Sdk.Adjust.DisableCoppaComplianceInDelay();
+    }
+
+    public static partial void SetExternalDeviceIdInDelay(string? externalDeviceId)
+    {
+        Com.Adjust.Sdk.Adjust.SetExternalDeviceIdInDelay(externalDeviceId);
+    }
     #endregion
 
     #region Android specific
@@ -157,7 +187,7 @@ public partial class Adjust
             AppContext, new OnGoogleAdIdReadListenerAdapter(callback));
     }
 
-    public static partial void GetAmazonAdId(Action<string> callback)
+    public static partial void GetAmazonAdId(Action<string?> callback)
     {
         Com.Adjust.Sdk.Adjust.GetAmazonAdId(
             AppContext, new OnAmazonAdIdReadListenerAdapter(callback));
@@ -177,6 +207,16 @@ public partial class Adjust
     {
         Com.Adjust.Sdk.Adjust.VerifyAndTrackPlayStorePurchase(adjustEvent.toNative(),
             new OnPurchaseVerificationFinishedListenerAdapter(verificationResultCallback));
+    }
+
+    public static partial void EnablePlayStoreKidsComplianceInDelay()
+    {
+        Com.Adjust.Sdk.Adjust.EnablePlayStoreKidsComplianceInDelay();
+    }
+
+    public static partial void DisablePlayStoreKidsComplianceInDelay()
+    {
+        Com.Adjust.Sdk.Adjust.DisablePlayStoreKidsComplianceInDelay();
     }
     #endregion
 
