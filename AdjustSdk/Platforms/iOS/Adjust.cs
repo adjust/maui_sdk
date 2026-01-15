@@ -57,8 +57,7 @@ public partial class Adjust
 
     public static partial void ProcessDeeplink(AdjustDeeplink deeplink)
     {
-        AdjustSdk.iOSBinding.Adjust.ProcessDeeplink(
-            new AdjustSdk.iOSBinding.ADJDeeplink(new NSUrl(deeplink.Deeplink)));
+        AdjustSdk.iOSBinding.Adjust.ProcessDeeplink(deeplink.toNative());
     }
 
     public static partial void AddGlobalPartnerParameter(string key, string value)
@@ -117,6 +116,14 @@ public partial class Adjust
         });
     }
 
+    public static partial void GetAdidWithTimeout(long timeout, Action<string?> callback)
+    {
+        AdjustSdk.iOSBinding.Adjust.AdidWithTimeout((nint)timeout, (string? adid) =>
+        {
+            callback(adid);
+        });
+    }
+
     public static partial void GetAttribution(Action<AdjustAttribution> callback)
     {
         AdjustSdk.iOSBinding.Adjust.AttributionWithCompletionHandler(
@@ -130,6 +137,14 @@ public partial class Adjust
             }
 
             callback(adjustAttribution);
+        });
+    }
+
+    public static partial void GetAttributionWithTimeout(long timeout, Action<AdjustAttribution?> callback)
+    {
+        AdjustSdk.iOSBinding.Adjust.AttributionWithTimeout((nint)timeout, (AdjustSdk.iOSBinding.ADJAttribution? attribution) =>
+        {
+            callback(AdjustAttribution.fromNative(attribution));
         });
     }
 
@@ -155,8 +170,7 @@ public partial class Adjust
     public static partial void ProcessAndResolveDeeplink(
         AdjustDeeplink deeplink, Action<string> callback)
     {
-        AdjustSdk.iOSBinding.Adjust.ProcessAndResolveDeeplink(
-            new AdjustSdk.iOSBinding.ADJDeeplink(new NSUrl(deeplink.Deeplink)),
+        AdjustSdk.iOSBinding.Adjust.ProcessAndResolveDeeplink(deeplink.toNative(),
             (string? resolvedLink) =>
             {
                 if (resolvedLink is not null)
@@ -183,6 +197,26 @@ public partial class Adjust
     {
         AdjustSdk.iOSBinding.Adjust.TrackSubsessionEnd();
     }
+
+    public static partial void EndFirstSessionDelay()
+    {
+        AdjustSdk.iOSBinding.Adjust.EndFirstSessionDelay();
+    }
+
+    public static partial void EnableCoppaComplianceInDelay()
+    {
+        AdjustSdk.iOSBinding.Adjust.EnableCoppaComplianceInDelay();
+    }
+
+    public static partial void DisableCoppaComplianceInDelay()
+    {
+        AdjustSdk.iOSBinding.Adjust.DisableCoppaComplianceInDelay();
+    }
+
+    public static partial void SetExternalDeviceIdInDelay(string? externalDeviceId)
+    {
+        AdjustSdk.iOSBinding.Adjust.SetExternalDeviceIdInDelay(externalDeviceId);
+    }
     #endregion
 
     #region iOS specific
@@ -191,7 +225,6 @@ public partial class Adjust
         AdjustSdk.iOSBinding.Adjust
             .RequestAppTrackingAuthorizationWithCompletionHandler(
                 (nuint status) => callback((int) status));
-
     }
 
     public static partial void TrackAppStoreSubscription(AdjustAppStoreSubscription subscription)

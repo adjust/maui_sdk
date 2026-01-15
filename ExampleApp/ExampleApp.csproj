@@ -39,6 +39,11 @@
 		<!--<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>-->
 	</PropertyGroup>
 
+	<PropertyGroup Condition="$(TargetFramework.Contains('android'))">
+		<AndroidJavaSourceVersion>11</AndroidJavaSourceVersion>
+		<AndroidJavaTargetVersion>11</AndroidJavaTargetVersion>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -67,7 +72,19 @@
 	  <ProjectReference Include="..\AdjustSdk\AdjustSdk.csproj" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
 		<PackageReference Include="Xamarin.Android.Binding.InstallReferrer" Version="2.2.0" />
 	</ItemGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('android'))">
+		<!--
+		<ProjectReference Include="..\plugins\AdjustOaid\AdjustOaid.csproj" />
+		<ProjectReference Include="..\plugins\AdjustMetaReferrer\AdjustMetaReferrer.csproj" />
+		<ProjectReference Include="..\plugins\AdjustGoogleLvl\AdjustGoogleLvl.csproj" />
+		-->
+		<AndroidResource Update="Platforms/Android/Resources/**/*.*">
+			<Link>$([System.String]::Copy('%(Identity)').Replace('Platforms\\Android\\','').Replace('Platforms/Android/',''))</Link>
+		</AndroidResource>
+	</ItemGroup>
+
 </Project>

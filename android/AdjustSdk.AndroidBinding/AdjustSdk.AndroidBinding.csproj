@@ -1,11 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-android</TargetFramework>
+    <!-- Conditional targeting: .NET 8 SDK builds net8.0, .NET 10 SDK builds net10.0 -->
+    <TargetFrameworks Condition="$([MSBuild]::VersionLessThan($(NETCoreSdkVersion), '10.0.0'))">net8.0-android34.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::VersionGreaterThanOrEquals($(NETCoreSdkVersion), '10.0.0'))">net10.0-android36.0</TargetFrameworks>
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Suppress unavoidable binding warnings for internal SDK types -->
+    <!-- BG8605: Missing '$' (synthetic accessor methods), Callable<V> (generic type parameter) -->
+    <!-- BG8606: Types auto-removed due to missing dependencies -->
+    <!-- BG8503/BG8800: Types referencing removed dependencies during transformation -->
+    <NoWarn>$(NoWarn);BG8605;BG8606;BG8503;BG8800</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <AndroidLibrary Update="libs\adjust-android-signature.aar" Bind="false" />
+    <!-- Remove any auto-included AARs from libs to avoid duplicate binding inputs -->
+    <AndroidLibrary Remove="libs\*.aar" />
+
+    <!-- Bind only the main SDK -->
+    <AndroidLibrary Include="libs\adjust-android.aar" Bind="true" />
+
+    <!-- Include signature AAR but do not bind -->
+    <AndroidLibrary Include="libs\adjust-android-signature.aar" Bind="false" />
   </ItemGroup>
 </Project>

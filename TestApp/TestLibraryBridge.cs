@@ -1,21 +1,31 @@
 using System.Text.Json;
 using AdjustSdk;
+#if IOS
+using UIKit;
+using Foundation;
+#endif
 
 public partial class TestLibraryBridge
 {
-    private readonly Dictionary<int, AdjustConfig> savedConfigs = new();
-    private readonly Dictionary<int, AdjustEvent> savedEvents = new();
     private string? currentExtraPath;
 
-    private string overwriteUrl { get ; init; }
-    private string controlUrl { get ; init; }
+    private string overwriteUrl { get; init; }
+    private string controlUrl { get; init; }
 
     public partial void Start();
     public partial void AddTest(string testName);
     public partial void AddTestDirectory(string testDirectory);
-    private partial void AddInfoToSend(string key, string value);
+    private partial void AddInfoToSend(string key, string? value);
     private partial void SetInfoToServer(IDictionary<string, string>? infoToSend);
     private partial void SendInfoToServer(string? extraPath);
+    #if ANDROID
+    private partial void PlayStoreKidsComplianceInDelay(Dictionary<string, List<string>> parameters);
+    private partial void AmazonAdIdGetter(Dictionary<string, List<string>> parameters);
+    private partial void GoogleAdIdGetter(Dictionary<string, List<string>> parameters);
+    #elif IOS
+    private partial void IdfaGetter(Dictionary<string, List<string>> parameters);
+    private partial void IdfvGetter(Dictionary<string, List<string>> parameters);
+    #endif
 
 #region Commands
     internal void ExecuteCommon(string className, string methodName, string jsonParameters)
@@ -56,7 +66,22 @@ public partial class TestLibraryBridge
             case "verifyPurchase": VerifyPurchase(parameters); break;
             case "processDeeplink": ProcessDeeplink(parameters); break;
             case "attributionGetter": AttributionGetter(parameters); break;
+            case "attributionGetterWithTimeout": AttributionGetterWithTimeout(parameters); break;
+            case "adidGetter": AdidGetter(parameters); break;
+            case "adidGetterWithTimeout": AdidGetterWithTimeout(parameters); break;
             case "verifyTrack": VerifyTrack(parameters); break;
+            case "endFirstSessionDelay": EndFirstSessionDelay(parameters); break;
+            case "coppaComplianceInDelay": CoppaComplianceInDelay(parameters); break;
+            case "externalDeviceIdInDelay": ExternalDeviceIdInDelay(parameters); break;
+            case "sdkVersionGetter": SdkVersionGetter(parameters); break;
+            #if ANDROID
+            case "playStoreKidsComplianceInDelay": PlayStoreKidsComplianceInDelay(parameters); break;
+            case "amazonAdIdGetter": AmazonAdIdGetter(parameters); break;
+            case "googleAdIdGetter": GoogleAdIdGetter(parameters); break;
+            #elif IOS
+            case "idfaGetter": IdfaGetter(parameters); break;
+            case "idfvGetter": IdfvGetter(parameters); break;
+            #endif
         }
     }
 
@@ -144,8 +169,6 @@ public partial class TestLibraryBridge
                 }
                 else if (teardownOption == "resetTest")
                 {
-                    savedConfigs.Clear();
-                    savedEvents.Clear();
                     testOptions.Add("timerIntervalInMilliseconds", -1L);
                     testOptions.Add("timerStartInMilliseconds", -1L);
                     testOptions.Add("sessionIntervalInMilliseconds", -1L);
@@ -158,8 +181,6 @@ public partial class TestLibraryBridge
                 }
                 else if (teardownOption == "test")
                 {
-                    savedConfigs.Clear();
-                    savedEvents.Clear();
                     testOptions.Add("timerIntervalInMilliseconds", -1L);
                     testOptions.Add("timerStartInMilliseconds", -1L);
                     testOptions.Add("sessionIntervalInMilliseconds", -1L);
@@ -179,33 +200,24 @@ public partial class TestLibraryBridge
 
     private AdjustConfig? ConfigNative(Dictionary<string, List<string>> parameters)
     {
-        if (!Int32.TryParse(FirstStringValue(parameters, "configName"), out int configNumber))
+        string? appToken = FirstStringValue(parameters, "appToken");
+        AdjustEnvironment? environment =
+            FirstStringValue(parameters, "environment") switch
         {
-            configNumber = 0;
+            "sandbox" => AdjustEnvironment.Sandbox,
+            "production"  => AdjustEnvironment.Production,
+            _ => null,
+        };
+
+        if (!(appToken is string appTokenValid
+            && environment is AdjustEnvironment environmentValid))
+        {
+            return null;
         }
 
-        if (!savedConfigs.TryGetValue(configNumber, out AdjustConfig? adjustConfig))
-        {
-            string? appToken = FirstStringValue(parameters, "appToken");
-            AdjustEnvironment? environment =
-                FirstStringValue(parameters, "environment") switch
-            {
-                "sandbox" => AdjustEnvironment.Sandbox,
-                "production"  => AdjustEnvironment.Production,
-                _ => null,
-            };
+        AdjustConfig adjustConfig = new(appTokenValid, environmentValid);
 
-            if (!(appToken is string appTokenValid
-                && environment is AdjustEnvironment environmentValid))
-            {
-                return null;
-            }
-
-            adjustConfig = new (appTokenValid, environmentValid);
-            savedConfigs.Add(configNumber, adjustConfig);
-        }
-
-        AdjustLogLevel? adjustLogLevel = FirstStringValue(parameters, "appToken") switch
+        AdjustLogLevel? adjustLogLevel = FirstStringValue(parameters, "logLevel") switch
         {
             "verbose" => AdjustLogLevel.VERBOSE,
             "debug" => AdjustLogLevel.DEBUG,
@@ -214,7 +226,8 @@ public partial class TestLibraryBridge
             "error" => AdjustLogLevel.ERROR,
             "assert" => AdjustLogLevel.ASSERT,
             "suppress" => AdjustLogLevel.SUPPRESS,
-            _ => null };
+            _ => null
+        };
         if (adjustLogLevel is not null)
         {
             adjustConfig.LogLevel = adjustLogLevel;
@@ -237,8 +250,13 @@ public partial class TestLibraryBridge
             adjustConfig.IsSendingInBackgroundEnabled = true;
         }
 
+        if (FirstBoolValue(parameters, "firstSessionDelayEnabled") is true)
+        {
+            adjustConfig.IsFirstSessionDelayEnabled = true;
+        }
+
         if (FirstIntValue(parameters, "eventDeduplicationIdsMaxSize")
-            is int eventDeduplicationIdsMaxSize) 
+            is int eventDeduplicationIdsMaxSize)
         {
             adjustConfig.EventDeduplicationIdsMaxSize = eventDeduplicationIdsMaxSize;
         }
@@ -253,21 +271,44 @@ public partial class TestLibraryBridge
             adjustConfig.IsCoppaComplianceEnabled = true;
         }
 
+        if (FirstStringValue(parameters, "storeName") is string storeName)
+        {
+            AdjustStoreInfo storeInfo = new AdjustStoreInfo(storeName);
+
+            if (FirstStringValue(parameters, "storeAppId") is string storeAppId)
+            {
+                storeInfo.StoreAppId = storeAppId;
+            }
+
+            adjustConfig.StoreInfo = storeInfo;
+        }
+
 #if ANDROID
         if (FirstBoolValue(parameters, "playStoreKids") is true)
         {
             adjustConfig.IsPlayStoreKidsComplianceEnabled = true;
         }
 
+        if (FirstBoolValue(parameters, "appSetIdReadingEnabled") is false)
+        {
+            adjustConfig.IsAppSetIdReadingEnabled = false;
+        }
+
         /* not being tested:
             IsPreinstallTrackingEnabled
             PreinstallFilePath
             FbAppId
+
         */
 #elif IOS
         if (FirstBoolValue(parameters, "allowIdfaReading") is false)
         {
             adjustConfig.IsIdfaReadingEnabled = false;
+        }
+
+        if (FirstBoolValue(parameters, "allowIdfvReading") is false)
+        {
+            adjustConfig.IsIdfvReadingEnabled = false;
         }
 
         if (FirstBoolValue(parameters, "allowAdServicesInfoReading") is false)
@@ -294,10 +335,21 @@ public partial class TestLibraryBridge
                 SendInfoToServer(localBasePath);
             };
         }
+
+        if (FirstBoolValue(parameters, "allowAttUsage") is false)
+        {
+            adjustConfig.IsAppTrackingTransparencyUsageEnabled = false;
+        }
+/*
+        if (FirstBoolValue(parameters, "checkPasteboard") is true)
+        {
+            adjustConfig.IsLinkMeEnabled = true;
+        }
+*/
 #endif
         if (parameters.ContainsKey("attributionCallbackSendAll"))
         {
-            adjustConfig.AttributionChangedDelegate = attributionCallback(currentExtraPath);
+            adjustConfig.AttributionChangedDelegate = attributionCallback(currentExtraPath, parameters);
         }
 
         if (parameters.ContainsKey("sessionCallbackSendSuccess"))
@@ -437,7 +489,7 @@ public partial class TestLibraryBridge
         if (parameters.ContainsKey("deferredDeeplinkCallback"))
         {
             string? localBasePath = currentExtraPath;
-            bool launchDeferredDeeplink = 
+            bool launchDeferredDeeplink =
                 FirstBoolValue(parameters, "deferredDeeplinkCallback") is true;
             adjustConfig.DeferredDeeplinkDelegate = (string deeplink) =>
             {
@@ -458,23 +510,12 @@ public partial class TestLibraryBridge
         }
 
         Adjust.InitSdk(adjustConfig);
-
-        savedConfigs.Remove(FirstIntValue(parameters, "configName") ?? 0);
     }
 
     private AdjustEvent EventNative(Dictionary<string, List<string>> parameters)
     {
-        if (!Int32.TryParse(FirstStringValue(parameters, "eventName"), out int eventNumber))
-        {
-            eventNumber = 0;
-        }
-
-        if (!savedEvents.TryGetValue(eventNumber, out AdjustEvent? adjustEvent))
-        {
-            string eventToken = FirstStringValue(parameters, "eventToken") ?? "";
-            adjustEvent = new (eventToken);
-            savedEvents.Add(eventNumber, adjustEvent);
-        }
+        string eventToken = FirstStringValue(parameters, "eventToken") ?? "";
+        AdjustEvent adjustEvent = new(eventToken);
 
         if (RevenueCurrencyValues(parameters) is (string currency, double amount))
         {
@@ -518,8 +559,6 @@ public partial class TestLibraryBridge
     private void TrackEvent(Dictionary<string, List<string>> parameters)
     {
         Adjust.TrackEvent(EventNative(parameters));
-
-        savedEvents.Remove(FirstIntValue(parameters, "eventName") ?? 0);
     }
 
     private void Resume(Dictionary<string, List<string>> parameters)
@@ -617,7 +656,13 @@ public partial class TestLibraryBridge
     {
         if (FirstStringValue(parameters, "deeplink") is string deeplink)
         {
-            Adjust.ProcessDeeplink(new AdjustDeeplink(deeplink));
+            AdjustDeeplink adjustDeeplink = new(deeplink);
+            if (FirstStringValue(parameters, "referrer") is string referrer)
+            {
+                adjustDeeplink.Referrer = referrer;
+            }
+
+            Adjust.ProcessDeeplink(adjustDeeplink);
         }
     }
 
@@ -701,10 +746,12 @@ public partial class TestLibraryBridge
 
     private void GetLastDeeplink(Dictionary<string, List<string>> parameters)
     {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
         string? localBasePath = currentExtraPath;
         Adjust.GetLastDeeplink((string? lastDeeplink) =>
         {
-            AddInfoToSend("last_deeplink", lastDeeplink ?? "");
+            AddInfoToSend("last_deeplink", lastDeeplink);
+            AddInfoToSend("test_callback_id", testCallbackId);
             SendInfoToServer(localBasePath);
         });
     }
@@ -735,7 +782,46 @@ public partial class TestLibraryBridge
 
     private void AttributionGetter(Dictionary<string, List<string>> parameters)
     {
-        Adjust.GetAttribution(attributionCallback(currentExtraPath));
+        Adjust.GetAttribution(attributionCallback(currentExtraPath, parameters));
+    }
+
+    private void AttributionGetterWithTimeout(Dictionary<string, List<string>> parameters)
+    {
+        Adjust.GetAttributionWithTimeout(FirstLongValue(parameters, "timeout") ?? 0,
+            attributionCallbackNullable(currentExtraPath, parameters));
+    }
+
+    private void AdidGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetAdid(adid =>
+        {
+            AddInfoToSend("adid", adid);
+            AddInfoToSend("test_callback_id", testCallbackId);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+
+    private void AdidGetterWithTimeout(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetAdidWithTimeout(FirstLongValue(parameters, "timeout") ?? 0, adid =>
+        {
+            if (adid is not null)
+            {
+                testLibrary.AddInfoToSend("adid", adid);
+            }
+            else
+            {
+                #if ANDROID
+                testLibrary.AddInfoToSend("adid", "null");
+                #else
+                testLibrary.AddInfoToSend("adid", "nil");
+                #endif
+            }
+            AddInfoToSend("test_callback_id", testCallbackId);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
     }
 
     private void VerifyTrack(Dictionary<string, List<string>> parameters)
@@ -748,23 +834,87 @@ public partial class TestLibraryBridge
         Adjust.VerifyAndTrackAppStorePurchase(adjustEvent, VerificationResultCallback(localBasePath));
 #endif
     }
+
+    private void EndFirstSessionDelay(Dictionary<string, List<string>> parameters)
+    {
+        Adjust.EndFirstSessionDelay();
+    }
+
+    private void CoppaComplianceInDelay(Dictionary<string, List<string>> parameters)
+    {
+        if (FirstBoolValue(parameters, "isEnabled") is true)
+        {
+            Adjust.EnableCoppaComplianceInDelay();
+        }
+
+        if (FirstBoolValue(parameters, "isEnabled") is false)
+        {
+            Adjust.DisableCoppaComplianceInDelay();
+        }
+    }
+
+    private void ExternalDeviceIdInDelay(Dictionary<string, List<string>> parameters)
+    {
+        if (FirstStringValue(parameters, "externalDeviceId") is string externalDeviceId)
+        {
+            Adjust.SetExternalDeviceIdInDelay(externalDeviceId);
+        }
+    }
+
+    private void SdkVersionGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetSdkVersion(sdkVersion =>
+        {
+            AddInfoToSend("sdk_version", sdkVersion);
+            AddInfoToSend("test_callback_id", testCallbackId);
+            SendInfoToServer(currentExtraPath);
+        });
+    }
+
     #endregion
 
     private Action<AdjustPurchaseVerificationResult> VerificationResultCallback(
         string? localBasePath) => (AdjustPurchaseVerificationResult result) =>
     {
-        AddInfoToSend("verification_status", result.VerificationStatus ?? "");
+        AddInfoToSend("verification_status", result.VerificationStatus);
         AddInfoToSend("code", Convert.ToString(result.Code));
-        AddInfoToSend("message", result.Message ?? "");
+        AddInfoToSend("message", result.Message);
 
         SendInfoToServer(localBasePath);
     };
 
-    private Action<AdjustAttribution> attributionCallback(string? localBasePath) =>
+    private Action<AdjustAttribution?> attributionCallbackNullable(
+        string? localBasePath, Dictionary<string, List<string>> parameters) =>
+        (AdjustAttribution? attribution) =>
+    {
+        if (attribution is not null)
+        {
+            attributionCallback(localBasePath, parameters)(attribution);
+        }
+        else
+        {
+            string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+            AddInfoToSend("test_callback_id", testCallbackId);
+            #if ANDROID
+            AddInfoToSend("attribution", "null");
+            #else
+            AddInfoToSend("attribution", "nil");
+            #endif
+            SendInfoToServer(localBasePath);
+        }
+    };
+
+    private Action<AdjustAttribution> attributionCallback(
+        string? localBasePath, Dictionary<string, List<string>> parameters) =>
         (AdjustAttribution attribution) =>
     {
         Dictionary<string, string> infoToSend = new();
-
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        if (testCallbackId is not null)
+        {
+            infoToSend.Add("test_callback_id", testCallbackId);
+        }
         if (attribution.TrackerToken is not null)
         {
             infoToSend.Add("tracker_token", attribution.TrackerToken);
@@ -806,12 +956,18 @@ public partial class TestLibraryBridge
         {
             infoToSend.Add("cost_currency", attribution.CostCurrency);
         }
+        Console.WriteLine("before fb_install_referrer");
 #if ANDROID
+        Console.WriteLine("in ANDROID fb_install_referrer");
         if (attribution.FbInstallReferrer is not null)
         {
             infoToSend.Add("fb_install_referrer", attribution.FbInstallReferrer);
         }
 #endif
+        if (attribution.JsonResponse is not null)
+        {
+            infoToSend.Add("json_response", attribution.JsonResponse);
+        }
         SetInfoToServer(infoToSend);
         SendInfoToServer(localBasePath);
     };

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-ios</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
+    <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
+    <UseMauiEssentials>true</UseMauiEssentials>
+    <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <CreatePackage>false</CreatePackage>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <CreatePackage>false</CreatePackage>
+  </PropertyGroup>
+    <ItemGroup>
+    <ProjectReference Include="..\..\..\ios\TestLibrary.iOSBinding\TestLibrary.iOSBinding.csproj" />
+    <Compile Include="..\..\..\testApp\TestLibraryBridge.cs" Link="TestLibraryBridge.cs" />
+    <Compile Include="..\..\..\testApp\Platforms\iOS\TestLibraryBridge.cs" Link="TestLibraryBridge.iOS.cs" />
+  </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Adjust.Maui.Sdk" Version="5.5.0" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+<metadata>
+  <!-- Remove OnOaidReadListener interface - not exposed in the plugin -->
+  <remove-node path="/api/package[@name='com.adjust.sdk.oaid']/interface[@name='OnOaidReadListener']" />
+
+  <!-- Remove getOaid method that uses the removed OnOaidReadListener interface -->
+  <remove-node path="/api/package[@name='com.adjust.sdk.oaid']/class[@name='AdjustOaid']/method[@name='getOaid' and count(parameter)=2]" />
+
+  <!-- Note: Methods with ILogger parameters and internal nested classes are automatically -->
+  <!-- removed during class-parse phase due to missing dependencies. No explicit removal needed. -->
+</metadata>

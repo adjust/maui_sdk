@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Adjust.Maui.Sdk.Meta.Referrer</id>
+    <version>5.5.0</version>
+    <title>Adjust MAUI SDK Meta Referrer Plugin</title>
+    <authors>Adjust GmbH</authors>
+    <owners>Adjust GmbH</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/adjust/maui_sdk</projectUrl>
+    <iconUrl>https://raw.github.com/adjust/adjust_sdk/master/Resources/windows/gravatar.gif</iconUrl>
+    <icon>gravatar.jpg</icon>
+    <description>This is the Meta Referrer plugin for the MAUI SDK of Adjust. http://www.adjust.com</description>
+    <summary>This is the Meta Referrer plugin for the MAUI SDK of Adjust. http://www.adjust.com</summary>
+    <readme>README.md</readme>
+    <releaseNotes></releaseNotes>
+    <copyright></copyright>
+    <language></language>
+    <tags>adjust maui android ios measurement analytics meta referrer</tags>
+    <dependencies>
+      <!-- .NET 8 -->
+      <group targetFramework="net8.0-android34.0">
+        <dependency id="Adjust.Maui.Sdk" version="5.5.0" />
+      </group>
+      <!-- .NET 10 -->
+      <group targetFramework="net10.0-android36.0">
+        <dependency id="Adjust.Maui.Sdk" version="5.5.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="gravatar.jpg" target="" />
+    <file src="README.md" target="" />
+
+    <!-- .NET 8 Android -->
+    <file src=".artifacts/AdjustMetaReferrer/bin/Release/net8.0-android34.0/AdjustMetaReferrer.dll" target="lib/net8.0-android34.0/AdjustMetaReferrer.dll" />
+    <file src=".artifacts/AdjustMetaReferrer/bin/Release/net8.0-android34.0/AdjustMetaReferrer.xml" target="lib/net8.0-android34.0/AdjustMetaReferrer.xml" />
+    <file src=".artifacts/AdjustMetaReferrer.AndroidBinding/bin/Release/net8.0-android34.0/AdjustMetaReferrer.AndroidBinding.dll" target="lib/net8.0-android34.0/AdjustMetaReferrer.AndroidBinding.dll" />
+    <file src=".artifacts/AdjustMetaReferrer.AndroidBinding/bin/Release/net8.0-android34.0/AdjustMetaReferrer.AndroidBinding.xml" target="lib/net8.0-android34.0/AdjustMetaReferrer.AndroidBinding.xml" />
+    <file src="android/AdjustMetaReferrer.AndroidBinding/libs/adjust-android-meta-referrer.aar" target="lib/net8.0-android34.0/adjust-android-meta-referrer.aar" />
+
+    <!-- .NET 10 Android -->
+    <file src=".artifacts/AdjustMetaReferrer/bin/Release/net10.0-android36.0/AdjustMetaReferrer.dll" target="lib/net10.0-android36.0/AdjustMetaReferrer.dll" />
+    <file src=".artifacts/AdjustMetaReferrer/bin/Release/net10.0-android36.0/AdjustMetaReferrer.xml" target="lib/net10.0-android36.0/AdjustMetaReferrer.xml" />
+    <file src=".artifacts/AdjustMetaReferrer.AndroidBinding/bin/Release/net10.0-android36.0/AdjustMetaReferrer.AndroidBinding.dll" target="lib/net10.0-android36.0/AdjustMetaReferrer.AndroidBinding.dll" />
+    <file src=".artifacts/AdjustMetaReferrer.AndroidBinding/bin/Release/net10.0-android36.0/AdjustMetaReferrer.AndroidBinding.xml" target="lib/net10.0-android36.0/AdjustMetaReferrer.AndroidBinding.xml" />
+    <file src="android/AdjustMetaReferrer.AndroidBinding/libs/adjust-android-meta-referrer.aar" target="lib/net10.0-android36.0/adjust-android-meta-referrer.aar" />
+  </files>
+</package>

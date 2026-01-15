@@ -5,6 +5,7 @@ public partial record AdjustConfig {
     public bool? IsPreinstallTrackingEnabled { get; set; }
     public string? PreinstallFilePath { get; set; }
     public string? FbAppId { get; set; }
+    public bool? IsAppSetIdReadingEnabled { get; set; }
 
     internal Com.Adjust.Sdk.AdjustConfig toNative()
     {
@@ -51,6 +52,10 @@ public partial record AdjustConfig {
         {
             nativeAdjustConfig.EnableSendingInBackground();
         }
+        if (IsFirstSessionDelayEnabled is true)
+        {
+            nativeAdjustConfig.EnableFirstSessionDelay();
+        }
 
         if (IsCostDataInAttributionEnabled is true)
         {
@@ -77,8 +82,8 @@ public partial record AdjustConfig {
         {
             nativeAdjustConfig.SetUrlStrategy(
                 urlStrategyDomainsValue,
-                ShouldUseSubdomains?? false,
-                IsDataResidency?? false);
+                ShouldUseSubdomains ?? false,
+                IsDataResidency ?? false);
         }
 
         if (AttributionChangedDelegate is Action<AdjustAttribution> attributionChangedDelegateValue)
@@ -137,11 +142,22 @@ public partial record AdjustConfig {
             nativeAdjustConfig.FbAppId = fbAppIdValue;
         }
 
+        if (StoreInfo is AdjustStoreInfo storeInfoValue)
+        {
+            nativeAdjustConfig.StoreInfo = storeInfoValue.toNative();
+        }
+
+        if (IsAppSetIdReadingEnabled is false)
+        {
+            nativeAdjustConfig.DisableAppSetIdReading();
+        }
+
         return nativeAdjustConfig;
     }
 }
 
-public partial class AdjustAttribution {
+public partial class AdjustAttribution
+{
     public string? FbInstallReferrer { get; private set; }
 
     internal static AdjustAttribution? fromNative(
@@ -164,7 +180,8 @@ public partial class AdjustAttribution {
             CostType = nativeAdjustAttribution.CostType,
             CostAmount = nativeAdjustAttribution.CostAmount?.DoubleValue(),
             CostCurrency = nativeAdjustAttribution.CostCurrency,
-            FbInstallReferrer = nativeAdjustAttribution.FbInstallReferrer
+            FbInstallReferrer = nativeAdjustAttribution.FbInstallReferrer,
+            JsonResponse = nativeAdjustAttribution.JsonResponse
         };
     }
 }
@@ -207,7 +224,7 @@ public partial class AdjustEventSuccess
 internal class OnEventTrackingSucceededListenerAdapter(Action<AdjustEventSuccess> EventSuccessDelegate)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnEventTrackingSucceededListener
 {
-    public void OnEventTrackingSucceeded (Com.Adjust.Sdk.AdjustEventSuccess? nativeAdjustEventSuccess)
+    public void OnEventTrackingSucceeded(Com.Adjust.Sdk.AdjustEventSuccess? nativeAdjustEventSuccess)
     {
         if (AdjustEventSuccess.fromNativeAdjustEventSuccess(nativeAdjustEventSuccess)
         is AdjustEventSuccess adjustEventSuccess)
@@ -277,7 +294,7 @@ public partial class AdjustSessionSuccess
 internal class OnSessionTrackingSucceededListenerAdapter(Action<AdjustSessionSuccess> SessionSuccessDelegate)
     : Java.Lang.Object, Com.Adjust.Sdk.IOnSessionTrackingSucceededListener
 {
-    public void OnSessionTrackingSucceeded (Com.Adjust.Sdk.AdjustSessionSuccess? nativeAdjustSessionSuccess)
+    public void OnSessionTrackingSucceeded(Com.Adjust.Sdk.AdjustSessionSuccess? nativeAdjustSessionSuccess)
     {
         if (AdjustSessionSuccess.fromNativeAdjustSessionSuccess(nativeAdjustSessionSuccess)
         is AdjustSessionSuccess adjustSessionSuccess)

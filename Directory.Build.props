@@ -1,0 +1,29 @@
+<Project>
+  <PropertyGroup>
+    <!-- Intermediates: .artifacts/{ProjectName}/obj/{Config}/{TFM}/ -->
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory).artifacts/$(MSBuildProjectName)/obj/</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)/$(TargetFramework)/</IntermediateOutputPath>
+
+    <!-- Outputs: .artifacts/{ProjectName}/bin/{Config}/{TFM}/ -->
+    <BaseOutputPath>$(MSBuildThisFileDirectory).artifacts/$(MSBuildProjectName)/bin/</BaseOutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisibleArtifactsRoot>$(MSBuildThisFileDirectory)artifacts_copy/</VisibleArtifactsRoot>
+    <HiddenArtifactsRoot>$(MSBuildThisFileDirectory).artifacts/</HiddenArtifactsRoot>
+    <VisibleBinDirName>build_bin/$(MSBuildProjectName)/</VisibleBinDirName>
+    <VisibleObjDirName>build_obj/$(MSBuildProjectName)/</VisibleObjDirName>
+  </PropertyGroup>
+  <Target Name="CopyArtifactsToVisibleFolder" AfterTargets="Build">
+    <ItemGroup>
+      <!-- Copy only the current project's outputs to avoid cross-TFM/file-not-found issues -->
+      <BinArtifacts Include="$(TargetDir)**/*" />
+      <ObjArtifacts Include="$(IntermediateOutputPath)**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BinArtifacts)"
+          DestinationFolder="$(VisibleArtifactsRoot)$(VisibleBinDirName)%(BinArtifacts.RecursiveDir)"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ObjArtifacts)"
+          DestinationFolder="$(VisibleArtifactsRoot)$(VisibleObjDirName)%(ObjArtifacts.RecursiveDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

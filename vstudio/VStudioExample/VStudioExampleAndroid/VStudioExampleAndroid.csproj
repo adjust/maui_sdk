@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationId>com.companyname.VStudioExampleAndroid</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Adjust.Maui.Sdk" Version="5.5.0" />
+    <PackageReference Include="Adjust.Maui.Sdk.Oaid" Version="5.5.0" />
+    <PackageReference Include="Adjust.Maui.Sdk.Google.LVL" Version="5.5.0" />
+    <PackageReference Include="Adjust.Maui.Sdk.Meta.Referrer" Version="5.5.0" />
+  </ItemGroup>
+</Project>

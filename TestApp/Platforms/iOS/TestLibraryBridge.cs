@@ -5,19 +5,23 @@ using Foundation;
 public partial class TestLibraryBridge
 {
     // simulator
-    // private const string baseIp = "127.0.0.1";
+    private const string baseIp = "127.0.0.1";
     // device
-    private const string baseIp = "192.168.86.227";
+    // private const string baseIp = "192.168.86.211";
 
     private TestLibrary.iOSBinding.ATLTestLibrary testLibrary { get; init; }
+    // Must keep a strong reference to prevent GC from collecting the delegate
+    // while native code still holds a weak reference to it
+    private CommandDelegate commandDelegate { get; init; }
 
     public TestLibraryBridge()
     {
         overwriteUrl = $"http://{baseIp}:8080";
         controlUrl = $"ws://{baseIp}:1987";
 
+        commandDelegate = new CommandDelegate(this);
         testLibrary = TestLibrary.iOSBinding.ATLTestLibrary.TestLibraryWithBaseUrl(
-            overwriteUrl, controlUrl, new CommandDelegate(this));
+            overwriteUrl, controlUrl, commandDelegate);
     }
 
     public partial void Start()
@@ -35,9 +39,12 @@ public partial class TestLibraryBridge
         testLibrary.AddTestDirectory(testDirectory);
     }
 
-    private partial void AddInfoToSend(string key, string value)
+    private partial void AddInfoToSend(string key, string? value)
     {
-        testLibrary.AddInfoToSend(key, value);
+        if (value is not null)
+        {
+            testLibrary.AddInfoToSend(key, value);
+        }
     }
 
     private partial void SetInfoToServer(IDictionary<string, string>? infoToSend)
@@ -67,7 +74,7 @@ public partial class TestLibraryBridge
             return;
         }
 
-        AdjustAppStoreSubscription adjustAppStoreSubscription = new (price, currency, transactionId);
+        AdjustAppStoreSubscription adjustAppStoreSubscription = new(price, currency, transactionId);
 
         if (FirstStringValue(parameters, "transactionDate") is string transactionDate)
         {
@@ -115,19 +122,46 @@ public partial class TestLibraryBridge
             _ => null
         };
     }
+#region Commands
+    private partial void IdfaGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetIdfa(idfa =>
+        {
+            testLibrary.AddInfoToSend("idfa", idfa);
+            AddInfoToSend("test_callback_id", testCallbackId);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+
+    private partial void IdfvGetter(Dictionary<string, List<string>> parameters)
+    {
+        string? testCallbackId = FirstStringValue(parameters, "testCallbackId");
+        Adjust.GetIdfv(idfv =>
+        {
+            testLibrary.AddInfoToSend("idfv", idfv);
+            AddInfoToSend("test_callback_id", testCallbackId);
+            testLibrary.SendInfoToServer(currentExtraPath);
+        });
+    }
+#endregion Commands
 }
 
 internal class CommandDelegate(TestLibraryBridge testLibraryBridge) :
     TestLibrary.iOSBinding.AdjustCommandDelegate
 {
     /*
-        public override void ExecuteCommand(string className, string methodName, NSDictionary parameters) {}
+        public override void ExecuteCommand(string className, string methodName, NSDictionary parameters)
+        {
+        }
     */
     public override void ExecuteCommand(string className, string methodName, string jsonParameters)
     {
         testLibraryBridge.ExecuteCommon(className, methodName, jsonParameters);
     }
     /*
-        public override void ExecuteCommandRawJson(string json) {}
+        public override void ExecuteCommandRawJson(string json)
+        {
+        }
     */
 }

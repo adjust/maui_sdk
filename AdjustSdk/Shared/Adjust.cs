@@ -42,7 +42,11 @@ public partial class Adjust
 
     public static partial void GetAdid(Action<string> callback);
 
+    public static partial void GetAdidWithTimeout(long timeout, Action<string?> callback);
+
     public static partial void GetAttribution(Action<AdjustAttribution> callback);
+
+    public static partial void GetAttributionWithTimeout(long timeout, Action<AdjustAttribution?> callback);
 
     public static partial void GetSdkVersion(Action<string> callback);
 
@@ -56,12 +60,20 @@ public partial class Adjust
 
     public static partial void Pause();
 
+    public static partial void EndFirstSessionDelay();
+
+    public static partial void EnableCoppaComplianceInDelay();
+
+    public static partial void DisableCoppaComplianceInDelay();
+
+    public static partial void SetExternalDeviceIdInDelay(string? externalDeviceId);
+
     #if ANDROID
     public static partial void TrackPlayStoreSubscription(AdjustPlayStoreSubscription subscription);
 
     public static partial void GetGoogleAdId(Action<string> callback);
 
-    public static partial void GetAmazonAdId(Action<string> callback);
+    public static partial void GetAmazonAdId(Action<string?> callback);
 
     public static partial void VerifyPlayStorePurchase(
         AdjustPlayStorePurchase purchase,
@@ -70,6 +82,10 @@ public partial class Adjust
     public static partial void VerifyAndTrackPlayStorePurchase(
         AdjustEvent adjustEvent,
         Action<AdjustPurchaseVerificationResult> verificationResultCallback);
+
+    public static partial void EnablePlayStoreKidsComplianceInDelay();
+
+    public static partial void DisablePlayStoreKidsComplianceInDelay();
 
     #elif IOS
     public static partial void RequestAppTrackingAuthorization(Action<int> callback);
