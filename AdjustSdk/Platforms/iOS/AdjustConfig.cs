@@ -13,6 +13,9 @@ public partial record AdjustConfig
     public int? AttConsentWaitingInterval { get; set; }
     public Action<Dictionary<string, string>>? SkanUpdatedDelegate { get; set; }
 
+    // ADJConfig.delegate is a weak native reference: without a managed reference the adapter is collected and callbacks are lost
+    private static AdjustDelegateAdapter? retainedDelegateAdapter;
+
     internal AdjustSdk.iOSBinding.ADJConfig toNative()
     {
         NSString? nativeEnvironment = Environment switch
@@ -99,6 +102,7 @@ public partial record AdjustConfig
 
         if (AdjustDelegateAdapter.adaptNative(this) is AdjustDelegateAdapter adjustDelegateAdapter)
         {
+            retainedDelegateAdapter = adjustDelegateAdapter;
             nativeAdjustConfig.Delegate = adjustDelegateAdapter;
         }
 
